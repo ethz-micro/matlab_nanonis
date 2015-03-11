@@ -100,7 +100,9 @@ if nargin > 0
 end
 
 
-
+figure
+imagesc(flatData);
+axis image
 
 %{
 %Compute removed part
@@ -121,9 +123,7 @@ figure
 imagesc(double(slidingmean))
 axis image
 
-figure
-imagesc(flatData);
-axis image
+
 %}
 
 end

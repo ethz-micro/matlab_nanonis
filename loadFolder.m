@@ -1,12 +1,6 @@
 function loadFolder(folderName)
 %load and save all files in folder
 
-    %Load & Process SEM Data
-    function data = getSEMData(fn,n)
-        [~, data] = loadsxm(fn, n);
-        data = processSEM(data);
-    end
-
     %Save as a PNG in rootImgName
     function savePNG(name)
         imgName=[rootImgName, name,'.png'];
@@ -46,12 +40,8 @@ for i=1:numel(files)
     if count == 4
         %STM, load Z
         
-        [~, ZForward] = loadsxm(fn, 0);
-        [~, ZBackward] = loadsxm(fn, 1);
-        
-        ZForward = processSTM(ZForward);
-        ZBackward = processSTM(ZBackward);
-        ZBackward = flip(ZBackward,2);
+        ZForward = loadSTM(fn, 0);
+        ZBackward =loadSTM(fn, 1);
         
         %Plot
         
@@ -67,23 +57,16 @@ for i=1:numel(files)
         %SEM, load channels 0-3 and current
         
         %Current
-        currF = getSEMData(fn, 0);
-        currB = getSEMData(fn, 1);
-        C0F = getSEMData(fn, 2);
-        C0B = getSEMData(fn, 3);
-        C1F = getSEMData(fn, 4);
-        C1B = getSEMData(fn, 5);
-        C2F = getSEMData(fn, 6);
-        C2B = getSEMData(fn, 7);
-        C3F = getSEMData(fn, 8);
-        C3B = getSEMData(fn, 9);
-        
-        %Flip backwards
-        currB=flip(currB,2);
-        C0B = flip(C0B,2);
-        C1B = flip(C1B,2);
-        C2B = flip(C2B,2);
-        C3B = flip(C3B,2);
+        currF = loadSEM(fn, 0);
+        currB = loadSEM(fn, 1);
+        C0F = loadSEM(fn, 2);
+        C0B = loadSEM(fn, 3);
+        C1F = loadSEM(fn, 4);
+        C1B = loadSEM(fn, 5);
+        C2F = loadSEM(fn, 6);
+        C2B = loadSEM(fn, 7);
+        C3F = loadSEM(fn, 8);
+        C3B = loadSEM(fn, 9);
         
         %Save current Forward
         plotSEM(currF,header);

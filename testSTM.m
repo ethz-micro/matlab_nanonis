@@ -5,11 +5,11 @@ close all;
 %image name
 fn='Data/DataC2/2015-03-04/image008.sxm';%1-2;4;9
 
-[header, data0] = loadsxm(fn, 0);
+[data0,header, mn0,std0, slope0] = loadSTM(fn, 0);
 %print header infos
 header.data_info
 
-[data0, mn0,std0, slope0] = processSTM(data0);
+
 %print mean and stdev for data 0
 
 figure        

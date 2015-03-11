@@ -14,16 +14,10 @@ title('non-stdev corrected channel 0');
 %% Load SED data
 
 %Load 2,4,6,8 (forward channel 0 1 2 3)
-[header, data0] = loadsxm(fn, 2);
-[~, data1] = loadsxm(fn, 4);
-[~, data2] = loadsxm(fn, 6);
-[~, data3] = loadsxm(fn, 8);
-
-%Process Datas
-[data0, mn0, stdev0, slope0] = processSEM(data0);
-data1=processSEM(data1);
-data2=processSEM(data2);
-data3=processSEM(data3);
+[data0,header, mn0, stdev0, slope0 ] = loadSEM(fn, 2);
+data1 = loadSEM(fn, 4);
+data2 = loadSEM(fn, 6);
+data3 = loadSEM(fn, 8);
 
 %print header infos
 header.data_info
@@ -70,8 +64,7 @@ title('4 channels')
 
 %% Do the same for current
 
-[header, dataFC] = loadsxm(fn, 0);
-[dataFC, mn0, stdev0, slope0] = processSEM(dataFC);
+[dataFC,header, mn0, stdev0, slope0] = loadSEM(fn, 0);
 
 %plot image
 figure
