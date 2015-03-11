@@ -3,7 +3,7 @@ clear all;
 close all;
 
 %image name
-fn='DataC2/2015-03-04/image008.sxm';%1-2;4;9
+fn='Data/DataC2/2015-03-04/image008.sxm';%1-2;4;9
 
 [header, data0] = loadsxm(fn, 0);
 %print header infos

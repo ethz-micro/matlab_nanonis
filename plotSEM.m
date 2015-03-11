@@ -1,7 +1,7 @@
 function [p,range] = plotSEM(data,header)
-%SEM
-range = [-2 2]*nanstd(data(:));%Range = 2*std of data
+%Plot SEM data
 
+%Range = 2*std of data
+range = [-2 2]*nanstd(data(:));
 p=plotSxm(data, header, range);
-
 end

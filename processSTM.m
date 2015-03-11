@@ -1,13 +1,12 @@
 function [data, lineMedian,lineSTDev, slope] = processSTM(data)
-%The lines are gaussian. The mean and std depends on the distance
-%tip-sample, that changes during the measurment because of the drift, and
-%on other things.
+%processSTM correct for the drift by substracting the median of each lines.
+%It also does plane correction
 
 %Some useful functions
-function data = flatenLine(data)
-    %Remove the median
-    data=(data-nanmedian(data,2)*ones([1 size(data,2)]));
-end
+    function data = flatenLine(data)
+        %Remove the median
+        data=(data-nanmedian(data,2)*ones([1 size(data,2)]));
+    end
     function [data,corr] = flatenMeanPlane(data)
         %Remove sample tilt
         crv = nanmedian(data,1);

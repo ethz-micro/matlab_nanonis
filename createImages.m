@@ -1,7 +1,7 @@
 close all;
 clear all;
-
-SuperFolder = '2015';
+%call loadFolder in all folder inside superfolder
+SuperFolder = 'Data/2015';
 files=dir(SuperFolder);
 
 

@@ -1,4 +1,5 @@
 function plotHistogram(data, range)
+%Plots an instogram and corresponding range to visualize the cut posiiton
 
 histogram(data,50)
 hold all;

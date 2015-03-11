@@ -1,30 +1,37 @@
+function loadFolder(folderName)
 %load and save all files in folder
 
-function loadFolder(folderName)
+    %Load & Process SEM Data
+    function data = getSEMData(fn,n)
+        [~, data] = loadsxm(fn, n);
+        data = processSEM(data);
+    end
 
-function data = getSEMData(fn,n)
-    [~, data] = loadsxm(fn, n);
-    data = processSEM(data);        
-end
-    function save(name)
+    %Save as a PNG in rootImgName
+    function savePNG(name)
         imgName=[rootImgName, name,'.png'];
         saveas(gcf,imgName);
     end
 
+    %Set the title with name and header
     function titleSxm(name, header)
         title([header.rec_date,' - ', imgNbr ,' - ',name]);
     end
 
+%Create an images folder
 imgFolder = [folderName, '/images/'];
 mkdir(imgFolder);
+
+%Search all sxm files
 files = dir([folderName, '/*.sxm']);
 
+%Loop threw all sxm files
 for i=1:numel(files)
     
     %Load file
     file=files(i);
     fn = [folderName,'/',file.name];
-    [header, ~] = loadsxm(fn, 0);
+    header = loadsxm(fn);
     
     %prepare image name
     A = strsplit(file.name,'.');
@@ -50,11 +57,11 @@ for i=1:numel(files)
         
         plotSTM(ZForward,header);
         titleSxm('Z Forward',header);
-        save('ZF');
+        savePNG('ZF');
    
         plotSTM(ZBackward,header);
         titleSxm('Z Backward',header);
-        save('ZB');
+        savePNG('ZB');
         
     elseif count == 7
         %SEM, load channels 0-3 and current
@@ -81,27 +88,27 @@ for i=1:numel(files)
         %Save current Forward
         plotSEM(currF,header);
         titleSxm('Field current Forward',header);
-        save('FCF');
+        savePNG('FCF');
         
         %Save current Backward
         plotSEM(currB,header);
         titleSxm('Field current Backward',header);
-        save('FCB');
+        savePNG('FCB');
         
         %Add and plot 4 channels
         dataF = 1/4*(C0F + C1F + C2F + C3F);
         plotSEM(dataF,header);
         titleSxm('4 channels Forward',header);
-        save('4CF');
+        savePNG('4CF');
         
         %Idem backwards
         dataB = 1/4*(C0B + C1B + C2B + C3B);
         plotSEM(dataB,header);
         titleSxm('4 channels Backwards',header);
-        save('4CB');
+        savePNG('4CB');
         
     else
-      msgbox('unknown scan type'); 
+      msgbox('unknown scan type - not typical saved channels'); 
     end
     
     

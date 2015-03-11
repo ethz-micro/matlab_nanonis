@@ -1,4 +1,5 @@
 function p=plotSxm(data,header,range)
+%Plot and reorientate the images
 
 %Flip if up
 if strcmp(header.scan_dir,'up')

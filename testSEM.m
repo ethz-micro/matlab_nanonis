@@ -2,17 +2,16 @@
 clear all;
 close all;
 %image name
-fn='DataC2/2015-02-27/image007.sxm'; % 5-7
-%%
+fn='Data/DataC2/2015-02-27/image007.sxm'; % 5-7
+
+%% Non STDev corrected data
 [header, data] = loadsxm(fn, 2);
-%[data, lineMedian,lineSTDev, slope] = processSTM(data);
 data=(data-median(data,2)*ones([1 size(data,2)]));
 figure
 plotSEM(data,header);
 title('non-stdev corrected channel 0');
 
-
-%% SED
+%% Load SED data
 
 %Load 2,4,6,8 (forward channel 0 1 2 3)
 [header, data0] = loadsxm(fn, 2);
@@ -32,7 +31,7 @@ header.data_info
 %Correlation 
 corrMnSTDev=corr(mn0,stdev0);
 
-%%
+%% plot mean and std
 
 %print mean and stdev for data 0
 figure        
@@ -42,7 +41,7 @@ figure
 plot(stdev0)        
 title(['std channel 0, correlation with mean: ',num2str(corrMnSTDev)]);
 
-%%
+%% plot images
 
 %plot image
 figure
@@ -59,7 +58,7 @@ figure
 imagesc([0 header.scan_range(1)],[0 header.scan_range(2)],-ones([size(data0,1) 1])*slope0,range);
 title('Corrected plane')
 
-%%
+%% add 4 channels in one data
 
 %Add datas
 data = 1/4*(data0+data1+data2+data3);
@@ -68,6 +67,28 @@ data = 1/4*(data0+data1+data2+data3);
 figure
 [~, range]=plotSEM(data,header);
 title('4 channels')
+
+%% Do the same for current
+
+[header, dataFC] = loadsxm(fn, 0);
+[dataFC, mn0, stdev0, slope0] = processSEM(dataFC);
+
+%plot image
+figure
+plotSEM(dataFC,header);
+title('Field current');
+
+%% 5 channels
+%Add datas
+data = 1/2*(data+dataFC);
+
+%plot image
+figure
+plotSEM(data,header);
+title('5 channels')
+
+%% Old & discarded
+
 
 %{
 %% plot distributions
@@ -92,10 +113,7 @@ end
 %}    
 
 
-%% Do the same for current
 
-[header, dataFC] = loadsxm(fn, 0);
-[dataFC, mn0, stdev0, slope0] = processSEM(dataFC);
 
 %{
 %print mean and stdev for data 0
@@ -110,11 +128,7 @@ plot(slope0)
 legend('slope channel 0');
 %}
 
-%plot image
-figure
-%Use 2 std
-plotSEM(dataFC,header);
-title('Field current');
+
 
 %{
 %% Blur
@@ -133,15 +147,8 @@ B(big)=0;
 B(small)=0;
 mesh(B)
 
-
-%% 5 channels
-%Add datas
-data = 1/2*(data+dataFC);
-
-%plot image
-figure
-plotSEM(data,header);
-title('5 channels')
-
 %}
+
+
+
 
