@@ -1,13 +1,17 @@
-function [maskUp, maskDown] = getMask(data, prctUp, prctDown)%fn, varargin
-%getMask creates a mask for the detection of pattern
-%   Detailed explanation goes here
+function [maskUp, maskDown] = getMask(data, prctUp, prctDown,varargin)%fn, varargin
+%getMask creates a mask for the detection of pattern. It will filter the
+%datas using FFT, flatten the datas with a sliding mean and take a
+%threshold to cut the datas
+%   prctUp and -Down specify the fraction of pixel that should be kept in
+%   the mask
+%   Can add a 'plotFFT' to plot the fourrier transform
 
 %% Settings
 
-radius = 20;
-scanFrac = 4;
-stdCut = 2;
-zoomFT=8;
+radius = 20;%Radius of the circle in the fourrier plane
+scanFrac = 4;%Fraction of the image on which the sliding averaging is done
+stdCut = 2;%Number of STDev kept on the data
+zoomFT=8;%Zoom on the FFT Graph
 
 
 %%
@@ -46,7 +50,7 @@ filtered=real(ifft2(redFTrans));
 
 %calculate sliding mean
 sldArea=size(data)/scanFrac;
-normalMtx=flip(sldArea)*sldArea.'/size(sldArea,2);
+normalMtx=flip(sldArea)*sldArea.'/size(sldArea,2);%X*Y
 slidingmean=convolve2(filtered,ones(sldArea)/normalMtx,'symmetric');
 
 %Get flattened data
@@ -64,21 +68,7 @@ keep = flatData < threshold;
 maskDown = zeros(size(flatData));
 maskDown(keep)=1;
 
-
-
-
-%{
-redFTrans = complex(zeros(size(fTrans)));
-
-redFTrans(~indx)=fTrans(~indx);
-
-noise=real(ifft2(redFTrans));
-
-figure
-imagesc(noise,range);
-axis image
-%}
-sizeSq = size(data)/zoomFT;
+%% Plot Fourrier transform plane
 
     function ret = swapSquares(data, sizeSq)
         ret=zeros(2*sizeSq);
@@ -88,17 +78,41 @@ sizeSq = size(data)/zoomFT;
         ret(end-sizeSq(1)+1:end, end-sizeSq(2)+1: end)=data(1:sizeSq(1), 1: sizeSq(2));
     end
 
-dis = swapSquares(abs(fTrans),sizeSq);
+% read the data if requested
+if nargin > 0
+    cmd = varargin{1};
+    
+    if strcmp(cmd,'plotFFT')
+        %Compute the quarter size
+        sizeSq = size(data)/zoomFT;
+        %Reorder fourrier data
+        dis = swapSquares(abs(fTrans),sizeSq);
+        
+        %Plot
+        figure
+        imagesc(dis);
+        axis image
+        title('Fourrier plane and selected area')
+        %apply index mask
+        applyMask(swapSquares(indx,sizeSq),[0 size(dis,1)],[0 size(dis,2)],[1,0,0],.2)
+    end
+    
+end
 
-
-figure
-imagesc(dis);
-axis image
-applyMask(swapSquares(indx,sizeSq),[0 size(dis,1)],[0 size(dis,2)],[1,0,0],.2)
 
 
 
 %{
+%Compute removed part
+redFTrans = complex(zeros(size(fTrans)));
+redFTrans(~indx)=fTrans(~indx);
+noise=real(ifft2(redFTrans));
+
+%Plot removed part
+figure
+imagesc(noise,range);
+axis image
+
 figure
 imagesc(filtered);
 axis image
