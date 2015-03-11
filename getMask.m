@@ -1,4 +1,4 @@
-function [maskUp, maskDown] = getMask(data, prctUp, prctDown,varargin)%fn, varargin
+function [maskUp, maskDown] = getMask(data,FFTRadius, prctUp, prctDown,varargin)%fn, varargin
 %getMask creates a mask for the detection of pattern. It will filter the
 %datas using FFT, flatten the datas with a sliding mean and take a
 %threshold to cut the datas
@@ -7,8 +7,6 @@ function [maskUp, maskDown] = getMask(data, prctUp, prctDown,varargin)%fn, varar
 %   Can add a 'plotFFT' to plot the fourrier transform
 
 %% Settings
-
-radius = 20;%Radius of the circle in the fourrier plane
 scanFrac = 4;%Fraction of the image on which the sliding averaging is done
 stdCut = 2;%Number of STDev kept on the data
 zoomFT=8;%Zoom on the FFT Graph
@@ -17,7 +15,7 @@ zoomFT=8;%Zoom on the FFT Graph
 %%
 
 %Remove extreme values
-range = [-1 1]*stdCut*std(data(:));
+range = [-1 1]*stdCut*nanstd(data(:));
 low = data < range(1);
 data(low)=range(1);
 high = data > range(2);
@@ -35,10 +33,10 @@ n = 1:size(fTrans,2);
 c=m*ones(size(n))+1i*(ones(size(m))*n);
 
 %Calculate a circle around the corners
-indx = abs(c-c(1,1)) < radius;
-indx = indx | (abs(c-c(1,end)) < radius);
-indx = indx | (abs(c-c(end,1)) < radius);
-indx = indx | (abs(c-c(end,end)) < radius);
+indx = abs(c-c(1,1)) < FFTRadius;
+indx = indx | (abs(c-c(1,end)) < FFTRadius);
+indx = indx | (abs(c-c(end,1)) < FFTRadius);
+indx = indx | (abs(c-c(end,end)) < FFTRadius);
 
 
 %Extract interesting part

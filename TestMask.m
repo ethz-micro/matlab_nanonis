@@ -21,7 +21,7 @@ data3 = loadSEM(fn, 8);
 data = 1/4*(data0+data1+data2+data3);
 
 %Compute mask
-[maskUp, maskDown] = getMask(data, prctUp, prctDown,'plotFFT');
+[maskUp, maskDown] = getMask(data, 20, prctUp, prctDown,'plotFFT');
 
 %Plot bare data 
 figure
@@ -44,7 +44,7 @@ fn='Data/DataC2/2015-03-04/image004.sxm'; % 5-7
 [data0,header] = loadSTM(fn, 0);
 
 %Compute mask
-[maskUpSTM, maskDownSTM] = getMask(data0, prctUp, prctDown,'plotFFT');
+[maskUpSTM, maskDownSTM] = getMask(nanHighStd(data0), 30, prctUp, prctDown,'plotFFT');
 
 figure
 plotSTM(data0,header)
@@ -64,11 +64,20 @@ yrangeSTM=[0 header.scan_range(2)];
 
 figure
 image(xrangeSTM,yrangeSTM,cat(3,zeros(size(maskUpSTM)),zeros(size(maskUpSTM)),maskUpSTM));
+%applyMask(maskUpSTM,xrangeSTM,yrangeSTM,[0,0,1],1)
 applyMask(maskUp,xrange+xoffset,yrange+yoffset,[1,0,0], .4);
+axis image
+
+figure
+image(xrangeSTM,yrangeSTM,cat(3,zeros(size(maskUpSTM)),zeros(size(maskUpSTM)),maskDownSTM));
+%applyMask(maskUpSTM,xrangeSTM,yrangeSTM,[0,0,1],1)
+applyMask(maskDown,xrange+xoffset,yrange+yoffset,[1,0,0], .4);
+axis image
 
 figure
 plotSTM(data0,header)
 applyMask(maskUpSTM,xrangeSTM,yrangeSTM,[1,0,0], .4);
+applyMask(maskDownSTM,xrangeSTM,yrangeSTM,[0,0,0], .4);
 
 %{
 
