@@ -158,7 +158,7 @@ switch shape
     case 'reflect'
         shape = 'symmetric';
 end
-y = exindex(x, 1-ml:mx+mr, 1-nl:nx+nr, shape);
+y = convolve2.exindex(x, 1-ml:mx+mr, 1-nl:nx+nr, shape);
 
 end
 

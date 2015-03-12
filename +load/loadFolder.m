@@ -7,10 +7,6 @@ function loadFolder(folderName)
         saveas(gcf,imgName);
     end
     
-    %Set the title with name and header
-    function titleSxm(name, header)
-        title([header.rec_date,' - ', imgNbr ,' - ',name]);
-    end
     
     %Create an images folder
     imgFolder = [folderName, '/images/'];

@@ -127,7 +127,7 @@ function channel = loadChannel(fn,n,data_info)
     [data,channel.slope] = flatenMeanPlane(data);
     
     %Orientate the data
-    data = orientateData(data,channel.Direction,scan_type,header.scan_angle);
+    data = orientateData(data,channel.Direction,header.scan_dir,header.scan_angle);
     
     %Save data
     channel.data=data;
