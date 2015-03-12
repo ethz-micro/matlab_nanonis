@@ -7,9 +7,9 @@ fn='Data/DataC2/2015-02-27/image007.sxm'; % 5-7
 %% Non STDev corrected data
 [header, data] = load.loadsxm(fn, 2);
 data=(data-median(data,2)*ones([1 size(data,2)]));
+header.scan_type='SEM';
 figure
-plot.plotSEM(data,header);
-title('non-stdev corrected channel 0');
+plot.plotData(data,'non-stdev corrected channel 0',header);
 
 %% Load SED data
 
@@ -33,8 +33,7 @@ title(['std channel 0, correlation with mean: ',num2str(corrMnSTDev)]);
 
 %plot image
 figure
-[~, range] = plot.plotSEM(file.channels(2).data,file.header);
-title('channel 0')
+[~, range] = plot.plotChannel(file,2);
 
 %plot histogram
 figure
@@ -49,19 +48,17 @@ title('Corrected plane')
 %% add 4 channels in one data
 
 %Add datas
-data = 1/4*squeeze(sum(cat(3,file.channels(2:5).data),3));
+data = combineChannel(file,2:5,1/4*[1,1,1,1]);
 
 %plot image
 figure
-[~, range]=plot.plotSEM(data,file.header);
-title('4 channels')
+[~, range]=plot.plotData(data,'4 channels',file.header);
 
 %% Do the same for current
 
 %plot image
 figure
-plot.plotSEM(file.channels(1).data,header);
-title('Field current');
+plot.plotChannel(file,1);
 
 %% 5 channels
 %Add datas
@@ -69,8 +66,7 @@ data = 1/2*(data+file.channels(1).data);
 
 %plot image
 figure
-plot.plotSEM(data,header);
-title('5 channels')
+plot.plotData(data,'5 channels',header);
 
 %% Old & discarded
 

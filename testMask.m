@@ -11,28 +11,28 @@ fn='Data/DataC2/2015-03-04/image006.sxm'; % 5-7
 prctUp = 80;
 prctDown = 10;
 
-file6=load.loadProcessedSxM(fn,[2:2:8]);
 %Load 2,4,6,8 (forward channel 0 1 2 3)
+file6=load.loadProcessedSxM(fn,2:2:8);
+
 
 %Add datas
-data = 1/4*sum(cat(3,file6.channels.data),3);
+data = combineChannel(file6,1:4,1/4*[1,1,1,1]);
 
 %Compute mask
 [maskUp, maskDown] = mask.getMask(data, 20, prctUp, prctDown,'plotFFT');
 
 %Plot bare data 
 figure
-plot.plotSEM(data,file6.header);
-title('Initial Data');
+plot.plotData(data,'Initial Data',file6.header);
 
 %Data + Mask
 figure
-plot.plotSEM(data,file6.header);
+plot.plotData(data,'Initial Data + Mask',file6.header);
 xrange=[0 file6.header.scan_range(1)];
 yrange=[0 file6.header.scan_range(2)];
 mask.applyMask(maskUp,xrange,yrange,[1,0,0], .2)
 mask.applyMask(maskDown,xrange,yrange,[0,0,0], .2)
-title('Initial Data + Mask');
+
 
 %% LOAD STM
 %try to match the mask and stm data

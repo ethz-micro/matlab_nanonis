@@ -22,8 +22,7 @@ plot(nanstd(file.channels(1).data,0,2))
 title('std Z');
 
 figure
-[~, range] = plot.plotSTM(file.channels(1).data,file.header);
-title('Z height')
+[~, range] = plot.plotChannel(file,1);
 
 %plot histogram
 figure
