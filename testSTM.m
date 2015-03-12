@@ -5,28 +5,29 @@ close all;
 %image name
 fn='Data/DataC2/2015-03-04/image008.sxm';%1-2;4;9
 
-[data0,header, mn0,std0, slope0] = loadSTM(fn, 0);
+file = load.loadProcessedSxM(fn,0);
+%%
 %print header infos
-header.data_info
+file.header.data_info
 
 
 %print mean and stdev for data 0
 
 figure        
-plot(mn0)   
+plot(file.channels(1).median)   
 title('median Z');
 
 figure        
-plot(std0) 
+plot(nanstd(file.channels(1).data,0,2)) 
 title('std Z');
 
 figure
-[~, range] = plotSTM(data0,header);
+[~, range] = plot.plotSTM(file.channels(1).data,file.header);
 title('Z height')
 
 %plot histogram
 figure
-plotHistogram(data0,range);
+plot.plotHistogram(file.channels(1).data,range);
 title('Z height')
 
 

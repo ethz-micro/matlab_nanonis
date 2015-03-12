@@ -22,5 +22,5 @@ end
 %Range is 3 stdev
 range = [-1 1]*3*stdData;
 
-p = plotSxm(data, header, range);
+p = plot.plotSxm(data, header, range);
 end

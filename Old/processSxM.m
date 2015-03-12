@@ -14,8 +14,6 @@ function [data, slope] = processSxM( data,header )
 %Flatten data
 [data,slope] = flatenMeanPlane(data);
 
-%Orientation
-
 %Flip if up
 if strcmp(header.scan_dir,'up')
     data = flip(data,1);

@@ -3,5 +3,5 @@ function [p,range] = plotSEM(data,header)
 
 %Range = 2*std of data
 range = [-2 2]*nanstd(data(:));
-p=plotSxm(data, header, range);
+p=plot.plotSxm(data, header, range);
 end

@@ -5,79 +5,71 @@ close all;
 fn='Data/DataC2/2015-02-27/image007.sxm'; % 5-7
 
 %% Non STDev corrected data
-[header, data] = loadsxm(fn, 2);
+[header, data] = load.loadsxm(fn, 2);
 data=(data-median(data,2)*ones([1 size(data,2)]));
 figure
-plotSEM(data,header);
+plot.plotSEM(data,header);
 title('non-stdev corrected channel 0');
 
 %% Load SED data
 
 %Load 2,4,6,8 (forward channel 0 1 2 3)
-[data0,header, mn0, stdev0, slope0 ] = loadSEM(fn, 2);
-data1 = loadSEM(fn, 4);
-data2 = loadSEM(fn, 6);
-data3 = loadSEM(fn, 8);
-
-%print header infos
-header.data_info
-
+file = load.loadProcessedSxM(fn,[0 2 4 6 8]);
+file.header
 %Correlation 
-corrMnSTDev=corr(mn0,stdev0);
+corrMnSTDev=corr(file.channels(2).mean,file.channels(2).std);
 
 %% plot mean and std
 
 %print mean and stdev for data 0
 figure        
-plot(mn0)        
+plot(file.channels(2).mean)        
 title(['mean channel 0, correlation with stdev: ',num2str(corrMnSTDev)]);        
 figure        
-plot(stdev0)        
+plot(file.channels(2).std)        
 title(['std channel 0, correlation with mean: ',num2str(corrMnSTDev)]);
 
 %% plot images
 
 %plot image
 figure
-[~, range] = plotSEM(data0,header);
+[~, range] = plot.plotSEM(file.channels(2).data,file.header);
 title('channel 0')
 
 %plot histogram
 figure
-plotHistogram(data0,range)
+plot.plotHistogram(file.channels(2).data,range)
 title('channel 0')
 
 %Plot plane
 figure
-imagesc([0 header.scan_range(1)],[0 header.scan_range(2)],-ones([size(data0,1) 1])*slope0,range);
+imagesc([0 file.header.scan_range(2)],[0 file.header.scan_range(2)],-ones([size(file.channels(2).data,1) 1])*file.channels(1).slope,range);
 title('Corrected plane')
 
 %% add 4 channels in one data
 
 %Add datas
-data = 1/4*(data0+data1+data2+data3);
+data = 1/4*squeeze(sum(cat(3,file.channels(2:5).data),3));
 
 %plot image
 figure
-[~, range]=plotSEM(data,header);
+[~, range]=plot.plotSEM(data,file.header);
 title('4 channels')
 
 %% Do the same for current
 
-[dataFC,header, mn0, stdev0, slope0] = loadSEM(fn, 0);
-
 %plot image
 figure
-plotSEM(dataFC,header);
+plot.plotSEM(file.channels(1).data,header);
 title('Field current');
 
 %% 5 channels
 %Add datas
-data = 1/2*(data+dataFC);
+data = 1/2*(data+file.channels(1).data);
 
 %plot image
 figure
-plotSEM(data,header);
+plot.plotSEM(data,header);
 title('5 channels')
 
 %% Old & discarded
