@@ -114,7 +114,6 @@ function [filtered, removed] = filterData(data,FFTRadius,varargin)
     
     % read the data if requested
     if nargin > 2
-        nargin
         cmd = varargin{1};
         if nargin >1
             zoom = varargin{2};

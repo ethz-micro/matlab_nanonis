@@ -6,10 +6,6 @@ close all;
 fn='Data/DataC2/2015-03-04/image008.sxm';%1-2;4;9
 
 file = load.loadProcessedSxM(fn,0);
-%%
-%print header infos
-file.header.data_info
-
 
 %print mean and stdev for data 0
 

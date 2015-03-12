@@ -15,7 +15,6 @@ plot.plotData(data,'non-stdev corrected channel 0',header);
 
 %Load 2,4,6,8 (forward channel 0 1 2 3)
 file = load.loadProcessedSxM(fn,[0 2 4 6 8]);
-file.header
 %Correlation 
 corrMnSTDev=corr(file.channels(2).mean,file.channels(2).std);
 
