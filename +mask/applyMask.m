@@ -10,6 +10,7 @@ colorImage = repmat(colorImage,size(mask));
 
 %Draw uniform image
 hold on 
+set(gca,'YDir','reverse');%because could cause a problem otherwhise
 h = image(Xrange,Yrange,colorImage); 
 hold off
 

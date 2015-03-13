@@ -14,6 +14,7 @@ prctDown = 10;
 %Load 2,4,6,8 (forward channel 0 1 2 3)
 file6=load.loadProcessedSxM(fn,2:2:8);
 
+file6.header
 
 %Add datas
 data = combineChannel(file6,1:4,1/4*[1,1,1,1]);
@@ -21,6 +22,7 @@ data = combineChannel(file6,1:4,1/4*[1,1,1,1]);
 %Compute mask
 [maskUp, maskDown] = mask.getMask(data, 20, prctUp, prctDown,'plotFFT');
 
+%%
 %Plot bare data 
 figure
 plot.plotData(data,'Initial Data',file6.header);
@@ -43,8 +45,22 @@ file4 = load.loadProcessedSxM(fn,0);
 %Compute mask
 [maskUpSTM, maskDownSTM] = mask.getMask(nanHighStd(file4.channels.data), 30, prctUp, prctDown,'plotFFT');
 
+xrangeSTM=[0 file4.header.scan_range(1)];
+yrangeSTM=[0 file4.header.scan_range(2)];
+
+
+
+%%
+
+
+[ret,x,y]=mask.matchMask(maskUpSTM,file4.header,maskUp,file6.header)
+
+%%
+
 xoffset=(file4.header.scan_range(1)-xrange(2))*.5*1.1;
 yoffset=(file4.header.scan_range(2)-yrange(2))*.5*.8;
+
+
 
 figure
 plot.plotChannel(file4,1);
@@ -54,16 +70,13 @@ plot.plotChannel(file4,1);
 mask.applyMask(maskUp,xrange+xoffset,yrange+yoffset,[1,0,0], .4)
 mask.applyMask(maskDown,xrange+xoffset,yrange+yoffset,[0,0,0], .4)
 title(['STM Data + Mask. Offset x:',num2str(xoffset*10^9),'nm, y:',num2str(yoffset*10^9),'nm'])
-
-
-xrangeSTM=[0 file4.header.scan_range(1)];
-yrangeSTM=[0 file4.header.scan_range(2)];
-
+%%
 figure
-image(xrangeSTM,yrangeSTM,cat(3,zeros(size(maskUpSTM)),zeros(size(maskUpSTM)),maskUpSTM));
-%mask.applyMask(maskUpSTM,xrangeSTM,yrangeSTM,[0,0,1],1)
-mask.applyMask(maskUp,xrange+xoffset,yrange+yoffset,[1,0,0], .4);
+%Draw uniform image
+mask.applyMask(maskUpSTM,xrangeSTM,yrangeSTM,[1,0,0],.5);
+mask.applyMask(maskUp,xrange+xoffset,yrange+yoffset,[0,0,1], .5);
 axis image
+%%
 
 figure
 image(xrangeSTM,yrangeSTM,cat(3,zeros(size(maskUpSTM)),zeros(size(maskUpSTM)),maskDownSTM));
