@@ -47,7 +47,7 @@ title('Corrected plane')
 %% add 4 channels in one data
 
 %Add datas
-data = combineChannel(file,2:5,1/4*[1,1,1,1]);
+data = op.combineChannel(file,2:5,1/4*[1,1,1,1]);
 
 %plot image
 figure

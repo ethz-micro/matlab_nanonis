@@ -9,8 +9,6 @@ function [maskUp, maskDown, flatData] = getMask(data,FFTRadius, prctUp, prctDown
     %% Settings
     scanFrac = 4;%Fraction of the image on which the sliding averaging is done
     stdCut = 2;%Number of STDev kept on the data
-    zoomFT=8;%Zoom on the FFT Graph
-    
     
     %%
     
@@ -21,7 +19,7 @@ function [maskUp, maskDown, flatData] = getMask(data,FFTRadius, prctUp, prctDown
     high = data > range(2);
     data(high) = range(2);
     
-    filtered = filterData(data,FFTRadius,varargin,zoomFT);
+    filtered = filterData(data,FFTRadius,varargin);
     
     
     %calculate sliding mean
@@ -115,7 +113,7 @@ function [filtered, removed] = filterData(data,FFTRadius,varargin)
     % read the data if requested
     if nargin > 2
         cmd = varargin{1};
-        if nargin >1
+        if nargin >3
             zoom = varargin{2};
         else
             zoom=8;
