@@ -1,4 +1,4 @@
-function [maskUp, maskDown] = getMask(data,FFTRadius, prctUp, prctDown,varargin)%fn, varargin
+function [maskUp, maskDown, flatData] = getMask(data,FFTRadius, prctUp, prctDown,varargin)%fn, varargin
     %getMask creates a mask for the detection of pattern. It will filter the
     %datas using FFT, flatten the datas with a sliding mean and take a
     %threshold to cut the datas
@@ -45,12 +45,12 @@ function [maskUp, maskDown] = getMask(data,FFTRadius, prctUp, prctDown,varargin)
     maskDown(keep)=1;
     
     %%
-    
+    %{
     figure
     imagesc(flatData);
     axis image
     
-    %{
+    
 %Plot removed part
 figure
 imagesc(noise,range);

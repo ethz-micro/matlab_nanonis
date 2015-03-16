@@ -14,10 +14,10 @@ prctDown = 10;
 %Load 2,4,6,8 (forward channel 0 1 2 3)
 file6=load.loadProcessedSxM(fn,2:2:8);
 
-file6.header
+%file6.header
 
 %Add datas
-data = combineChannel(file6,1:4,1/4*[1,1,1,1]);
+data = op.combineChannel(file6,1:4,1/4*[1,1,1,1]);
 
 %Compute mask
 [maskUp, maskDown] = mask.getMask(data, 20, prctUp, prctDown,'plotFFT');
@@ -30,8 +30,7 @@ plot.plotData(data,'Initial Data',file6.header);
 %Data + Mask
 figure
 plot.plotData(data,'Initial Data + Mask',file6.header);
-xrange=[0 file6.header.scan_range(1)];
-yrange=[0 file6.header.scan_range(2)];
+[xrange,yrange] = op.getRange(file6.header);
 mask.applyMask(maskUp,xrange,yrange,[1,0,0], .2)
 mask.applyMask(maskDown,xrange,yrange,[0,0,0], .2)
 
@@ -43,46 +42,31 @@ fn='Data/DataC2/2015-03-04/image004.sxm'; % 5-7
 file4 = load.loadProcessedSxM(fn,0);
 
 %Compute mask
-[maskUpSTM, maskDownSTM] = mask.getMask(nanHighStd(file4.channels.data), 30, prctUp, prctDown,'plotFFT');
+[maskUpSTM, maskDownSTM] = mask.getMask(op.nanHighStd(file4.channels.data), 60, prctUp, prctDown,'plotFFT');
 
-xrangeSTM=[0 file4.header.scan_range(1)];
-yrangeSTM=[0 file4.header.scan_range(2)];
-
-
+[xrangeSTM,yrangeSTM]=op.getRange(file4.header);
 
 %%
 
 
-[ret,x,y]=mask.matchMask(maskUpSTM,file4.header,maskUp,file6.header)
-
+[offset,XC,centerOffset]= op.getOffset(maskUpSTM,file4.header,maskUp,file6.header,'mask');
 %%
+xrange = xrange+offset(1);
+yrange = yrange+offset(2);
 
-xoffset=(file4.header.scan_range(1)-xrange(2))*.5*1.1;
-yoffset=(file4.header.scan_range(2)-yrange(2))*.5*.8;
-
-
+figure
+imagesc(XC)
+title('cross correlation');
 
 figure
 plot.plotChannel(file4,1);
 
 figure
 plot.plotChannel(file4,1);
-mask.applyMask(maskUp,xrange+xoffset,yrange+yoffset,[1,0,0], .4)
-mask.applyMask(maskDown,xrange+xoffset,yrange+yoffset,[0,0,0], .4)
-title(['STM Data + Mask. Offset x:',num2str(xoffset*10^9),'nm, y:',num2str(yoffset*10^9),'nm'])
+mask.applyMask(maskUp,xrange,yrange,[1,0,0], .4)
+mask.applyMask(maskDown,xrange,yrange,[0,0,0], .4)
+title(['STM Data + Mask. Offset x:',num2str(round(centerOffset(1)*10^9)),'nm, y:',num2str(round(centerOffset(2)*10^9)),'nm'])
 %%
-figure
-%Draw uniform image
-mask.applyMask(maskUpSTM,xrangeSTM,yrangeSTM,[1,0,0],.5);
-mask.applyMask(maskUp,xrange+xoffset,yrange+yoffset,[0,0,1], .5);
-axis image
-%%
-
-figure
-image(xrangeSTM,yrangeSTM,cat(3,zeros(size(maskUpSTM)),zeros(size(maskUpSTM)),maskDownSTM));
-%mask.applyMask(maskUpSTM,xrangeSTM,yrangeSTM,[0,0,1],1)
-mask.applyMask(maskDown,xrange+xoffset,yrange+yoffset,[1,0,0], .4);
-axis image
 
 figure
 plot.plotChannel(file4,1);

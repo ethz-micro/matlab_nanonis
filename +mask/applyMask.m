@@ -1,4 +1,4 @@
-function applyMask(mask,Xrange,Yrange,color,alpha)
+function applyMask(mask,xrange,yrange,color,alpha)
 % This function apply the mask 'mask' to the current handle. 
 %   X- and Yrange specify the position of the mask
 %   color is a vector with RGB values : [R,G,B]
@@ -11,7 +11,7 @@ colorImage = repmat(colorImage,size(mask));
 %Draw uniform image
 hold on 
 set(gca,'YDir','reverse');%because could cause a problem otherwhise
-h = image(Xrange,Yrange,colorImage); 
+h = image(xrange,yrange,colorImage); 
 hold off
 
 %Apply alpha
