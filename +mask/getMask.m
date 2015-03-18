@@ -8,27 +8,13 @@ function [maskUp, maskDown, flatData] = getMask(data,FFTRadius, prctUp, prctDown
     
     %% Settings
     scanFrac = 4;%Fraction of the image on which the sliding averaging is done
-    stdCut = 2;%Number of STDev kept on the data
     
-    %%
+    %Filter the data
+    filtered = process.filterData(data,FFTRadius,varargin);
     
-    %Remove extreme values
-    range = [-1 1]*stdCut*nanstd(data(:));
-    low = data < range(1);
-    data(low)=range(1);
-    high = data > range(2);
-    data(high) = range(2);
-    
-    filtered = filterData(data,FFTRadius,varargin);
-    
-    
-    %calculate sliding mean
-    sldArea=size(data)/scanFrac;
-    normalMtx=flip(sldArea)*sldArea.'/size(sldArea,2);%X*Y
-    slidingmean=convolve2.convolve2(filtered,ones(sldArea)/normalMtx,'symmetric');
-    
-    %Get flattened data
-    flatData= filtered-double(slidingmean);
+    %Flatten the datas
+    flatData = flattenData(filtered,scanFrac);
+   
     
     %Compute high mask
     threshold = prctile(flatData(:),prctUp);
@@ -67,72 +53,12 @@ axis image
     
 end
 
-function [filtered, removed] = filterData(data,FFTRadius,varargin)
+function data=flattenData(data,scanFrac)
+     %calculate sliding mean
+    sldArea=size(data)/scanFrac;
+    normalMtx=flip(sldArea)*sldArea.'/size(sldArea,2);%X*Y
+    slidingmean=convolve2.convolve2(data,ones(sldArea)/normalMtx,'symmetric');
     
-    %Fourrier transform
-    fTrans=fft2(data);
-    
-    %Create matrix for easy radius computation
-    m = 1:size(fTrans,1);
-    m=m.';
-    n = 1:size(fTrans,2);
-    
-    %real part of c is first dim, imaginary is 2nd
-    c=m*ones(size(n))+1i*(ones(size(m))*n);
-    
-    %Calculate a circle around the corners
-    indx = abs(c-c(1,1)) < FFTRadius;
-    indx = indx | (abs(c-c(1,end)) < FFTRadius);
-    indx = indx | (abs(c-c(end,1)) < FFTRadius);
-    indx = indx | (abs(c-c(end,end)) < FFTRadius);
-    
-    
-    %Extract interesting part
-    redFTrans = complex(zeros(size(fTrans)));
-    redFTrans(indx)=fTrans(indx);
-    
-    %Retrieve filtered data
-    filtered=real(ifft2(redFTrans));
-    
-    %Compute removed part
-    redFTrans = complex(zeros(size(fTrans)));
-    redFTrans(~indx)=fTrans(~indx);
-    removed=real(ifft2(redFTrans));
-    
-    
-    
-    function ret = swapSquares(data, sizeSq)
-        ret=zeros(2*sizeSq);
-        ret(1:sizeSq(1), 1: sizeSq(2))= data(end-sizeSq(1)+1:end,end-sizeSq(2)+1:end );
-        ret(1:sizeSq(1), end-sizeSq(2)+1: end)=data(end-sizeSq(1)+1:end, 1: sizeSq(2));
-        ret(end-sizeSq(1)+1:end, 1: sizeSq(2))=data(1:sizeSq(1), end-sizeSq(2)+1: end);
-        ret(end-sizeSq(1)+1:end, end-sizeSq(2)+1: end)=data(1:sizeSq(1), 1: sizeSq(2));
-    end
-    
-    
-    % read the data if requested
-    if nargin > 2
-        cmd = varargin{1};
-        if nargin >3
-            zoom = varargin{2};
-        else
-            zoom=8;
-        end
-        if strcmp(cmd,'plotFFT')
-            %Compute the quarter size
-            sizeSq = size(data)/zoom;
-            %Reorder fourrier data
-            dis = swapSquares(abs(fTrans),sizeSq);
-            
-            %Plot
-            figure
-            imagesc(dis);
-            axis image
-            title('Fourrier plane and selected area')
-            %apply index mask
-            mask.applyMask(swapSquares(indx,sizeSq),[0 size(dis,1)],[0 size(dis,2)],[1,0,0],.2)
-        end
-        
-    end
-    
+    %Get flattened data
+    data= data-double(slidingmean);
 end

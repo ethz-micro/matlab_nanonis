@@ -45,7 +45,7 @@ function data_info = readDataInfos(header)
     
 end
 
-function data = orientateData(data,line_dir,scan_dir,angle)
+function data = orientateData(data,line_dir,scan_dir)
     %Flip if backwards
     if strcmp(line_dir, 'backward')
         data=flip(data,2);
@@ -55,7 +55,8 @@ function data = orientateData(data,line_dir,scan_dir,angle)
     if strcmp(scan_dir,'up')
         data = flip(data,1);
     end
-    
+end
+function data = rotateData(data,angle)
     %Rotate
     if angle ~=0
         data = imrotate(data,-angle);
@@ -113,6 +114,9 @@ function channel = loadChannel(fn,n,data_info)
     %load data in channel
     [header, data]=load.loadsxm(fn,n);
     
+    %Orientate the data
+    data = orientateData(data,channel.Direction,header.scan_dir);
+    
     %Process the data
     scan_type = scanType(data_info);
     switch scan_type
@@ -126,8 +130,8 @@ function channel = loadChannel(fn,n,data_info)
     %Flatten plane
     [data,channel.slope] = flatenMeanPlane(data);
     
-    %Orientate the data
-    data = orientateData(data,channel.Direction,header.scan_dir,header.scan_angle);
+    %turn the datas - done after the rest because scan was line by line
+    data = rotateData(data,header.scan_angle);
     
     %Save data
     channel.data=data;

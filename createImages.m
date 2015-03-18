@@ -1,7 +1,7 @@
 close all;
 clear all;
 %call loadFolder in all folder inside superfolder
-SuperFolder = 'Data/DataC2';
+SuperFolder = 'Data/March';
 files=dir(SuperFolder);
 
 

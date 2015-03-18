@@ -52,11 +52,13 @@ function loadFolder(folderName)
                 savePNG('FCB');
                 
                 %Add and plot 4 channels
-                plot.plotSumChannel(file,'4 channels - forward', 3:2:9,1/4*[1 1 1 1]);
+                data = op.combineChannel(file,3:2:9,1/4*[1 1 1 1]);
+                plot.plotData(data,'4 channels - forward',file.header);
                 savePNG('4CF');
                 
                 %Idem backwards
-                plot.plotSumChannel(file,'4 channels - backward', 4:2:10,1/4*[1 1 1 1]);
+                data = op.combineChannel(file,4:2:10,1/4*[1 1 1 1]);
+                plot.plotData(data,'4 channels - backward',file.header);
                 savePNG('4CB');
                 
             otherwise

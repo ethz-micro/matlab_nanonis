@@ -2,7 +2,7 @@
 clear all;
 close all;
 %image name
-fn='Data/DataC2/2015-02-27/image007.sxm'; % 5-7
+fn='Data/March/2015-03-05/image004.sxm'; % 5-7
 
 %% Non STDev corrected data
 [header, data] = load.loadsxm(fn, 2);
@@ -66,6 +66,15 @@ data = 1/2*(data+file.channels(1).data);
 %plot image
 figure
 plot.plotData(data,'5 channels',header);
+
+%%
+
+[signal,removed]=process.filterData(data,25);
+figure
+plot.plotData(signal,'Filtered - 25 px',header);
+
+figure
+plot.plotData(removed,'Removed - 25 px',header);
 
 %% Old & discarded
 

@@ -1,21 +1,29 @@
-function [h, range] = plotData(data,name,header)
+function [h, range] = plotData(data,name,header,varargin)
     switch header.scan_type
         case 'STM'
             range = rangeSTM(data);
         case 'SEM'
             range = rangeSEM(data);
     end
-    h=plotSxm(data,header,range);
+    h=plotSxm(data,header,range,varargin{:});
     s=[header.rec_date, ' - '];
     s=[s,getName(header),' - '];
     s=[s,name];
     title(s);
 end
 
-function p=plotSxm(data,header,range)
+function p=plotSxm(data,header,range,varargin)
     %Plot
     
-    p = imagesc([0 header.scan_range(1)],[0 header.scan_range(2)],data,range);
+    %Varargin gives x and y offset
+    xoffset=0;
+    yoffset=0;
+    if nargin>4
+        xoffset=varargin{1};
+        yoffset=varargin{2};
+    end
+    
+    p = imagesc([0 header.scan_range(1)]+xoffset,[0 header.scan_range(2)]+yoffset,data,range);
     axis image;
     
 end
