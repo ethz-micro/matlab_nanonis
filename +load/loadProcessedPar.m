@@ -1,0 +1,149 @@
+function file = loadProcessedPar(fn)
+    
+    %get data path
+    i=strfind(fn,'/');
+    if numel(i)>0
+        path=fn(1:i(end));
+    else
+        path='';
+    end
+    
+    %Read file
+    [FCMtx, chInfos] = readFile(fn);
+    
+    %Read Header
+    file.header = readHeader(FCMtx);
+    
+    %read Scan type
+    file.header.scan_type=scanType(chInfos);
+    
+    %There is 9 lines for each channel
+    for i=numel(chInfos)/9:-1:1;
+        [file.channels(i), file.header.scan_file]=loadChannel(chInfos,i,path,file.header);
+    end
+    
+    
+end
+
+
+function data=loadParData(fn,scan_pixels)
+    fid = fopen(fn);
+    data= fread(fid,scan_pixels,'int16','ieee-be')';
+    fclose(fid);
+end
+
+
+function [FCMtx, chInfos] = readFile(fn)
+    
+    %Read file
+    fileContent=fileread(fn);
+    
+    %Split lines
+    fileContent=strsplit(fileContent,'\n');
+    
+    %Define function to access index
+    index = @(A,i) A{mod(i-1,numel(A))+1};%Mod to avoid overflow
+    
+    %Remove comments
+    fileContent=cellfun(@(x) strtrim(index(strsplit(x,';'),1)),fileContent,'UniformOutput',false);
+    
+    %Remove blank lines
+    fileContent=fileContent(~strcmp('',fileContent));
+    
+    
+    function list=separate(str)
+        
+        k=strfind(str,':');
+        if numel(k)>0
+            list={str(1:k-1), str(k+1:end)};
+        else
+            list={str};
+        end
+    end
+    
+    %Separate name and values
+    fileContent=cellfun(@(x) strtrim(separate(x)),fileContent,'UniformOutput',false);
+    
+    
+    
+    %Put filecontent in matrix for easy lookup
+    FCMtx=cell(size(fileContent,2),2);
+    FCMtx(:,1)=cellfun(@(x) index(x,1),fileContent,'UniformOutput',false);
+    FCMtx(:,2)=cellfun(@(x) index(x,2),fileContent,'UniformOutput',false);
+    
+    %all lines with 1 cell are channel infos
+    chIdx=cellfun(@numel,fileContent)==1;
+    chInfos=fileContent(chIdx);
+    
+end
+
+function header = readHeader(FCMtx)
+    
+    %Create header
+    datasForKey= @(x) FCMtx(strcmp(x,FCMtx(:,1)),2);
+    
+    %Date
+    Date=datasForKey('Date');
+    Date=strsplit(Date{1},' ');
+    header.rec_date=Date{1};
+    header.rec_time=Date{2};
+    
+    %Scan pixels
+    pxX=str2double(datasForKey('Image Size in X'));
+    pxY=str2double(datasForKey('Image Size in Y'));
+    header.scan_pixels=[pxX pxY];
+    
+    %Scan Range
+    rX=str2double(datasForKey('Field X Size in nm'))*10^-9;
+    rY=str2double(datasForKey('Field Y Size in nm'))*10^-9;
+    header.scan_range=[rX,rY];
+    
+    %Scan Offset
+    oX=str2double(datasForKey('X Offset'));
+    oY=str2double(datasForKey('Y Offset'));
+    header.scan_offset=[oX,oY];
+    
+    %Scan Angle
+    header.scan_angle=str2double(datasForKey('Scan Angle'));
+    
+    %Scan Direction
+    header.scan_dir=datasForKey('Scan Direction');
+    header.scan_dir=lower(header.scan_dir{1});
+    
+    %Bias
+    header.bias=str2double(datasForKey('Gap Voltage'));
+    
+end
+
+function scan_type=scanType(chInfos)
+    
+    
+    
+    %For STM scans, Z is the first data, for SEM, it is the current
+    switch chInfos{9}{1};
+        case 'Z'
+            scan_type='STM';
+        case 'I'
+            scan_type='SEM';
+        otherwise
+            scan_type='Unknown';
+    end
+    
+end
+
+function [channel, scan_file]=loadChannel(chInfos,i,path,header)
+    %offset
+    ofs=(i-1)*9;
+    %Load infos
+    channelTemp.Direction=lower(chInfos{ofs+1}{1});
+    channelTemp.Unit=chInfos{ofs+7}{1};
+    channelTemp.Name=chInfos{ofs+9}{1};
+    fileName=chInfos{ofs+8};
+    resolution=str2double(chInfos{ofs+6});
+    %load data
+    channelTemp.data=loadParData([path fileName{1}],header.scan_pixels)*resolution;
+    %process data
+    channel=load.processChannel(channelTemp,header);
+    
+    scan_file=fileName{1};
+end

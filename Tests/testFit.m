@@ -1,7 +1,15 @@
+%---------------------------------------------
+%   This files tries to fit the variation on mean and std
+%   on a SEM image to distance
+%
+%   TODO
+%
+%---------------------------------------------
+
 close all;
 clear all;
 
-%%
+%% load datas
 file5=load.loadProcessedSxM('Data/March/2015-03-02/image005.sxm');
 file6=load.loadProcessedSxM('Data/March/2015-03-02/image006.sxm');
 file7=load.loadProcessedSxM('Data/March/2015-03-02/image007.sxm');

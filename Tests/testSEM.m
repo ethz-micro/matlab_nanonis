@@ -1,24 +1,36 @@
+%---------------------------------------------
+%   This files load a SEM image and plot the various data
+%
+%
+%
+%
+%---------------------------------------------
 
 clear all;
 close all;
-%image name
-fn='Data/March/2015-03-05/image004.sxm'; % 5-7
 
-%% Non STDev corrected data
+%% load image
+
+%image name
+fn='Data/March/2015-03-05/image004.sxm'; 
+%Load 2,4,6,8 (current + forward channel 0 1 2 3)
+file = load.loadProcessedSxM(fn,[0 2 4 6 8]);
+
+%% Image without STD correction
+
+%load
 [header, data] = load.loadsxm(fn, 2);
+%remove median
 data=(data-median(data,2)*ones([1 size(data,2)]));
+%plot
 header.scan_type='SEM';
 figure
-plot.plotData(data,'non-stdev corrected channel 0',header);
-
-%% Load SED data
-
-%Load 2,4,6,8 (forward channel 0 1 2 3)
-file = load.loadProcessedSxM(fn,[0 2 4 6 8]);
-%Correlation 
-corrMnSTDev=corr(file.channels(2).mean,file.channels(2).std);
+plot.plotData(data,'non-stdev corrected channel 0','',header);
 
 %% plot mean and std
+
+%Correlation 
+corrMnSTDev=corr(file.channels(2).mean,file.channels(2).std);
 
 %print mean and stdev for data 0
 figure        
@@ -32,7 +44,7 @@ title(['std channel 0, correlation with mean: ',num2str(corrMnSTDev)]);
 
 %plot image
 figure
-[~, range] = plot.plotChannel(file,2);
+[~, range] = plot.plotFile(file,2);
 
 %plot histogram
 figure
@@ -43,38 +55,53 @@ title('channel 0')
 figure
 imagesc([0 file.header.scan_range(2)],[0 file.header.scan_range(2)],-ones([size(file.channels(2).data,1) 1])*file.channels(1).slope,range);
 title('Corrected plane')
+axis image
 
 %% add 4 channels in one data
 
 %Add datas
-data = op.combineChannel(file,2:5,1/4*[1,1,1,1]);
+channel = op.combineChannel(file,'4 channels',2:5,1/4*[1,1,1,1]);
 
 %plot image
 figure
-[~, range]=plot.plotData(data,'4 channels',file.header);
+[~, range]=plot.plotChannel(channel,file.header);
 
 %% Do the same for current
 
 %plot image
 figure
-plot.plotChannel(file,1);
+plot.plotFile(file,1);
 
 %% 5 channels
+
 %Add datas
-data = 1/2*(data+file.channels(1).data);
+data = 1/2*(channel.data+file.channels(1).data);
 
 %plot image
 figure
-plot.plotData(data,'5 channels',header);
+plot.plotData(data,'5 channels','',header);
 
-%%
+%% Plot filtered data
 
 [signal,removed]=process.filterData(data,25);
 figure
-plot.plotData(signal,'Filtered - 25 px',header);
+plot.plotData(signal,'Filtered - 25 px','',header);
 
 figure
-plot.plotData(removed,'Removed - 25 px',header);
+plot.plotData(removed,'Removed - 25 px','',header);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %% Old & discarded
 

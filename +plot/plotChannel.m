@@ -1,6 +1,6 @@
-function [h, range] = plotChannel(file, n,varargin)
-    name=[file.channels(n).Name,' - ',file.channels(n).Direction];
-    [h, range] = plot.plotData(file.channels(n).data,name,file.header,varargin{:});
+function [h, range] = plotChannel(channel,header,varargin)
+    name=[channel.Name,' - ',channel.Direction];
+    [h, range] = plot.plotData(channel.data,name,channel.Unit,header,varargin{:});
 end
 
 

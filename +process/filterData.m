@@ -1,5 +1,6 @@
 function [filtered, removed] = filterData(data,pixSize,varargin)
-    %This function keeps a circle of radius FFTRadius in the fourrier plane
+    %This function keeps a circle in the fourrier plane corresponding to
+    %pixSize
     %   Can add a 'plotFFT' to plot the fourrier transform & Zoom level 
     
     stdCut = 2;%Number of STDev kept on the data

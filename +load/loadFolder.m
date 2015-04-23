@@ -1,11 +1,7 @@
 function loadFolder(folderName)
     %load and save all files in folder
     
-    %Save as a PNG in rootImgName
-    function savePNG(name)
-        imgName=[rootImgName, name,'.png'];
-        saveas(gcf,imgName);
-    end
+  
     
     
     %Create an images folder
@@ -35,31 +31,31 @@ function loadFolder(folderName)
                 
                 %Plot
                 
-                plot.plotChannel(file,1);
-                savePNG('ZF');
+                plot.plotFile(file,1);
+                savePNG(rootImgName,'ZF');
                 
-                plot.plotChannel(file,2);
-                savePNG('ZB');
+                plot.plotFile(file,2);
+                savePNG(rootImgName,'ZB');
                 
             case 'SEM'
                 
                 %Save current Forward
-                plot.plotChannel(file,1);
-                savePNG('FCF');
+                plot.plotFile(file,1);
+                savePNG(rootImgName,'FCF');
                 
                 %Save current Backward
-                plot.plotChannel(file,2);
-                savePNG('FCB');
+                plot.plotFile(file,2);
+                savePNG(rootImgName,'FCB');
                 
                 %Add and plot 4 channels
-                data = op.combineChannel(file,3:2:9,1/4*[1 1 1 1]);
-                plot.plotData(data,'4 channels - forward',file.header);
-                savePNG('4CF');
+                channel= op.combineChannel(file,'4 channels',3:2:9,1/4*[1 1 1 1]);
+                plot.plotChannel(channel,file.header);
+                savePNG(rootImgName,'4CF');
                 
                 %Idem backwards
-                data = op.combineChannel(file,4:2:10,1/4*[1 1 1 1]);
-                plot.plotData(data,'4 channels - backward',file.header);
-                savePNG('4CB');
+                channel= op.combineChannel(file,'4 channels',4:2:10,1/4*[1 1 1 1]);
+                plot.plotChannel(channel,file.header);
+                savePNG(rootImgName,'4CB');
                 
             otherwise
                 msgbox('unknown scan type - not typical saved channels');
@@ -69,5 +65,36 @@ function loadFolder(folderName)
         
     end
     
+    %Search all par files
+    files = dir([folderName, '/*.par']);
     
+    %Loop threw all par files
+    for i=1:numel(files)
+        
+        %Load file
+        fileInfo=files(i);
+        fn = [folderName,'/',fileInfo.name];
+        
+        %prepare image name
+        A = strsplit(fileInfo.name,'.');
+        imgNbr = A{1};
+        rootImgName=[imgFolder, imgNbr ,'-'];
+        
+        file=load.loadProcessedPar(fn);
+        
+        for j=1:numel(file.channels)
+            plot.plotFile(file,j);
+            savePNG(rootImgName,file.channels(j).Name);
+        end
+        
+    end
+    
+    
+    
+end
+
+%Save as a PNG in rootImgName
+function savePNG(rootImgName,name)
+    imgName=[rootImgName, name,'.png'];
+    saveas(gcf,imgName);
 end

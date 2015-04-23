@@ -1,15 +1,23 @@
-function [h, range] = plotData(data,name,header,varargin)
+function [h, range] = plotData(data,name,unit,header,varargin)
     switch header.scan_type
         case 'STM'
             range = rangeSTM(data);
         case 'SEM'
             range = rangeSEM(data);
     end
+    %Check if there is no variation
+    delta=range(2)-range(1);
+    if abs(delta)==0
+        range=[-1,1];
+    end
     h=plotSxm(data,header,range,varargin{:});
     s=[header.rec_date, ' - '];
     s=[s,getName(header),' - '];
+    s=[s,'\Delta= ',num2str(delta,3),' ',unit,' - '];
     s=[s,name];
     title(s);
+    xlabel('x [m]');
+    ylabel('y [m]');
 end
 
 function p=plotSxm(data,header,range,varargin)
@@ -50,10 +58,9 @@ function range = rangeSTM(data)
     %Use 2 std
     stdData=nanstd(signal(:));
     
-    % if stdData is NaN, recompute on non-nan value
+    % if stdData is NaN, put arbitrary range
     if isnan(stdData)
-        good = ~isnan(signal);
-        stdData=std(signal(good));
+        stdData=0;
     end
     
     %Range is 3 stdev

@@ -1,14 +1,23 @@
+%---------------------------------------------
+%   This files load a STM image and plot the various data
+%
+%
+%
+%
+%---------------------------------------------
 
 clear all;
 close all;
 
+%% load image
+
 %image name
 fn='Data/DataC2/2015-03-04/image008.sxm';%1-2;4;9
-
 file = load.loadProcessedSxM(fn,0);
 
-%print mean and stdev for data 0
+%% plot data
 
+%print mean and stdev for data 0
 figure        
 plot(file.channels(1).median)   
 title('median Z');
@@ -17,13 +26,16 @@ figure
 plot(nanstd(file.channels(1).data,0,2)) 
 title('std Z');
 
+%plot image
 figure
-[~, range] = plot.plotChannel(file,1);
+[~, range] = plot.plotFile(file,1);
 
 %plot histogram
 figure
 plot.plotHistogram(file.channels(1).data,range);
 title('Z height')
+
+
 
 
 %{

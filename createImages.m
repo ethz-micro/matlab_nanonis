@@ -1,3 +1,11 @@
+%---------------------------------------------
+%   This files create an image for all the files in a folder in the given
+%   folder
+%
+%   Calls loadFolder on all folders
+%
+%
+%---------------------------------------------
 close all;
 clear all;
 %call loadFolder in all folder inside superfolder
