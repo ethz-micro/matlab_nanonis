@@ -119,12 +119,12 @@ function scan_type=scanType(chInfos)
     
     
     
-    %For STM scans, Z is the first data, for SEM, it is the current
+    %For STM scans, Z is the first data, for NFESEM, it is the current
     switch chInfos{9}{1};
         case 'Z'
             scan_type='STM';
         case 'I'
-            scan_type='SEM';
+            scan_type='NFESEM';
         otherwise
             scan_type='Unknown';
     end

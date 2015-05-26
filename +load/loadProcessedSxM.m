@@ -51,33 +51,64 @@ function channel = loadChannel(fn,n,data_info)
     %Copy info on channels (duplicate as Direction = both)
     channel = data_info(idx);
     
-    %Save line direction
-    if mod(n,2)==1
-        channel.Direction = 'backward';
-    else
-        channel.Direction = 'forward';
+    %Is the direction backwards?
+    dirBack= mod(n,2)==1;
+    
+    %Should we load the data?
+    loadData = false;
+    
+    switch channel.Direction
+        case 'both'
+            %Save line direction
+            if dirBack
+                channel.Direction = 'backward';
+            else
+                channel.Direction = 'forward';
+            end
+            loadData = true;
+        case 'forward'
+            if ~dirBack
+                loadData = true;
+            end
+            
+        case 'backward'
+            if dirBack
+                loadData = true;
+            end
+            
+            
     end
     
-    %load data in channel
-    [header, data]=load.loadsxm(fn,n);
-    
-    header.scan_type = scanType(data_info);
-   
-    %Save data
-    channel.data=data;
-    
-    channel=load.processChannel(channel,header);
+    if loadData
+        
+        %load data in channel
+        [header, data]=load.loadsxm(fn,n);
+        
+        header.scan_type = scanType(data_info);
+        
+        %Save data
+        channel.data=data;
+        
+        channel=load.processChannel(channel,header);
+        
+        
+    else
+        channel.data=0;
+    end
     
 end
 
 function scan_type = scanType(data_info)
     
-     %For STM scans, Z is the first data, for SEM, it is the current
+     %For STM scans, Z is the first data, for NFESEM, it is the current,
+     %For SEM, Video
     switch data_info(1).Name
         case 'Z'
             scan_type='STM';
         case 'Current'
-            scan_type='SEM';
+            scan_type='NFESEM';
+        case 'Video'
+            scan_type='SEMPA';
         otherwise
             scan_type='Unknown';
     end

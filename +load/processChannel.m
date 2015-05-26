@@ -4,30 +4,44 @@ function channel = processChannel(channel,header)
     
     %Process the data
     switch header.scan_type
-        case 'SEM'
-            [channel.data, channel.mean , channel.std] = processSEM(channel.data);
+        case 'NFESEM'
+            [channel.data, channel.mean , channel.std,channel.slope] = processNFESEM(channel.data);
         case 'STM'
-            [channel.data, channel.median] = processSTM(channel.data);
+            [channel.data, channel.median,channel.slope] = processSTM(channel.data);
+        case 'SEMPA'
+            [channel.data, channel.mean] = processSEMPA(channel.data);
         otherwise
             %Can't process data
     end
-    %Flatten plane
-    [channel.data,channel.slope] = flatenMeanPlane(channel.data);
     
     %turn the datas - done after the rest because scan was line by line
     channel.data = rotateData(channel.data,header.scan_angle);
 end
 
+function [data, lineMean] = processSEMPA(data)
+    %Reset nan
+    
+    data(abs(data)>2^30)=nan;
+    
+    
+    %Save mean and STDev
+    lineMean = nanmean(data,2);
+    %lineStd = nanstd(data,0,2);
+    
+    %Remove mean and STDev
+    data=(data-lineMean*ones([1 size(data,2)]));%./(nanstd(data,0,2)*ones([1 size(data,2)]));
+end
+
 function [data,corr] = flatenMeanPlane(data)
     %Remove sample tilt
-    crv = nanmean(data,1);
+    crv = nanmedian(data,1);
     x=1:size(crv,2);
     p = polyfit(x,crv,1);
     corr= p(1)*x+p(2);
     data = data - ones([size(data,1) 1])*corr;
 end
 
-function [data, lineMedian] = processSTM(data)
+function [data, lineMedian, slope] = processSTM(data)
     %processSTM correct for the drift by substracting the median of each lines.
     
     %Save mean and STDev
@@ -35,9 +49,12 @@ function [data, lineMedian] = processSTM(data)
     
     %Remove median
     data=(data-nanmedian(data,2)*ones([1 size(data,2)]));
+    
+    %Flatten plane
+    [data,slope] = flatenMeanPlane(data);
 end
 
-function [data, lineMean , lineStd] = processSEM(data)
+function [data, lineMean , lineStd, slope] = processNFESEM(data)
     %processSTM corrects for the mean and std variation
     
     %The lines are gaussian. The mean and std depends on the distance
@@ -51,6 +68,8 @@ function [data, lineMean , lineStd] = processSEM(data)
     %Remove mean and STDev
     data=(data-nanmean(data,2)*ones([1 size(data,2)]))./(nanstd(data,0,2)*ones([1 size(data,2)]));
     
+    %Flatten plane
+    [data,slope] = flatenMeanPlane(data);
 end
 
 function data = orientateData(data,line_dir,scan_dir)

@@ -4,6 +4,9 @@ function [h, range] = plotData(data,name,unit,header,varargin)
             range = rangeSTM(data);
         case 'SEM'
             range = rangeSEM(data);
+        otherwise
+            range=[-1 1]*(prctile(data(:),75)-prctile(data(:),25));
+            
     end
     %Check if there is no variation
     delta=range(2)-range(1);

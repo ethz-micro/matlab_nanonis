@@ -79,6 +79,7 @@ while 1
         case 'SCANIT_END'
             break;
         otherwise % treat as strings
+            s1 = regexprep(lower(s1), '#', 'nbr');
             s1 = regexprep(lower(s1), '[^a-z0-9_]', '_');
             s_line = strtrim(fgetl(fid));
             s2 = '';
