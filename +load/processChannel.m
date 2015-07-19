@@ -29,7 +29,7 @@ function [data, lineMean] = processSEMPA(data)
     %lineStd = nanstd(data,0,2);
     
     %Remove mean and STDev
-    data=(data-lineMean*ones([1 size(data,2)]));%./(nanstd(data,0,2)*ones([1 size(data,2)]));
+    data=(data-lineMean*ones([1 size(data,2)]))./(nanstd(data,0,2)*ones([1 size(data,2)]));
 end
 
 function [data,corr] = flatenMeanPlane(data)
@@ -66,7 +66,7 @@ function [data, lineMean , lineStd, slope] = processNFESEM(data)
     lineStd = nanstd(data,0,2);
     
     %Remove mean and STDev
-    data=(data-nanmean(data,2)*ones([1 size(data,2)]))./(nanstd(data,0,2)*ones([1 size(data,2)]));
+    data=(data-nanmean(data,2)*ones([1 size(data,2)]));%./(nanstd(data,0,2)*ones([1 size(data,2)]));
     
     %Flatten plane
     [data,slope] = flatenMeanPlane(data);

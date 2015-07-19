@@ -3,6 +3,11 @@ function file=loadProcessedSxM(fn, varargin)
     %read header
     file.header = load.loadsxm(fn);
     
+    if ~isfield(file.header,'scan_pixels')
+        fprintf('File header malformed\n');
+        return;
+    end
+    
     %Save data infos in a nice format
     data_info = readDataInfos(file.header);
     
