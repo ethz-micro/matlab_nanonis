@@ -12,8 +12,8 @@ close all;
 %% load image
 
 %image name
-fn='Data/March/2015-03-05/image004.sxm';
-%fn='Data/March/2015-03-04/image006.sxm';
+%fn='Data/March/2015-03-05/image004.sxm';
+fn='Data/March/2015-03-04/image006.sxm';
 %Load 2,4,6,8 (current + forward channel 0 1 2 3)
 file = load.loadProcessedSxM(fn,[0 2 4 6 8]);
 
@@ -49,6 +49,7 @@ title(['std channel 0']);
 %plot image
 figure
 [~, range] = plot.plotFile(file,2);
+%%
 
 %plot histogram
 figure

@@ -12,7 +12,7 @@ close all;
 %% load image
 
 %image name
-fn='Data/DataC2/2015-03-04/image008.sxm';%1-2;4;9
+fn='Data/DataC2/2015-03-04/image004.sxm';%1-2;4;9
 file = load.loadProcessedSxM(fn,0);
 
 %% plot data
