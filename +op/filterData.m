@@ -5,12 +5,18 @@ function [filtered, removed] = filterData(data,pixSize,varargin)
     
     stdCut = 2;%Number of STDev kept on the data
     
+    MEDIAN=nanmedian(data(:));
+    data=data-MEDIAN;
+    
     %Remove extreme values
     range = [-1 1]*stdCut*nanstd(data(:));
     low = data < range(1);
     data(low)=range(1);
     high = data > range(2);
     data(high) = range(2);
+    
+    %nan to 0 otherwise fft doesn't work
+    data(isnan(data))=0;
     
     %Fourrier transform
     fTrans=fft2(data);
@@ -36,12 +42,12 @@ function [filtered, removed] = filterData(data,pixSize,varargin)
     redFTrans(indx)=fTrans(indx);
     
     %Retrieve filtered data
-    filtered=real(ifft2(redFTrans));
+    filtered=real(ifft2(redFTrans))+MEDIAN;
     
     %Compute removed part
     redFTrans = complex(zeros(size(fTrans)));
     redFTrans(~indx)=fTrans(~indx);
-    removed=real(ifft2(redFTrans));
+    removed=real(ifft2(redFTrans))+MEDIAN;
     
     
     

@@ -6,7 +6,35 @@ ext='.sxm';
 fns=arrayfun(@(x) [fn num2str(x) ext],idx,'UniformOutput',false);
 files=cellfun(@load.loadProcessedSxM,fns);
 
+Z=[25,20,18,15,12,11,10,9,8,7,6,5,4]-0.5;
 
+noiseSTD=0.0005;
+
+fig=figure;
+hold all
+
+for i=numel(files):-1:1
+    
+    %figure(fig)
+    file = files(i);
+    Ne=file.channels(3).median.*(file.header.scan_time(1)/file.header.scan_pixels(1));
+    X=Ne.^-.5;
+    Y=file.channels(3).std-noiseSTD*X;
+    plot(X,Y,'x','DisplayName',sprintf('Z=%d',Z(i)));
+    A(i)=min(Y);
+    
+    
+end
+%figure(fig)
+xlabel('median^{-.5}')
+ylabel('STD')
+legend(gca,'show')
+
+figure
+plot(Z,A)
+
+
+%%
 
 k=3;
 f=11;
@@ -15,9 +43,9 @@ Datas=arrayfun(@(x) sgolayfilt(x.channels(3).data,k,f,[],2),files,'UniformOutput
 
 
 STDevs=arrayfun(@(x) median(x.channels(3).std),files);
-Means=arrayfun(@(x) median(x.channels(3).mean),files);
+Means=arrayfun(@(x) median(x.channels(3).median),files);
 
-Z=[25,20,18,15,12,11,10,9,8,7,6,5,4];
+
 %{
 DIFF=cellfun(@(x) diff(x,1,2),Datas,'UniformOutput',false);
 A=cellfun(@(x) std(x(:)),DIFF);

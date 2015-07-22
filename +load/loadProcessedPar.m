@@ -1,5 +1,20 @@
 function file = loadProcessedPar(fn)
     
+    %Read header file
+    [file.header, chInfos] = readPar(fn);
+   
+    %Get path to open corresponding data file
+    path = getPath(fn);
+    
+    %There is 9 lines for each channel
+    for i=numel(chInfos)/9:-1:1;
+        [file.channels(i), file.header.scan_file]=loadProcessParChannel(chInfos,i,path,file.header);
+    end
+    
+    
+end
+
+function path = getPath(fn)
     %get data path
     i=strfind(fn,'/');
     if numel(i)>0
@@ -7,33 +22,18 @@ function file = loadProcessedPar(fn)
     else
         path='';
     end
-    
-    %Read file
-    [FCMtx, chInfos] = readFile(fn);
-    
-    %Read Header
-    file.header = readHeader(FCMtx);
-    
-    %read Scan type
-    file.header.scan_type=scanType(chInfos);
-    
-    %There is 9 lines for each channel
-    for i=numel(chInfos)/9:-1:1;
-        [file.channels(i), file.header.scan_file]=loadChannel(chInfos,i,path,file.header);
-    end
-    
-    
 end
 
-
 function data=loadParData(fn,scan_pixels)
+    %Open .tfx file as int16 data
     fid = fopen(fn);
     data= fread(fid,scan_pixels,'int16','ieee-be')';
     fclose(fid);
 end
 
 
-function [FCMtx, chInfos] = readFile(fn)
+function [header, chInfos] = readPar(fn)
+    %read the content of the .par file
     
     %Read file
     fileContent=fileread(fn);
@@ -44,13 +44,13 @@ function [FCMtx, chInfos] = readFile(fn)
     %Define function to access index
     index = @(A,i) A{mod(i-1,numel(A))+1};%Mod to avoid overflow
     
-    %Remove comments
+    %Remove comments (starting with ;)
     fileContent=cellfun(@(x) strtrim(index(strsplit(x,';'),1)),fileContent,'UniformOutput',false);
     
     %Remove blank lines
     fileContent=fileContent(~strcmp('',fileContent));
     
-    
+    %Separate the field name from the infos (separated by : except for channel infos)
     function list=separate(str)
         
         k=strfind(str,':');
@@ -64,16 +64,19 @@ function [FCMtx, chInfos] = readFile(fn)
     %Separate name and values
     fileContent=cellfun(@(x) strtrim(separate(x)),fileContent,'UniformOutput',false);
     
-    
-    
     %Put filecontent in matrix for easy lookup
-    FCMtx=cell(size(fileContent,2),2);
-    FCMtx(:,1)=cellfun(@(x) index(x,1),fileContent,'UniformOutput',false);
-    FCMtx(:,2)=cellfun(@(x) index(x,2),fileContent,'UniformOutput',false);
+    FCMatrix=cell(size(fileContent,2),2);
+    FCMatrix(:,1)=cellfun(@(x) index(x,1),fileContent,'UniformOutput',false);
+    FCMatrix(:,2)=cellfun(@(x) index(x,2),fileContent,'UniformOutput',false);
     
     %all lines with 1 cell are channel infos
     chIdx=cellfun(@numel,fileContent)==1;
     chInfos=fileContent(chIdx);
+    
+    %Transform File Content matrix into header
+    header = readHeader(FCMatrix);
+    %Deduce Scan type from chInfos
+    header.scan_type=scanType(chInfos);
     
 end
 
@@ -117,8 +120,6 @@ end
 
 function scan_type=scanType(chInfos)
     
-    
-    
     %For STM scans, Z is the first data, for NFESEM, it is the current
     switch chInfos{9}{1};
         case 'Z'
@@ -131,7 +132,7 @@ function scan_type=scanType(chInfos)
     
 end
 
-function [channel, scan_file]=loadChannel(chInfos,i,path,header)
+function [channel, scan_file]=loadProcessParChannel(chInfos,i,path,header)
     %offset
     ofs=(i-1)*9;
     %Load infos

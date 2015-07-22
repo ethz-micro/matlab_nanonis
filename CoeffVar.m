@@ -85,6 +85,57 @@ info{i}.drift=3.5;
 
 
 
+%%
+noiseSTD=0.000;
+plotIdx=3;
+ZFig=figure;
+hold all
+for i=1:numel(info)
+    
+    clear M
+    %Files names
+    
+    ext='.sxm';
+    fns=arrayfun(@(x) sprintf('%s%03d%s',info{i}.fn,x,ext),info{i}.idx,'UniformOutput',false);
+    
+    %Corresponding Height
+    
+    %Get data
+    files =cellfun(@(x) load.loadProcessedSxM(x),fns,'UniformOutput',false);
+    if i==plotIdx
+        fig=figure;
+        hold all
+    end
+    for j=numel(files):-1:1
+        
+        %figure(fig)
+        file = files{j};
+        Ne=file.channels(3).median.*(file.header.scan_time(1)/file.header.scan_pixels(1));
+        X=Ne.^-2;
+        Y=file.channels(3).std.^2-noiseSTD*X;
+        M(j)=min(Y);
+        if i==plotIdx
+            plot(X,Y,'x','DisplayName',sprintf('Z=%d',info{i}.Z(j)));
+        end
+        
+        
+    end
+    if i==plotIdx
+        xlabel('median^{-.5}')
+        ylabel('STD')
+        legend(gca,'show')
+        title(info{i}.name)
+        figure(ZFig)
+    end
+    plot(info{i}.Z,M,'x--','DisplayName',sprintf('%s Drift:%02.1f',info{i}.name,info{i}.drift))
+    
+end
+legend(gca,'show')
+xlabel('Z')
+ylabel('STD')
+
+%%
+
 for i=1:numel(info)
     
     %Files names
@@ -102,7 +153,7 @@ for i=1:numel(info)
     data{i}=cellfun(@(x) sgolayfilt(x,k,f,[],2),data{i},'UniformOutput',false);
     %}
     ddata{i}=cellfun(@(x) diff(x,1,2),data{i},'UniformOutput',false);
-
+    
     
 end
 
@@ -148,7 +199,7 @@ for i=1:numel(data)
     plot(info{i}.Z,STDFLD./STDFL,'x-','DisplayName',sprintf('%s Drift:%02.1f',info{i}.name,info{i}.drift))
     figure(3)
     plot(info{i}.Z,MFL,'x-','DisplayName',sprintf('%s Drift:%02.1f',info{i}.name,info{i}.drift))
-
+    
     
     ZBIG=[ZBIG,info{i}.Z];
     DBIG=[DBIG,Y];

@@ -7,5 +7,5 @@ stdCut=3*nanmedian(stdData);
 %Cut to keep "good lines"
 linesSTDev= stdData > stdCut;
 linesSTDev = logical(linesSTDev*ones([1 size(data,2)]));%matrix size
-data(linesSTDev)=0;
+data(linesSTDev)=nan;
 end

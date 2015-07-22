@@ -12,7 +12,8 @@ close all;
 %% load image
 
 %image name
-fn='Data/March/2015-03-05/image004.sxm'; 
+fn='Data/March/2015-03-05/image004.sxm';
+%fn='Data/March/2015-03-04/image006.sxm';
 %Load 2,4,6,8 (current + forward channel 0 1 2 3)
 file = load.loadProcessedSxM(fn,[0 2 4 6 8]);
 
@@ -22,23 +23,26 @@ file = load.loadProcessedSxM(fn,[0 2 4 6 8]);
 [header, data] = load.loadsxm(fn, 2);
 %remove median
 data=(data-median(data,2)*ones([1 size(data,2)]));
+
+%data=flip(data,2);
+data=flip(data,1);
+
+
 %plot
-header.scan_type='SEM';
+header.scan_type='NFESEM';
 figure
 plot.plotData(data,'non-stdev corrected channel 0','',header);
 
-%% plot mean and std
+%% plot median and std
 
-%Correlation 
-corrMnSTDev=corr(file.channels(2).mean,file.channels(2).std);
+%print median and stdev for data 0
+figure        
+plot(file.channels(2).median)        
+title(['median channel 0']);%, correlation with stdev: ',num2str(corrMnSTDev)]);
+figure
+plot(std(file.channels(2).data,0,2))
+title(['std channel 0']);
 
-%print mean and stdev for data 0
-figure        
-plot(file.channels(2).mean)        
-title(['mean channel 0, correlation with stdev: ',num2str(corrMnSTDev)]);        
-figure        
-plot(file.channels(2).std)        
-title(['std channel 0, correlation with mean: ',num2str(corrMnSTDev)]);
 
 %% plot images
 
@@ -53,7 +57,7 @@ title('channel 0')
 
 %Plot plane
 figure
-imagesc([0 file.header.scan_range(2)],[0 file.header.scan_range(2)],-ones([size(file.channels(2).data,1) 1])*file.channels(1).slope,range);
+imagesc([0 file.header.scan_range(2)],[0 file.header.scan_range(2)],ones([size(file.channels(2).data,1) 1])*file.channels(1).slope,range);
 title('Corrected plane')
 axis image
 
@@ -66,7 +70,7 @@ channel = op.combineChannel(file,'4 channels',2:5,1/4*[1,1,1,1]);
 figure
 [~, range]=plot.plotChannel(channel,file.header);
 
-%% Do the same for current
+%% current
 
 %plot image
 figure
@@ -83,15 +87,12 @@ plot.plotData(data,'5 channels','',header);
 
 %% Plot filtered data
 
-[signal,removed]=process.filterData(data,25);
+[signal,removed]=op.filterData(data,25);
 figure
 plot.plotData(signal,'Filtered - 25 px','',header);
 
 figure
 plot.plotData(removed,'Removed - 25 px','',header);
-
-
-
 
 
 
@@ -132,10 +133,10 @@ end
 
 
 %{
-%print mean and stdev for data 0
+%print median and stdev for data 0
 figure        
 plot(mn0)        
-legend('mean channel 0');        
+legend('median channel 0');        
 figure        
 plot(stdev0)        
 legend('std channel 0');

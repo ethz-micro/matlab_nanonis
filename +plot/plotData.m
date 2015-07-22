@@ -2,10 +2,10 @@ function [h, range] = plotData(data,name,unit,header,varargin)
     switch header.scan_type
         case 'STM'
             range = rangeSTM(data);
-        case 'SEM'
-            range = rangeSEM(data);
+        case {'NFESEM','SEMPA'}
+            range = rangeNFESEM(data);
         otherwise
-            range=[-1 1]*(prctile(data(:),75)-prctile(data(:),25));
+            range=[-1 1]*(prctile(data(:),75)-prctile(data(:),25))+nanmean(data(:));
             
     end
     %Check if there is no variation
@@ -14,13 +14,15 @@ function [h, range] = plotData(data,name,unit,header,varargin)
         range=[-1,1];
     end
     h=plotSxm(data,header,range,varargin{:});
-    s=[header.rec_date, ' - '];
-    s=[s,getName(header),' - '];
-    s=[s,'\Delta= ',num2str(delta,3),' ',unit,' - '];
-    s=[s,name];
-    title(s);
+    l1=[header.rec_date, ' - '];
+    l1=[l1,getName(header)];%' - '];
+    %Remove _
+    l2=regexprep(name,'_','\\_');
+    l3=['Delta= ',num2str(delta,3),' ',unit];
     xlabel('x [m]');
     ylabel('y [m]');
+    set(gca,'FontSize',20);
+    title({l1;l2;l3},'FontSize',12);
 end
 
 function p=plotSxm(data,header,range,varargin)
@@ -39,25 +41,17 @@ function p=plotSxm(data,header,range,varargin)
     
 end
 
-function range = rangeSEM(data)
+function range = rangeNFESEM(data)
     %Plot SEM data
     
     %Range = 2*std of data
-    range = [-2 2]*nanstd(data(:));
+    range = [-2 2]*nanstd(data(:))+nanmean(data(:));
+    %range=[.7 1.3];
 end
 
 function range = rangeSTM(data)
     %Plot STM Data. Will use STDev to determine the noisy parts
-    
-    %Keep lines with STD < 3* median to scale
-    stdData= nanstd(data,0,2);
-    stdCut=3*nanmedian(stdData);
-    
-    %Cut to keep "good lines"
-    linesSTDev= stdData < stdCut;
-    linesSTDev = logical(linesSTDev*ones([1 size(data,2)]));%matrix size
-    signal=data(linesSTDev);
-    
+    signal=op.nanHighStd(data);
     %Use 2 std
     stdData=nanstd(signal(:));
     
@@ -67,7 +61,7 @@ function range = rangeSTM(data)
     end
     
     %Range is 3 stdev
-    range = [-1 1]*3*stdData;
+    range = [-1 1]*3*stdData+nanmean(data(:));
 end
 
 function s=getName(header)

@@ -1,4 +1,4 @@
-function [maskUp, maskDown, flatData] = getMask(data,FFTRadius, prctUp, prctDown,varargin)%fn, varargin
+function [maskUp, maskDown, flatData] = getMask(data,pixSize, prctUp, prctDown,varargin)%fn, varargin
     %getMask creates a mask for the detection of pattern. It will filter the
     %datas using FFT, flatten the datas with a sliding mean and take a
     %threshold to cut the datas
@@ -10,7 +10,7 @@ function [maskUp, maskDown, flatData] = getMask(data,FFTRadius, prctUp, prctDown
     scanFrac = 4;%Fraction of the image on which the sliding averaging is done
     
     %Filter the data
-    filtered = process.filterData(data,FFTRadius,varargin);
+    filtered = op.filterData(data,pixSize,varargin);
     
     %Flatten the datas
     flatData = flattenData(filtered,scanFrac);
