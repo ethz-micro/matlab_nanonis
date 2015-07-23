@@ -55,7 +55,7 @@ end
 
 function data=flattenData(data,scanFrac)
      %calculate sliding mean
-    sldArea=size(data)/scanFrac;
+    sldArea=floor(size(data)/scanFrac);
     normalMtx=flip(sldArea)*sldArea.'/size(sldArea,2);%X*Y
     slidingmean=convolve2.convolve2(data,ones(sldArea)/normalMtx,'symmetric');
     

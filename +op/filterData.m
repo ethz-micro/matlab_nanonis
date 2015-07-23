@@ -70,7 +70,7 @@ function [filtered, removed] = filterData(data,pixSize,varargin)
         end
         if strcmp(cmd,'plotFFT')
             %Compute the quarter size
-            sizeSq = size(data)/zoom;
+            sizeSq = floor(size(data)/zoom);
             %Reorder fourrier data
             dis = swapSquares(abs(fTrans),sizeSq);
             

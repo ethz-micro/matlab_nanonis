@@ -94,17 +94,17 @@ function header = readHeader(FCMtx)
     %Scan pixels
     pxX=str2double(datasForKey('Image Size in X'));
     pxY=str2double(datasForKey('Image Size in Y'));
-    header.scan_pixels=[pxX pxY];
+    header.scan_pixels=[pxX;pxY];
     
     %Scan Range
     rX=str2double(datasForKey('Field X Size in nm'))*10^-9;
     rY=str2double(datasForKey('Field Y Size in nm'))*10^-9;
-    header.scan_range=[rX,rY];
+    header.scan_range=[rX;rY];
     
     %Scan Offset
     oX=str2double(datasForKey('X Offset'));
     oY=str2double(datasForKey('Y Offset'));
-    header.scan_offset=[oX,oY];
+    header.scan_offset=[oX;oY];
     
     %Scan Angle
     header.scan_angle=str2double(datasForKey('Scan Angle'));
@@ -142,7 +142,7 @@ function [channel, scan_file]=loadProcessParChannel(chInfos,i,path,header)
     fileName=chInfos{ofs+8};
     resolution=str2double(chInfos{ofs+6});
     %load data
-    channelTemp.data=loadParData([path fileName{1}],header.scan_pixels)*resolution;
+    channelTemp.data=loadParData([path fileName{1}],header.scan_pixels')*resolution;
     %process data
     channel=load.processChannel(channelTemp,header);
     

@@ -25,13 +25,13 @@ file = load.loadProcessedSxM(fn,[0 2 4 6 8]);
 data=(data-median(data,2)*ones([1 size(data,2)]));
 
 %data=flip(data,2);
-data=flip(data,1);
+%data=flip(data,1);
 
 
 %plot
 header.scan_type='NFESEM';
 figure
-plot.plotData(data,'non-stdev corrected channel 0','',header);
+plot.plotData(data,'Raw channel 0','',header);
 
 %% plot median and std
 

@@ -8,8 +8,8 @@
 clear all;
 close all;
 
-%% load SEM data
 
+%% load SEM data
 %imag name
 fn='Data/DataC2/2015-03-04/image006.sxm'; % 5-7
 %Load 2,4,6,8 (forward channel 0 1 2 3)
@@ -18,14 +18,30 @@ file6=load.loadProcessedSxM(fn,2:2:8);
 channel = op.combineChannel(file6,'4 channels',1:4,1/4*[1,1,1,1]);
 data=channel.data;
 
+%% LOAD STM Data
+
+%try to match the mask and stm data
+fn='Data/DataC2/2015-03-04/image004.sxm'; % 5-7
+file4 = load.loadProcessedSxM(fn,0);
+
+%{
+fn='Data/2013-03-01/m2_ori.par';
+file4=load.loadProcessedPar(fn);
+
+fn='Data/2013-03-01/m19_ori.par';
+file6=load.loadProcessedPar(fn);
+
+channel=file6.channels(2);
+data=channel.data;
+%}
 %% get mask
 
 %Mask prct
 prctUp = 80;
-prctDown = 10;
+prctDown = 20;
 
 %Compute mask
-[maskUp, maskDown] = mask.getMask(data, 20, prctUp, prctDown,'plotFFT');
+[maskUp, maskDown] = mask.getMask(data, 10, prctUp, prctDown,'plotFFT');
 
 %% Plot Data and mask
 
@@ -41,16 +57,11 @@ mask.applyMask(maskUp,xrange,yrange,[1,0,0], .2)
 mask.applyMask(maskDown,xrange,yrange,[0,0,0], .2)
 
 
-%% LOAD STM Data
-
-%try to match the mask and stm data
-fn='Data/DataC2/2015-03-04/image004.sxm'; % 5-7
-file4 = load.loadProcessedSxM(fn,0);
 
 %% Get mask STM For comparaison
 
 %Compute mask
-[maskUpSTM, maskDownSTM] = mask.getMask(op.nanHighStd(file4.channels.data), 20, prctUp, prctDown,'plotFFT');
+[maskUpSTM, maskDownSTM] = mask.getMask(op.nanHighStd(file4.channels.data), 10, prctUp, prctDown,'plotFFT');
 
 %Get offset
 [offset,XC,centerOffset]= op.getOffset(maskUpSTM,file4.header,maskUp,file6.header,'mask');
