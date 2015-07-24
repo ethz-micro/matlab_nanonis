@@ -38,10 +38,10 @@ data=channel.data;
 
 %Mask prct
 prctUp = 80;
-prctDown = 20;
-
+prctDown = 10;
+smallestComStruct=20;
 %Compute mask
-[maskUp, maskDown] = mask.getMask(data, 10, prctUp, prctDown,'plotFFT');
+[maskUp, maskDown] = mask.getMask(data, smallestComStruct, prctUp, prctDown,'plotFFT');
 
 %% Plot Data and mask
 
@@ -61,7 +61,7 @@ mask.applyMask(maskDown,xrange,yrange,[0,0,0], .2)
 %% Get mask STM For comparaison
 
 %Compute mask
-[maskUpSTM, maskDownSTM] = mask.getMask(op.nanHighStd(file4.channels.data), 10, prctUp, prctDown,'plotFFT');
+[maskUpSTM, maskDownSTM] = mask.getMask(op.nanHighStd(file4.channels.data), smallestComStruct, prctUp, prctDown,'plotFFT');
 
 %Get offset
 [offset,XC,centerOffset]= op.getOffset(maskUpSTM,file4.header,maskUp,file6.header,'mask');
