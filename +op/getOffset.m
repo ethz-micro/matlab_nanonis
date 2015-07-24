@@ -29,7 +29,7 @@ function [offset,XC,centerOffset] = getOffset(img1, header1,img2,header2,varargi
     end
     
     %Compute cross correlation
-    XC=xcorr2(double(img1),double(img2));
+    XC=xcorr2(double(img1)-mean(mean(img1)),double(img2)-mean(mean(img2)));
     
     %Get cross correlation max
     [M1, I1]=max(XC);

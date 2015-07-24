@@ -19,10 +19,17 @@ file9=load.loadProcessedSxM('Data/March/2015-03-02/image009.sxm');
 %plot cross correlation
 figure
 imagesc(XC)
+axis image
 
 %plot two images
 figure
 plot.plotFile(file4,1);
 hold on
 plot.plotFile(file9,1,offset(1),offset(2));
+
+%%
+figure
+plot.plotFile(file4,1);
+figure
+plot.plotFile(file9,1);
 
