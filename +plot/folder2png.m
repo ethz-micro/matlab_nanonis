@@ -43,7 +43,7 @@ function folder2png(folderName)
         rootImgName=[imgFolder, imgNbr ,'-'];
         
         %Save file to PNG
-        par2png(parFN,pngRootFN);        
+        par2png(parFN,pngRootFN);
     end
 end
 
@@ -84,15 +84,27 @@ function sxm2png(sxmFN,pngRootFN)
                 plot.plotFile(file,2);
                 savePNG(pngRootFN,'FCB');
                 
-                %Add and plot 4 channels
-                channel= op.combineChannel(file,'4 channels',3:2:9,1/4*[1 1 1 1]);
-                plot.plotChannel(channel,file.header);
-                savePNG(pngRootFN,'4CF');
-                
-                %Idem backwards
-                channel= op.combineChannel(file,'4 channels',4:2:10,1/4*[1 1 1 1]);
-                plot.plotChannel(channel,file.header);
-                savePNG(pngRootFN,'4CB');
+                if numel(file.channels)>8
+                    %Add and plot 4 channels
+                    channel= op.combineChannel(file,'4 channels',3:2:9,1/4*[1 1 1 1]);
+                    plot.plotChannel(channel,file.header);
+                    savePNG(pngRootFN,'4CF');
+                    
+                    %Idem backwards
+                    channel= op.combineChannel(file,'4 channels',4:2:10,1/4*[1 1 1 1]);
+                    plot.plotChannel(channel,file.header);
+                    savePNG(pngRootFN,'4CB');
+                else % old files, single channel
+                    
+                    %plot bians voltage forward
+                    plot.plotFile(file,3);
+                    savePNG(pngRootFN,'NF');
+                    
+                    %plot bias voltage backwards
+                    plot.plotFile(file,4);
+                    savePNG(pngRootFN,'NB');
+                    
+                end
                 
             otherwise
                 msgbox('unknown scan type - not typical saved channels');

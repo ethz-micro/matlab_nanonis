@@ -19,7 +19,7 @@ file = load.loadProcessedSxM(fn,0);
 
 %print mean and stdev for data 0
 figure        
-plot(file.channels(1).median)   
+plot(file.channels(1).lineMedian)   
 title('median Z');
 
 figure        

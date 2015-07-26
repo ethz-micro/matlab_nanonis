@@ -1,67 +1,85 @@
-function channel = processChannel(channel,header)
-     %Orientate the data
+function channel = processChannel(channel,header,varargin)
+    %Orientate the data
     channel.data = orientateData(channel.data,channel.Direction,header.scan_dir);
+    
+    %Get various possibilities for line correction
+    channel.lineMedian=nanmedian(channel.data,2);
+    channel.lineMean=nanmean(channel.data,2);
+    channel.linePlane= getLineFit(channel.data,2);
+    
+    %Default choise is mean
+    columnCorr=channel.lineMean;
+    
+    methodStr='Mean';
+    %Check varargin for different value
+    if nargin >2
+        switch varargin{1}
+            case 'PlaneLineCorrection'
+                columnCorr=channel.linePlane;
+            case 'Median'
+                columnCorr=channel.lineMedian;
+                methodStr='Median';
+                channel.linePlane= getLineFit(channel.data,2,methodStr);
+        end
+    end
+    
+    %Correct data
+    channel.data=correctData(channel.data,columnCorr,header.scan_type);
+    
+    %Get residual slope
+    channel.lineResidualSlope= getLineFit(channel.data,1,methodStr);
+    
+    %Correct data
+    channel.data=correctData(channel.data,channel.lineResidualSlope,header.scan_type);
+    
+    %Compute STD
+    channel.lineStd = std(channel.data,0,2);
     
     %Process the data
     switch header.scan_type
-        case 'NFESEM'
-            [channel.data, channel.median ,channel.slope] = processNFESEM(channel.data);
+        case {'NFESEM','SEMPA'}
             %arbitrary units
             channel.Unit='';
-        case 'STM'
-            [channel.data, channel.median,channel.slope] = processSTM(channel.data);
+            
         case 'SEMPA'
             %reset nans
             channel.data(abs(channel.data)>2^30)=nan;
-            [channel.data, channel.median ,channel.slope] = processNFESEM(channel.data);
-            channel.Unit='';
-        otherwise
-            %Can't process data
     end
     
-    channel.std = std(channel.data,0,2);
-    
-   
     %turn the datas - done after the rest because scan was line by line
     channel.data = rotateData(channel.data,header.scan_angle);
 end
 
-function lineFit = getLineFit(data)
-    %Get median line curve 
-    crv = nanmedian(data,1);
-    x=1:size(crv,2);
+function lineFit = getLineFit(data,dim,varargin)
+    centerfun=@nanmean;
+    if nargin>2
+        if strcmp(varargin{1},'Median')
+            centerfun=@nanmedian;
+        end
+    end
+    %Get mean line curve
+    if dim ==1
+        crv = centerfun(data,1);
+        x=(1:size(crv,2));
+    elseif dim==2
+        crv = centerfun(data,2);
+        x=(1:size(crv,1))';
+    end
+    
+    
     %Fit polynomial of degree 1
     p = polyfit(x,crv,1);
     lineFit= p(1)*x+p(2);
 end
 
-function [data, lineMedian, slope] = processSTM(data)
-    %processSTM correct for the drift by substracting the median of each lines.
-    
-    %Save mean and STDev
-    lineMedian = nanmedian(data,2);
-    
-    %Remove median
-    data=(data-nanmedian(data,2)*ones([1 size(data,2)]));
-    
-    %Flatten plane
-    slope = getLineFit(data);
-    data = data - ones([size(data,1) 1])*slope;
-    
-end
-
-function [data, lineMedian , slope] = processNFESEM(data)
-    %processSTM corrects for the mean and std variation
-    
-    %Save mean 
-    lineMedian = nanmedian(data,2);
-    
-    %Remove mean by dividing (mathematical justification in thesis)
-    data=data./(lineMedian*ones([1 size(data,2)]));
-    
-    %Flatten plane
-    slope = getLineFit(data);
-    data = data./(ones([size(data,1) 1])*slope);
+function data = correctData(data,corr,scanType)
+    corrM=repmat(corr,size(data,1)/size(corr,1),size(data,2)/size(corr,2));
+    switch scanType
+        case {'NFESEM', 'SEMPA'}
+            data=data./corrM;
+        case 'STM'
+            data=data - corrM;
+    end
 end
 
 function data = orientateData(data,line_dir,scan_dir)

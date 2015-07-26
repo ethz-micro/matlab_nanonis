@@ -1,4 +1,4 @@
-function file = loadProcessedPar(fn)
+function file = loadProcessedPar(fn,varargin)
     
     %Read header file
     [file.header, chInfos] = readPar(fn);
@@ -8,7 +8,7 @@ function file = loadProcessedPar(fn)
     
     %There is 9 lines for each channel
     for i=numel(chInfos)/9:-1:1;
-        [file.channels(i), file.header.scan_file]=loadProcessParChannel(chInfos,i,path,file.header);
+        [file.channels(i), file.header.scan_file]=loadProcessParChannel(chInfos,i,path,file.header,varargin{:});
     end
     
     
@@ -132,7 +132,7 @@ function scan_type=scanType(chInfos)
     
 end
 
-function [channel, scan_file]=loadProcessParChannel(chInfos,i,path,header)
+function [channel, scan_file]=loadProcessParChannel(chInfos,i,path,header,varargin)
     %offset
     ofs=(i-1)*9;
     %Load infos
@@ -144,7 +144,7 @@ function [channel, scan_file]=loadProcessParChannel(chInfos,i,path,header)
     %load data
     channelTemp.data=loadParData([path fileName{1}],header.scan_pixels')*resolution;
     %process data
-    channel=load.processChannel(channelTemp,header);
+    channel=load.processChannel(channelTemp,header,varargin{:});
     
     scan_file=fileName{1};
 end

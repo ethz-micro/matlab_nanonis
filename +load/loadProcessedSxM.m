@@ -1,5 +1,14 @@
 function file=loadProcessedSxM(fn, varargin)
-
+    
+    
+    if nargin > 1  && (strcmp(varargin{1},'PlaneLineCorrection') || strcmp(varargin{1},'Median'))
+        corrStr=varargin{1};
+    else
+        corrStr='';
+    end
+    
+    
+    
     %read header
     file.header = load.loadsxm(fn);
     
@@ -15,7 +24,7 @@ function file=loadProcessedSxM(fn, varargin)
     file.header.scan_type = scanType(data_info);
     
     %Channels numbers to save
-    if nargin > 1
+    if nargin > 1 && strcmp(corrStr,'') % varargin already used
         nArray=varargin{1};
     else
         nArray=0:2*numel(data_info)-1;
@@ -24,7 +33,7 @@ function file=loadProcessedSxM(fn, varargin)
     %save channels
     for n=numel(nArray):-1:1;
         idx=nArray(n);
-        file.channels(n)=loadChannel(fn,idx,data_info);
+        file.channels(n)=loadChannel(fn,idx,data_info,corrStr);
     end
     
     
@@ -49,10 +58,10 @@ function data_info = readDataInfos(header)
     
 end
 
-function channel = loadChannel(fn,n,data_info)
+function channel = loadChannel(fn,n,data_info,varargin)
     
     idx=floor(n/2+1);%The index of data info is half the channel index (both direction saved)
-     
+    
     %Copy info on channels (duplicate as Direction = both)
     channel = data_info(idx);
     
@@ -94,7 +103,7 @@ function channel = loadChannel(fn,n,data_info)
         %Save data
         channel.data=data;
         
-        channel=load.processChannel(channel,header);
+        channel=load.processChannel(channel,header,varargin{:});
         
         
     else
@@ -105,8 +114,8 @@ end
 
 function scan_type = scanType(data_info)
     
-     %For STM scans, Z is the first data, for NFESEM, it is the current,
-     %For SEM, Video
+    %For STM scans, Z is the first data, for NFESEM, it is the current,
+    %For SEM, Video
     switch data_info(1).Name
         case 'Z'
             scan_type='STM';

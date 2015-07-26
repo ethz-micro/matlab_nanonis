@@ -16,6 +16,6 @@ files=dir(SuperFolder);
 for i=1:numel(files)
     file = files(i);
     if file.isdir
-        load.loadFolder([SuperFolder,'/', file.name]);
+        plot.folder2png([SuperFolder,'/', file.name]);
     end
 end

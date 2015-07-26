@@ -17,6 +17,7 @@ function [h, range] = plotData(data,name,unit,header,varargin)
     l1=[header.rec_date, ' - '];
     l1=[l1,getName(header)];%' - '];
     %Remove _
+    l1=regexprep(l1,'_','\\_');
     l2=regexprep(name,'_','\\_');
     l3=['Delta= ',num2str(delta,3),' ',unit];
     xlabel('x [m]');
