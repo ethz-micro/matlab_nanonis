@@ -1,7 +1,28 @@
 function channel = processChannel(channel,header,varargin)
+
     %Orientate the data
     channel.data = orientateData(channel.data,channel.Direction,header.scan_dir);
     
+    %Specific process
+    switch header.scan_type
+        case {'NFESEM','SEMPA'}
+            %The units become arbitrary
+            channel.Unit='';
+            
+            %If current & min<0 , take min as offset
+            if strcmp(channel.Name,'Current')
+                minI=min(channel.data(:));
+                if minI<0
+                    %Correct the offset
+                    channel.data=channel.data-minI;
+                end
+            end
+            
+        case 'SEMPA'
+            %reset nans
+            channel.data(abs(channel.data)>2^30)=nan;
+    end
+
     %Get various possibilities for line correction
     channel.lineMedian=nanmedian(channel.data,2);
     channel.lineMean=nanmean(channel.data,2);
@@ -34,17 +55,6 @@ function channel = processChannel(channel,header,varargin)
     
     %Compute STD
     channel.lineStd = std(channel.data,0,2);
-    
-    %Process the data
-    switch header.scan_type
-        case {'NFESEM','SEMPA'}
-            %arbitrary units
-            channel.Unit='';
-            
-        case 'SEMPA'
-            %reset nans
-            channel.data(abs(channel.data)>2^30)=nan;
-    end
     
     %turn the datas - done after the rest because scan was line by line
     channel.data = rotateData(channel.data,header.scan_angle);

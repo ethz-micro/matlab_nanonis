@@ -110,9 +110,9 @@ for i=1:numel(info)
         
         %figure(fig)
         file = files{j};
-        Ne=file.channels(3).median.*(file.header.scan_time(1)/file.header.scan_pixels(1));
+        Ne=file.channels(3).lineMean.*(file.header.scan_time(1)/file.header.scan_pixels(1));
         X=Ne.^-2;
-        Y=file.channels(3).std.^2-noiseSTD*X;
+        Y=file.channels(3).lineStd.^2-noiseSTD*X;
         M(j)=min(Y);
         if i==plotIdx
             plot(X,Y,'x','DisplayName',sprintf('Z=%d',info{i}.Z(j)));
@@ -121,7 +121,7 @@ for i=1:numel(info)
         
     end
     if i==plotIdx
-        xlabel('median^{-.5}')
+        xlabel('lineMean^{-.5}')
         ylabel('STD')
         legend(gca,'show')
         title(info{i}.name)
@@ -266,8 +266,8 @@ hold all;
 title('Standard deviation');
 plot(Z,STDFA,'x--','DisplayName','Forward, All')
 plot(Z,STDBA,'x--','DisplayName','Backward, All')
-plot(Z,STDFL,'x-','DisplayName','Forward, Median over lines')
-plot(Z,STDBL,'x-','DisplayName','Backward, Median over lines')
+plot(Z,STDFL,'x-','DisplayName','Forward, lineMean over lines')
+plot(Z,STDBL,'x-','DisplayName','Backward, lineMean over lines')
 legend(gca,'show')
 
 figure
@@ -275,8 +275,8 @@ hold all;
 title('Mean values')
 plot(Z,MFA,'x--','DisplayName','Forward, All')
 plot(Z,MBA,'x--','DisplayName','Backward, All')
-plot(Z,MFL,'x-','DisplayName','Forward, Median over lines')
-plot(Z,MBL,'x-','DisplayName','Backward, Median over lines')
+plot(Z,MFL,'x-','DisplayName','Forward, lineMean over lines')
+plot(Z,MBL,'x-','DisplayName','Backward, lineMean over lines')
 legend(gca,'show')
 figure
 hold all;

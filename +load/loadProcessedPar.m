@@ -143,6 +143,10 @@ function [channel, scan_file]=loadProcessParChannel(chInfos,i,path,header,vararg
     resolution=str2double(chInfos{ofs+6});
     %load data
     channelTemp.data=loadParData([path fileName{1}],header.scan_pixels')*resolution;
+    %correct name current
+    if strcmp(channelTemp.Name,'I')
+        channelTemp.Name='Current';
+    end
     %process data
     channel=load.processChannel(channelTemp,header,varargin{:});
     
