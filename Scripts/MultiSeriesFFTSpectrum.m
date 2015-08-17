@@ -85,7 +85,7 @@ info{k}.drift=3.5;
 
 
 
-%%
+%% Make all plots
 
 figR=figure;
 hold all
@@ -101,6 +101,7 @@ cutPrct=1.3;
 
 for k=1:numel(info)
     
+    %clear data from previus loop
     clear Nimg radial_average radius noise_fit NCoeff radial_signal signal_start sigal_error
     
     %Get files names
@@ -111,15 +112,11 @@ for k=1:numel(info)
     files =cellfun(@load.loadProcessedSxM,fns,'UniformOutput',false);
     
     for i=numel(files):-1:1
-        
-        % other infos
+      
         file = files{i};
-        
-        %Radial FFT
-        
+       
         %Get data
         [radial_average(i,:), radius(i,:), noise_fit(i,:),NCoeff(i,:)] =op.getRadialFFT(file.channels(3).data);
-        
         radial_signal(i,:)=radial_average(i,:)./noise_fit(i,:);
         
         %distance [m] to pixels
@@ -135,6 +132,8 @@ for k=1:numel(info)
             signal_start(i)=1./radius(i,rIdx);
             sigal_error(i)=abs(1./radius(i,rIdx)-1./radius(i,rIdx+1));
         end
+        
+        %get mean value of intensity
         Nimg(i)=mean(file.channels(3).lineMean);
         
     end
@@ -144,36 +143,39 @@ for k=1:numel(info)
     signal_start(badRes)=nan;
     sigal_error(badRes)=nan;
     
+    %Find highest peak
     radial_corr=radial_average-noise_fit;
     [~,I]=max(max(radial_corr));
 
-    
+    %plot signal intensity
     name = sprintf('%s f=%02.2f [1/nm]',info{k}.name,radius(1,I));
     figure(figA)
     plot(1./info{k}.Z,radial_corr(:,I),'x--','DisplayName',name);
     
+    %plot resolution
     name = sprintf('%s Drift:%02.1f',info{k}.name,info{k}.drift);
     figure(figR)
     errorbar(info{k}.Z,signal_start,sigal_error,'x','DisplayName',name)
     
+    %plot noise slope
     figure(figC1)
     plot(1./info{k}.Z,NCoeff(:,1),'x','DisplayName',name);
     
+    %plot noise intensity
     figure(figC2)
     plot(1./sqrt(Nimg),exp(NCoeff(:,2)),'x--','DisplayName',name);
     
 end
-%%
+% plot signal intensity
 figure(figA)
 xlabel('1/Z [1/nm]')
 ylabel('Amplitude [au]')
 set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
-%%
 
+%plot resolution
 figure(figR)
-
 xlabel('Z [nm]')
 ylabel('Wavelength [nm]')
 set(gca,'FontSize',20)
@@ -181,7 +183,7 @@ l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
 title('Resolution')
 
-%%
+%plot noise slope
 figure(figC1)
 xlabel('1/Z [1/nm]')
 ylabel('C1')
@@ -189,6 +191,7 @@ set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
     
+%plot noise intensity
 figure(figC2)
 xlabel('1/sqrt(Ne)')
 ylabel('Noise Amplitude')

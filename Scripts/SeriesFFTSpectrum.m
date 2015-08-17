@@ -33,11 +33,10 @@ Z=[14,10,8,6,4,2,0,-2,-4,-5,-6]+10;
 %}
 
 
-
-
-
+%Filp for plot purposes
 idx=flip(idx);
 Z=flip(Z);
+
 %% LOAD FILES
 ext='.sxm';
 fns=arrayfun(@(x) sprintf('%s%03d%s',fn,x,ext),idx,'UniformOutput',false);
@@ -45,25 +44,22 @@ files=cellfun(@load.loadProcessedSxM,fns,'UniformOutput',false);
 
 %% Loop files and get data
 
+%Choose the cut amplitude
 cutPrct=1.3;
 
 for i=numel(files):-1:1
-    
-    % other infos
     file = files{i};
-    
-    %Radial FFT
-    
+   
     %Get data
-    [radial_average(i,:), radius(i,:), noise_fit(i,:),NCoeff(i,:)] =op.getRadialFFT(file.channels(3).data);
-    
+    [radial_average(i,:), radius(i,:), noise_fit(i,:),NCoeff(i,:)] = ...
+        op.getRadialFFT(file.channels(3).data);
     radial_signal(i,:)=radial_average(i,:)./noise_fit(i,:);
     
     %distance [m] to pixels
     SpP=file.header.scan_range(1)/file.header.scan_pixels(1);
     radius(i,:)=radius(i,:)./SpP./1e9;% 1/px to 1/nm
     
-    %cut for resolution
+    %Find last point > cutPrct
     rIdx=find(radial_signal(i,:)>cutPrct,1,'last');
     if isempty(rIdx)
         signal_start(i)=nan;
@@ -83,7 +79,9 @@ for i=numel(files):-1:1
     STDImg(i)=std(file.channels(3).data(:));
     
 end
+
 STDImg=STDImg';
+
 %Number of electrons per pixel for the image
 Ne_Img=mean(Ne_line,2);
 
@@ -144,17 +142,8 @@ xlabel('1/Z [1/nm]')
 ylabel('Amplitude [au]')
 set(gca,'FontSize',20)
 
-%{
-%Plot corrected STD as a function of Z
-Y=STDImg.^2-MinSlopeLine./Ne_Img;
-plot(1./Z,sqrt(Y),'x--','DisplayName','Corrected')
-%Plot corrected median Var
-Y=MedianVarImg-MinSlopeLine./Ne_Img;
-plot(1./Z,sqrt(Y),'x--','DisplayName','Corrected median')
-%}
 
-
-%% hold all
+%% Coeff 1
 figure
 plot(1./Z,NCoeff(:,1),'x','DisplayName','C1');
 mean(NCoeff(:,1))
@@ -162,7 +151,7 @@ title('coeff1 vs 1/Z')
 xlabel('1/Z')
 ylabel('C1')
 set(gca,'FontSize',20)
-%%
+%% Noise Amplitude vs Ne
 figure
 plot(1./sqrt(Ne_Img),exp(NCoeff(:,2)),'x','DisplayName','C1');
 title('Noise Amplitude vs Ne')
@@ -170,29 +159,4 @@ xlabel('1/sqrt(Ne)')
 ylabel('Noise Amplitude')
 set(gca,'FontSize',20)
 
-%%
-%{
-close all
 
-for i=1:numel(files)
-    file=files{i};
-    figure
-    plot.plotFile(file,3);
-end
-
-%% %plot std of each line
-figure
-plot(1./Ne_line',STD_line.^2','x')
-hold on
-xlabel('1/Ne')
-ylabel('Variance')
-title('Variance of each line')
-
-%Plot min line
-plot(1./Ne_Img,MinSlopeLine./Ne_Img,'DisplayName','Minimum');
-set(gca,'FontSize',20)
-legend([arrayfun(@(x) sprintf('Z=%.2f',x),Z,'UniformOutput',false),'min'] ...
-    ,'FontSize',12,'Location','NorthEast')
-
-
-%}

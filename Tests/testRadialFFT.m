@@ -14,14 +14,9 @@ fn='Data/2013-12-05/image036.sxm';
 file=load.loadProcessedSxM(fn);%Z=3.5
 
 %Get data
-[radial_average, radius, noise_fit, noise_coeff] =op.getRadialFFT(file.channels(cn).data);
+[radial_average, radius, noise_fit, noise_coeff] =op.getRadialFFT(file.channels(cn).data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
 
-%distance [m] to pixels
-SpP=file.header.scan_range(1)/file.header.scan_pixels(1);
-
-%%
-
-r=radius/SpP/1e9;
+r=radius;
 figure
 loglog(r,radial_average,'x-')
 hold all
