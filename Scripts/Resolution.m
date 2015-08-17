@@ -8,7 +8,7 @@ fn='Data/2013-12-06/image';
 Z=[25,20,17,15,12,10,9,8,6,3,1,0,-1,-3,-5,-6,-7,-8,-9,-10,-11,-12,-12,-14,-15,-15]+21;
 %}
 
-%%{
+%{
 idx=36:48;
 fn='Data/Aram/image';
 Z=[25,20,18,15,12,11,10,9,8,7,6,5,4]-0.5;
@@ -25,6 +25,16 @@ idx=54:66;
 fn='Data/2013-12-04/image';
 Z=[20,18,15,12,10,9,8,7,6,5,4,3,2]+2;
 %}
+
+%%{
+idx=35:45;
+fn='Data/2013-12-05/image';
+Z=[14,10,8,6,4,2,0,-2,-4,-5,-6]+10;
+%}
+
+
+
+
 
 idx=flip(idx);
 Z=flip(Z);
@@ -124,10 +134,10 @@ radial_corr=radial_average-noise_fit;
 
 %% %Plot std as a function of Z
 figure
-plot(1./Z,STDImg.*sqrt(2),'x--','DisplayName','Image STD * sqrt(2)')
+plot(Z,STDImg.*sqrt(2),'x--','DisplayName','Image STD * sqrt(2)')
 hold all
 name = sprintf('Amplitude @ f=%.3g [1/nm]',radius(1,I));
-plot(1./Z,radial_corr(:,I),'x-','DisplayName',name);
+plot(Z,radial_corr(:,I),'x-','DisplayName',name);
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
 xlabel('1/Z [1/nm]')
@@ -154,18 +164,12 @@ ylabel('C1')
 set(gca,'FontSize',20)
 %%
 figure
-plot(1./Z,NCoeff(:,2),'x','DisplayName','C2');
-title('coeff2 vs 1/Z')
-xlabel('1/Z')
-ylabel('C2')
+plot(1./sqrt(Ne_Img),exp(NCoeff(:,2)),'x','DisplayName','C1');
+title('Noise Amplitude vs Ne')
+xlabel('1/sqrt(Ne)')
+ylabel('Noise Amplitude')
 set(gca,'FontSize',20)
-%%
-figure
-loglog(Ne_Img,exp(NCoeff(:,2)),'x','DisplayName','C1');
-title('exp(coeff2) vs Nimg')
-xlabel('Nimg')
-ylabel('exp(C2)')
-set(gca,'FontSize',20)
+
 %%
 %{
 close all

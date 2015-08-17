@@ -95,7 +95,6 @@ figC1=figure;
 hold all
 figC2=figure;
 hold all
-figEC2=figure;
 
 
 cutPrct=1.3;
@@ -161,12 +160,8 @@ for k=1:numel(info)
     plot(1./info{k}.Z,NCoeff(:,1),'x','DisplayName',name);
     
     figure(figC2)
-    plot(1./info{k}.Z,NCoeff(:,2),'x--','DisplayName',name);
+    plot(1./sqrt(Nimg),exp(NCoeff(:,2)),'x--','DisplayName',name);
     
-    figure(figEC2)
-    loglog(Nimg,exp(NCoeff(:,2)),'x--','DisplayName',name);
-    
-    hold all
 end
 %%
 figure(figA)
@@ -195,15 +190,9 @@ l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
     
 figure(figC2)
-xlabel('1/Z [1/nm]')
-ylabel('C2')
+xlabel('1/sqrt(Ne)')
+ylabel('Noise Amplitude')
 set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
 
-figure(figEC2)
-xlabel('NImg')
-ylabel('exp(C2)')
-set(gca,'FontSize',20)
-l=legend(gca,'show','Location','SouthWest');
-set(l,'FontSize',12)

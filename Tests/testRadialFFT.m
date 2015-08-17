@@ -1,15 +1,20 @@
 close all;
 clear all;
-fn='Data/Aram/image046.sxm';%36:48
+%fn='Data/Aram/image035.sxm';%36:48
+%cn=1;
+
+cn=3;
+%fn='Data/Aram/image046.sxm';%36:48
 %fn='Data/2013-12-04/image054.sxm';
 %fn='Data/2013-12-04/image054.sxm';
 %fn='Data/2013-12-06/image006.sxm';
 %fn='Data/Aram/image048.sxm';
 %fn='Data/2013-12-06/image047.sxm';
+fn='Data/2013-12-05/image036.sxm';
 file=load.loadProcessedSxM(fn);%Z=3.5
 
 %Get data
-[radial_average, radius, noise_fit, noise_coeff] =op.getRadialFFT(file.channels(3).data);
+[radial_average, radius, noise_fit, noise_coeff] =op.getRadialFFT(file.channels(cn).data);
 
 %distance [m] to pixels
 SpP=file.header.scan_range(1)/file.header.scan_pixels(1);
@@ -30,9 +35,9 @@ legend('Radial Spectrum','Fitted Noise','FontSize',12,'Location','NorthEast')
 
 %%
 figure
-loglog(radius,40*(radial_average-noise_fit)+1,'x-','DisplayName','40*(average-corr)+1')
+%loglog(radius,40*(radial_average-noise_fit)+1,'x-','DisplayName','40*(average-corr)+1')
 hold all
-loglog(radius,radial_average./noise_fit,'x-','DisplayName','signal/noise')
+loglog(radius,abs(radial_average./noise_fit),'x-','DisplayName','signal/noise')
 title('ratio vs substraction');
 xlabel('frequency [1/px]')
 ylabel('Amplitude [au]')
@@ -40,5 +45,5 @@ legend(gca,'show')
 
 %%
 figure
-plot.plotFile(file,3);
+plot.plotFile(file,cn);
 
