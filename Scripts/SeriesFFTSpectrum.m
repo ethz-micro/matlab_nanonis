@@ -1,6 +1,8 @@
 clear all;
 close all;
 
+chn=3;%1
+cutPrct=1.3;%1.6;
 %% FILES SERIES
 %{
 idx=23:48;
@@ -8,7 +10,7 @@ fn='Data/2013-12-06/image';
 Z=[25,20,17,15,12,10,9,8,6,3,1,0,-1,-3,-5,-6,-7,-8,-9,-10,-11,-12,-12,-14,-15,-15]+21;
 %}
 
-%{
+%%{
 idx=36:48;
 fn='Data/Aram/image';
 Z=[25,20,18,15,12,11,10,9,8,7,6,5,4]-0.5;
@@ -26,10 +28,10 @@ fn='Data/2013-12-04/image';
 Z=[20,18,15,12,10,9,8,7,6,5,4,3,2]+2;
 %}
 
-%%{
-idx=35:45;
+%{
+idx=47:64;
 fn='Data/2013-12-05/image';
-Z=[14,10,8,6,4,2,0,-2,-4,-5,-6]+10;
+Z=[25,20,17,14,12,10,8,6,4,2,1,0,-1,-2,-3,-4,-5,-6]+10;
 %}
 
 
@@ -42,17 +44,24 @@ ext='.sxm';
 fns=arrayfun(@(x) sprintf('%s%03d%s',fn,x,ext),idx,'UniformOutput',false);
 files=cellfun(@load.loadProcessedSxM,fns,'UniformOutput',false);
 
+%% Remove noise
+for i=1:numel(files)
+    if chn<3
+        files{i}.channels(chn).data=op.interpHighStd(files{i}.channels(chn).data);
+    end
+    files{i}.channels(chn).data=op.interpPeaks(files{i}.channels(chn).data);
+end
+
 %% Loop files and get data
 
 %Choose the cut amplitude
-cutPrct=1.3;
 
+%Z=Z(1:8);
 for i=numel(files):-1:1
     file = files{i};
-   
     %Get data
     [radial_average(i,:), radius(i,:), noise_fit(i,:),NCoeff(i,:)] = ...
-        op.getRadialFFT(file.channels(3).data);
+        op.getRadialFFT(file.channels(chn).data);
     radial_signal(i,:)=radial_average(i,:)./noise_fit(i,:);
     
     %distance [m] to pixels
@@ -70,13 +79,13 @@ for i=numel(files):-1:1
     end
     
     %Extract number of electrons (~ don't know voltage meaning)
-    Ne_line(i,:)=file.channels(3).lineMean.*(file.header.scan_time(1)/file.header.scan_pixels(1));
+    Ne_line(i,:)=file.channels(chn).lineMean.*(file.header.scan_time(1)/file.header.scan_pixels(1));
     
     %Extract Variance of each line
-    STD_line(i,:)=file.channels(3).lineStd;
+    STD_line(i,:)=file.channels(chn).lineStd;
     
     %Total image std
-    STDImg(i)=std(file.channels(3).data(:));
+    STDImg(i)=nanstd(file.channels(chn).data(:));
     
 end
 
@@ -132,10 +141,10 @@ radial_corr=radial_average-noise_fit;
 
 %% %Plot std as a function of Z
 figure
-plot(Z,STDImg.*sqrt(2),'x--','DisplayName','Image STD * sqrt(2)')
+plot(1./Z,STDImg.*sqrt(2),'x--','DisplayName','Image STD * sqrt(2)')
 hold all
 name = sprintf('Amplitude @ f=%.3g [1/nm]',radius(1,I));
-plot(Z,radial_corr(:,I),'x-','DisplayName',name);
+plot(1./Z,radial_corr(:,I),'x-','DisplayName',name);
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
 xlabel('1/Z [1/nm]')
@@ -159,4 +168,13 @@ xlabel('1/sqrt(Ne)')
 ylabel('Noise Amplitude')
 set(gca,'FontSize',20)
 
+%%
+figure
+plot.plotFile(files{8},chn)
+%{
+for i=numel(files):-1:1
+   figure
+   plot.plotFile(files{i},chn)
+end
+%}
 

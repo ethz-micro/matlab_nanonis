@@ -22,6 +22,7 @@ files=cellfun(@load.loadProcessedSxM,fns,'UniformOutput',false);
 figure
 %for i=1:numel(files)
 for i=[10,3];%13 3
+    files{i}.channels(3).data=op.interpPeaks(files{i}.channels(3).data);
     [radial_average_SEM, radius_SEM, noise_fit_SEM, noise_coeff_SEM] =op.getRadialFFT(files{i}.channels(3).data);
     loglog(radial_average_STM,radial_average_SEM,'x--','DisplayName',sprintf('Z= %.1fnm',Z(i)))
     hold all

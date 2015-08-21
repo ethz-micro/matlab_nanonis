@@ -1,6 +1,8 @@
 clear all;
 close all;
 
+chn=3;%1
+cutPrct=1.3;%1.6
 %Data sets
 %base='/Volumes/micro/STM_AFM/2013/';
 base='Data/';
@@ -95,14 +97,20 @@ figC1=figure;
 hold all
 figC2=figure;
 hold all
+figC2Z=figure;
+hold all
+figSTD=figure;
+hold all
+figC2ZN=figure;
+hold all
 
 
-cutPrct=1.3;
+
 
 for k=1:numel(info)
     
     %clear data from previus loop
-    clear Nimg radial_average radius noise_fit NCoeff radial_signal signal_start sigal_error
+    clear STDImg Nimg radial_average radius noise_fit NCoeff radial_signal signal_start sigal_error
     
     %Get files names
     ext='.sxm';
@@ -111,12 +119,20 @@ for k=1:numel(info)
     %Get data
     files =cellfun(@load.loadProcessedSxM,fns,'UniformOutput',false);
     
+    %% Remove noise
+    for i=1:numel(files)
+        if chn<3
+            files{i}.channels(chn).data=op.interpHighStd(files{i}.channels(chn).data);
+        end
+        files{i}.channels(chn).data=op.interpPeaks(files{i}.channels(chn).data);
+    end
+    
     for i=numel(files):-1:1
-      
+        
         file = files{i};
-       
+        
         %Get data
-        [radial_average(i,:), radius(i,:), noise_fit(i,:),NCoeff(i,:)] =op.getRadialFFT(file.channels(3).data);
+        [radial_average(i,:), radius(i,:), noise_fit(i,:),NCoeff(i,:)] =op.getRadialFFT(file.channels(chn).data);
         radial_signal(i,:)=radial_average(i,:)./noise_fit(i,:);
         
         %distance [m] to pixels
@@ -131,10 +147,14 @@ for k=1:numel(info)
         else
             signal_start(i)=1./radius(i,rIdx);
             sigal_error(i)=abs(1./radius(i,rIdx)-1./radius(i,rIdx+1));
+            %sigal_error(i)=nan;
         end
         
         %get mean value of intensity
-        Nimg(i)=mean(file.channels(3).lineMean);
+        Nimg(i)=mean(file.channels(chn).lineMean);
+        
+        %Total image std
+        STDImg(i)=nanstd(file.channels(chn).data(:));
         
     end
     
@@ -146,11 +166,11 @@ for k=1:numel(info)
     %Find highest peak
     radial_corr=radial_average-noise_fit;
     [~,I]=max(max(radial_corr));
-
+    
     %plot signal intensity
     name = sprintf('%s f=%02.2f [1/nm]',info{k}.name,radius(1,I));
     figure(figA)
-    plot(1./info{k}.Z,radial_corr(:,I),'x--','DisplayName',name);
+    plot(1./(info{k}.Z.^2),radial_corr(:,I),'x--','DisplayName',name);
     
     %plot resolution
     name = sprintf('%s Drift:%02.1f',info{k}.name,info{k}.drift);
@@ -164,6 +184,16 @@ for k=1:numel(info)
     %plot noise intensity
     figure(figC2)
     plot(1./sqrt(Nimg),exp(NCoeff(:,2)),'x--','DisplayName',name);
+    
+    figure(figC2Z)
+    plot(1./info{k}.Z,NCoeff(:,2),'x--','DisplayName',name);
+    
+    figure(figC2ZN)
+    plot(1./info{k}.Z,log(exp(NCoeff(:,2)).*sqrt(Nimg)'),'x--','DisplayName',name);
+    
+    %plot STD
+    figure(figSTD)
+    plot(1./info{k}.Z,STDImg,'x--','DisplayName',name);
     
 end
 % plot signal intensity
@@ -190,11 +220,38 @@ ylabel('C1')
 set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
-    
+%%
 %plot noise intensity
 figure(figC2)
 xlabel('1/sqrt(Ne)')
 ylabel('Noise Amplitude')
+set(gca,'FontSize',20)
+l=legend(gca,'show','Location','NorthWest');
+set(l,'FontSize',12)
+
+figure(figC2Z)
+%xlabel('1/sqrt(Ne)')
+%ylabel('Noise Amplitude')
+xlabel('1/Z [1/nm]')
+ylabel('log(Noise Amplitude)')
+set(gca,'FontSize',20)
+l=legend(gca,'show','Location','NorthWest');
+set(l,'FontSize',12)
+
+%%
+figure(figC2ZN)
+%xlabel('1/sqrt(Ne)')
+%ylabel('Noise Amplitude')
+xlabel('1/Z [1/nm]')
+ylabel('log(Normalized Noise Amplitude)')
+set(gca,'FontSize',20)
+l=legend(gca,'show','Location','NorthWest');
+set(l,'FontSize',12)
+
+% plot signal intensity
+figure(figSTD)
+xlabel('1/Z [1/nm]')
+ylabel('STD [au]')
 set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)

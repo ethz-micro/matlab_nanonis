@@ -6,14 +6,18 @@ close all;
 
 %image name
 
+%%{
 fn='Data/March/2015-03-05/image004.sxm';%DIST = 11
 ttl='2015-03-05/image004.sxm';
-
+%}
+%%{
 fn='Data/March/2015-03-04/image006.sxm';%DIST =0
 ttl='2015-03-04/image006.sxm';
-
-%fn='Data/March/2015-03-04/image005.sxm';%DIST = 11
-%ttl='2015-03-04/image005.sxm';
+%}
+%%{
+fn='Data/March/2015-03-04/image005.sxm';%DIST = 11
+ttl='2015-03-04/image005.sxm';
+%}
 
 
 %Load 2,4,6,8 (current + forward channel 0 1 2 3)
@@ -57,13 +61,19 @@ Y=file.channels(1).lineStd.^2;
 Y(Y>prctile(Y,90))=nan;
 
 %Plot
-figure     
+%figure   
+hold all
 plot(X,Y,'x')
 xlabel('1/Ne')
 ylabel('Variance')
 set(gca,'FontSize',20)
-title(ttl)
+title(ttl,'FontSize',20)
 %legend('Var[Line]','location','southeast')
+
+%%
+title('','FontSize',15)
+
+legend('2015-03-05/image004.sxm - Z = 11nm','2015-03-04/image006.sxm - Z = 0nm', '2015-03-04/image005.sxm - Z = 11nm');
 
 
 

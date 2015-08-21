@@ -1,9 +1,10 @@
 function [radial_average, radius, noise_fit, noise_coeff] =getRadialFFT(data,varargin)
     %Gives the radial amplitude for a given pixel frequency and fit sa
     %noise
-    
+    data=data-nanmean(data(:));
+    data(isnan(data))=0;
     %Get fourrier transform
-    img=abs(fft2(data-mean(data(:))));
+    img=abs(fft2(data));
     
     %Reorder fourrier data
     sizeSq = floor(size(img)/2);
@@ -53,7 +54,7 @@ function [radial_average, radius, noise_fit, noise_coeff] =getRadialFFT(data,var
     noise_coeff2=polyfit(X,Y,1);
     
     %test 7.5 px
-    limR=1/10;
+    limR=1/20;
     X=log(radius(radius>limR));
     Y=log(radial_average(radius>limR));
     noise_coeff3=polyfit(X,Y,1);

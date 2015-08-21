@@ -44,7 +44,7 @@ end
 
 function range = rangeNFESEM(data)
     %Plot SEM data
-    
+    data=op.nanHighStd(data);
     %Range = 2*std of data
     range = [-2 2]*nanstd(data(:))+nanmean(data(:));
     %range=[.7 1.3];
