@@ -1,16 +1,16 @@
 clear all;
 close all;
 
-chn=3;%1
-cutPrct=1.3;%1.6;
+chn=1;%1
+cutPrct=1;%1.6;
 %% FILES SERIES
-%{
+%%{
 idx=23:48;
 fn='Data/2013-12-06/image';
 Z=[25,20,17,15,12,10,9,8,6,3,1,0,-1,-3,-5,-6,-7,-8,-9,-10,-11,-12,-12,-14,-15,-15]+21;
 %}
 
-%%{
+%{
 idx=36:48;
 fn='Data/Aram/image';
 Z=[25,20,18,15,12,11,10,9,8,7,6,5,4]-0.5;
@@ -66,10 +66,12 @@ for i=numel(files):-1:1
     
     %distance [m] to pixels
     SpP=file.header.scan_range(1)/file.header.scan_pixels(1);
+    radiusPx=radius(i,:);
     radius(i,:)=radius(i,:)./SpP./1e9;% 1/px to 1/nm
     
     %Find last point > cutPrct
     rIdx=find(radial_signal(i,:)>cutPrct,1,'last');
+    %rIdx=find(radial_signal(i,:)<1.2,1,'first');
     if isempty(rIdx)
         signal_start(i)=nan;
         sigal_error(i)=nan;
@@ -87,9 +89,14 @@ for i=numel(files):-1:1
     %Total image std
     STDImg(i)=nanstd(file.channels(chn).data(:));
     
+    data=file.channels(chn).data;
+    data=op.filterData(data,1./radiusPx(rIdx));
+    STDFiltered(i)=nanstd(data(:));
+    
 end
 
 STDImg=STDImg';
+STDFiltered=STDFiltered';
 
 %Number of electrons per pixel for the image
 Ne_Img=mean(Ne_line,2);
@@ -118,11 +125,13 @@ legend(arrayfun(@(x) sprintf('Z=%.2f',x),Z,'UniformOutput',false)...
 %% Signal To Noise
 figure('Name','Signal to Noise Ratio');
 loglog(1./radius',radial_signal','x--');
+hold all
+loglog(1./radius(1,:),0./radius(1,:)+cutPrct)
 xlabel('Wavelength [nm]')
 ylabel('Amplitude [au]')
 set(gca,'FontSize',20)
 title('Signal to Noise Ratio');
-legend(arrayfun(@(x) sprintf('Z=%.2f',x),Z,'UniformOutput',false) ...
+legend([arrayfun(@(x) sprintf('Z=%.2f',x),Z,'UniformOutput',false), 'Threshold'] ...
     ,'FontSize',12,'Location','NorthWest')
 
 %% Plot Resolution
@@ -145,6 +154,7 @@ plot(1./Z,STDImg.*sqrt(2),'x--','DisplayName','Image STD * sqrt(2)')
 hold all
 name = sprintf('Amplitude @ f=%.3g [1/nm]',radius(1,I));
 plot(1./Z,radial_corr(:,I),'x-','DisplayName',name);
+plot(1./Z,STDFiltered.*sqrt(2),'x--','DisplayName','filtered STD * sqrt(2)')
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
 xlabel('1/Z [1/nm]')
@@ -154,10 +164,10 @@ set(gca,'FontSize',20)
 
 %% Coeff 1
 figure
-plot(1./Z,NCoeff(:,1),'x','DisplayName','C1');
+plot(Z,NCoeff(:,1),'x','DisplayName','C1');
 mean(NCoeff(:,1))
-title('coeff1 vs 1/Z')
-xlabel('1/Z')
+title('coeff1 vs Z')
+xlabel('Z')
 ylabel('C1')
 set(gca,'FontSize',20)
 %% Noise Amplitude vs Ne

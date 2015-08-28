@@ -141,13 +141,19 @@ for k=1:numel(info)
         
         %cut for resolution
         rIdx=find(radial_signal(i,:)>cutPrct,1,'last');
+        %rIdx=find(radial_signal(i,:)<1,1,'first');
         if isempty(rIdx)
             signal_start(i)=nan;
             sigal_error(i)=nan;
         else
-            signal_start(i)=1./radius(i,rIdx);
-            sigal_error(i)=abs(1./radius(i,rIdx)-1./radius(i,rIdx+1));
-            %sigal_error(i)=nan;
+            if rIdx > 1
+                %rIdx=rIdx-1;
+                signal_start(i)=1./radius(i,rIdx);
+                sigal_error(i)=abs(1./radius(i,rIdx)-1./radius(i,rIdx+1));
+            else
+                signal_start(i)=nan;
+                sigal_error(i)=nan;
+            end
         end
         
         %get mean value of intensity
@@ -157,11 +163,12 @@ for k=1:numel(info)
         STDImg(i)=nanstd(file.channels(chn).data(:));
         
     end
-    
+    %%{
     %remove resolution with low signal to noise intensity
     badRes=max(radial_signal,[],2)./cutPrct<2;% cut at least at half
     signal_start(badRes)=nan;
     sigal_error(badRes)=nan;
+    %}
     
     %Find highest peak
     radial_corr=radial_average-noise_fit;
@@ -170,7 +177,7 @@ for k=1:numel(info)
     %plot signal intensity
     name = sprintf('%s f=%02.2f [1/nm]',info{k}.name,radius(1,I));
     figure(figA)
-    plot(1./(info{k}.Z.^2),radial_corr(:,I),'x--','DisplayName',name);
+    plot(1./info{k}.Z,radial_corr(:,I),'x--','DisplayName',name);
     
     %plot resolution
     name = sprintf('%s Drift:%02.1f',info{k}.name,info{k}.drift);

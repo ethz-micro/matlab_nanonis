@@ -1,16 +1,19 @@
-%close all;
+close all;
 clear all;
 %fn='Data/Aram/image035.sxm';%36:48
-cn=1;%1 is current, 3 intensity
+cn=3;%1 is current, 3 intensity
 %cn=3;
-%fn='Data/Aram/image047.sxm';%36:48
+%fn='Data/Aram/image046.sxm';%36:48
 %fn='Data/2013-12-04/image054.sxm';
 %fn='Data/2013-12-04/image054.sxm';
 %fn='Data/2013-12-06/image006.sxm';
 %fn='Data/Aram/image048.sxm';
 %fn='Data/2013-12-06/image047.sxm';
 %fn='Data/2013-12-05/image036.sxm';
-fn='Data/2013-12-05/image057.sxm';
+%fn='Data/2013-12-05/image057.sxm';
+%fn='Data/2013-12-05/image060.sxm';
+%fn='Data/2013-12-06/image028.sxm';
+fn='Data/2013-12-06/image009.sxm';
 file=load.loadProcessedSxM(fn);%Z=3.5
 
 %Get data
@@ -48,21 +51,42 @@ figure
 loglog(r,radial_average,'x-')
 hold all
 
-file.channels(cn).data=op.interpHighStd(file.channels(cn).data);
+data=op.interpHighStd(file.channels(cn).data);
 %Get data
-[radial_average, radius, noise_fit, noise_coeff] =op.getRadialFFT(file.channels(cn).data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
+[radial_average, radius, noise_fit, noise_coeff] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
 loglog(r,radial_average,'x-')
 
-file.channels(cn).data=op.interpPeaks(file.channels(cn).data);
+data=op.interpPeaks(file.channels(cn).data);
 
 %Get data
-[radial_average, radius, noise_fit, noise_coeff] =op.getRadialFFT(file.channels(cn).data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
+[radial_average, radius, noise_fit, noise_coeff] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
 loglog(r,radial_average,'x-')
 
-legend('Base','Interpolated')
+data=op.interpPeaks(op.interpHighStd(file.channels(cn).data));
+
+%Get data
+[radial_average, radius, noise_fit, noise_coeff] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
+loglog(r,radial_average,'x-')
+loglog(r,noise_fit,'-')
+
+legend('Base','Interpolated lines', 'interpolated peaks')
 xlabel('frequency [1/nm]')
 ylabel('Amplitude [au]')
 set(gca,'FontSize',20)
+
+figure
+loglog(1./r,radial_average,'x-')
+hold all
+loglog(1./r,noise_fit,'-')
+
+legend('Radial Spectrum', 'Fitted Noise')
+xlabel('wavelength [nm]')
+ylabel('Amplitude [au]')
+set(gca,'FontSize',20)
+
+
+
+file.channels(cn).data=data;
 
 figure
 plot.plotFile(file,cn);

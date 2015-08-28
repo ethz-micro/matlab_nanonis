@@ -47,7 +47,7 @@ function [filtered, removed] = filterData(data,pixSize,varargin)
     %Compute removed part
     redFTrans = complex(zeros(size(fTrans)));
     redFTrans(~indx)=fTrans(~indx);
-    removed=real(ifft2(redFTrans))+MEDIAN;
+    removed=real(ifft2(redFTrans));
     
     
     
