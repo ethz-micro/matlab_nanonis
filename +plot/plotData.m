@@ -20,10 +20,19 @@ function [h, range] = plotData(data,name,unit,header,varargin)
     l1=regexprep(l1,'_','\\_');
     l2=regexprep(name,'_','\\_');
     l3=['Delta= ',num2str(delta,3),' ',unit];
-    xlabel('x [m]');
-    ylabel('y [m]');
     set(gca,'FontSize',20);
-    title({l1;l2;l3},'FontSize',12);
+    xlabel('x [nm]');
+    ylabel('y [nm]');
+    mkttl=true;
+    if nargin>6
+        if strcmp(varargin{3},'NoTitle')
+            mkttl=false;
+        end
+    end
+    if mkttl    
+        title({l1;l2;l3},'FontSize',12);
+    end
+    set(gca,'OuterPosition',[0,0,1,1])
 end
 
 function p=plotSxm(data,header,range,varargin)
@@ -36,9 +45,14 @@ function p=plotSxm(data,header,range,varargin)
         xoffset=varargin{1};
         yoffset=varargin{2};
     end
-    
-    p = imagesc([0 header.scan_range(1)]+xoffset,[0 header.scan_range(2)]+yoffset,data,range);
+    XScale=[0 header.scan_range(1)]+xoffset;
+    YScale=[0 header.scan_range(2)]+yoffset;
+    XScale=XScale*1e9;
+    YScale=YScale*1e9;
+    p = imagesc(XScale,YScale,data,range);
     axis image;
+    %To export image correctly
+    set(gcf,'Position',[100 100 512 512],'PaperSize',[10,10],'PaperPosition',[0,0,10,10]);
     
 end
 
@@ -61,8 +75,8 @@ function range = rangeSTM(data)
         stdData=0;
     end
     
-    %Range is 3 stdev
-    range = [-1 1]*3*stdData+nanmean(data(:));
+    %Range is 2 stdev
+    range = [-1 1]*2*stdData+nanmean(data(:));
 end
 
 function s=getName(header)

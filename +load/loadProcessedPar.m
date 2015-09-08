@@ -6,11 +6,19 @@ function file = loadProcessedPar(fn,varargin)
     %Get path to open corresponding data file
     path = getPath(fn);
     
+    scanup=false;
+    if strcmp(file.header.scan_dir,'up')
+        scanup=true;
+        file.header.scan_dir='down';%already switched
+    end
     %There is 9 lines for each channel
     for i=numel(chInfos)/9:-1:1;
         [file.channels(i), file.header.scan_file]=loadProcessParChannel(chInfos,i,path,file.header,varargin{:});
     end
     
+    if scanup
+        file.header.scan_dir='up';
+    end
     
 end
 

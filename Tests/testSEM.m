@@ -48,7 +48,9 @@ title(['std channel 0']);
 
 %plot image
 figure
-[~, range] = plot.plotFile(file,2);
+[h, range] = plot.plotFile(file,2,0,0,'NoTitle');
+set(gcf,'PaperPositionMode','auto')
+print -depsc -loose BarPlot
 %%
 
 %plot histogram

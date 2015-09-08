@@ -1,8 +1,7 @@
 clear all;
 close all;
 
-chn=3;%1
-cutPrct=1.3;%1.6
+chn=1;%1
 %Data sets
 %base='/Volumes/micro/STM_AFM/2013/';
 base='Data/';
@@ -28,12 +27,12 @@ info{k}.drift=2;
 %400
 k=k+1;
 info{k}.name='400-5.12-1';
-info{k}.idx=35:45;
+info{k}.idx=[35:39,41:45];
 info{k}.fn=[base,'2013-12-05/image'];
-info{k}.Z=[14,10,8,6,4,2,0,-2,-4,-5,-6]+10;
+info{k}.Z=[14,10,8,6,4,0,-2,-4,-5,-6]+10;
 info{k}.drift=10;
 
-
+%%{
 %400
 k=k+1;
 info{k}.name='400-5.12-2';
@@ -41,6 +40,7 @@ info{k}.idx=47:64;
 info{k}.fn=[base,'2013-12-05/image'];
 info{k}.Z=[25,20,17,14,12,10,8,6,4,2,1,0,-1,-2,-3,-4,-5,-6]+10;
 info{k}.drift=10;
+%}
 
 %300
 k=k+1;
@@ -50,7 +50,7 @@ info{k}.fn=[base,'2013-12-06/image'];
 info{k}.Z=[25,20,15,12,10,8,6,6,4,3,2]+2;
 info{k}.drift=2;
 
-
+%%{
 %300
 k=k+1;
 info{k}.name='300-6.12-2';
@@ -58,7 +58,7 @@ info{k}.idx=23:48;
 info{k}.fn=[base,'2013-12-06/image'];
 info{k}.Z=[25,20,17,15,12,10,9,8,6,3,1,0,-1,-3,-5,-6,-7,-8,-9,-10,-11,-12,-12,-14,-15,-15]+21;
 info{k}.drift=21;
-
+%}
 
 %300
 k=k+1;
@@ -110,7 +110,7 @@ hold all
 for k=1:numel(info)
     
     %clear data from previus loop
-    clear STDImg Nimg radial_average radius noise_fit NCoeff radial_signal signal_start sigal_error
+    clear STDImg Nimg radial_average radius noise_fit noise_coeff radial_signal signal_start signal_error
     
     %Get files names
     ext='.sxm';
@@ -132,29 +132,12 @@ for k=1:numel(info)
         file = files{i};
         
         %Get data
-        [radial_average(i,:), radius(i,:), noise_fit(i,:),NCoeff(i,:)] =op.getRadialFFT(file.channels(chn).data);
-        radial_signal(i,:)=radial_average(i,:)./noise_fit(i,:);
+        [radius(i,:),radial_average(i,:)] = ...
+            op.getRadialFFT(file.channels(chn).data,...
+            file.header.scan_pixels(1)./file.header.scan_range(1)./1e9);
         
-        %distance [m] to pixels
-        SpP=file.header.scan_range(1)/file.header.scan_pixels(1);
-        radius(i,:)=radius(i,:)./SpP./1e9;% 1/px to 1/nm
-        
-        %cut for resolution
-        rIdx=find(radial_signal(i,:)>cutPrct,1,'last');
-        %rIdx=find(radial_signal(i,:)<1,1,'first');
-        if isempty(rIdx)
-            signal_start(i)=nan;
-            sigal_error(i)=nan;
-        else
-            if rIdx > 1
-                %rIdx=rIdx-1;
-                signal_start(i)=1./radius(i,rIdx);
-                sigal_error(i)=abs(1./radius(i,rIdx)-1./radius(i,rIdx+1));
-            else
-                signal_start(i)=nan;
-                sigal_error(i)=nan;
-            end
-        end
+        %Get noise
+        [noise_fit(i,:),signal_start(i),signal_error(i), noise_coeff(i,:)] =op.getRadialNoise(radius(i,:), radial_average(i,:));
         
         %get mean value of intensity
         Nimg(i)=mean(file.channels(chn).lineMean);
@@ -163,16 +146,18 @@ for k=1:numel(info)
         STDImg(i)=nanstd(file.channels(chn).data(:));
         
     end
-    %%{
+    %{
     %remove resolution with low signal to noise intensity
-    badRes=max(radial_signal,[],2)./cutPrct<2;% cut at least at half
+    radial_signal=radial_average./noise_fit;
+    badRes=max(radial_signal,[],2)<2;% cut at least at half
     signal_start(badRes)=nan;
-    sigal_error(badRes)=nan;
+    signal_error(badRes)=nan;
     %}
     
     %Find highest peak
     radial_corr=radial_average-noise_fit;
     [~,I]=max(max(radial_corr));
+    I=6;
     
     %plot signal intensity
     name = sprintf('%s f=%02.2f [1/nm]',info{k}.name,radius(1,I));
@@ -182,21 +167,22 @@ for k=1:numel(info)
     %plot resolution
     name = sprintf('%s Drift:%02.1f',info{k}.name,info{k}.drift);
     figure(figR)
-    errorbar(info{k}.Z,signal_start,sigal_error,'x','DisplayName',name)
+    errorbar(info{k}.Z,signal_start,signal_error,'x','DisplayName',name)
+    
     
     %plot noise slope
     figure(figC1)
-    plot(1./info{k}.Z,NCoeff(:,1),'x','DisplayName',name);
+    plot(1./info{k}.Z,noise_coeff(:,1),'x','DisplayName',name);
     
     %plot noise intensity
     figure(figC2)
-    plot(1./sqrt(Nimg),exp(NCoeff(:,2)),'x--','DisplayName',name);
+    plot(1./sqrt(Nimg),exp(noise_coeff(:,2)),'x--','DisplayName',name);
     
     figure(figC2Z)
-    plot(1./info{k}.Z,NCoeff(:,2),'x--','DisplayName',name);
+    plot(1./info{k}.Z,noise_coeff(:,2),'x--','DisplayName',name);
     
     figure(figC2ZN)
-    plot(1./info{k}.Z,log(exp(NCoeff(:,2)).*sqrt(Nimg)'),'x--','DisplayName',name);
+    plot(1./info{k}.Z,log(exp(noise_coeff(:,2)).*sqrt(Nimg)'),'x--','DisplayName',name);
     
     %plot STD
     figure(figSTD)
@@ -205,24 +191,24 @@ for k=1:numel(info)
 end
 % plot signal intensity
 figure(figA)
-xlabel('1/Z [1/nm]')
-ylabel('Amplitude [au]')
+xlabel('1/d [1/nm]')
+ylabel('amplitude')
 set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
-
+%%
 %plot resolution
 figure(figR)
-xlabel('Z [nm]')
-ylabel('Wavelength [nm]')
+xlabel('d [nm]')
+ylabel('\Delta [nm]')
 set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
-title('Resolution')
-
+%title('Resolution')
+%%
 %plot noise slope
 figure(figC1)
-xlabel('1/Z [1/nm]')
+xlabel('1/d [1/nm]')
 ylabel('C1')
 set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');

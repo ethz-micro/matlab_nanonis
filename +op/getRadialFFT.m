@@ -1,4 +1,4 @@
-function [radial_average, radius, noise_fit, noise_coeff] =getRadialFFT(data,varargin)
+function [radius, radial_average] =getRadialFFT(data,varargin)
     %Gives the radial amplitude for a given pixel frequency and fit sa
     %noise
     data=data-nanmean(data(:));
@@ -38,37 +38,6 @@ function [radial_average, radius, noise_fit, noise_coeff] =getRadialFFT(data,var
     %rescale radius and radial_average
     radius=radius./img_size;
     radial_average=(radial_average./img_size).*(2*pi*radius);
-    
-    %radial_average is composed of the noise (x^a*b) and the signal
-    %We arbitrarely set 5px as the limit where S=0 (or 7.5, 10)
-    % test 5 px
-    limR=1/5;
-    X=log(radius(radius>limR));
-    Y=log(radial_average(radius>limR));
-    noise_coeff=polyfit(X,Y,1);
-    
-    %test 10 px
-    limR=1/10;
-    X=log(radius(radius>limR));
-    Y=log(radial_average(radius>limR));
-    noise_coeff2=polyfit(X,Y,1);
-    
-    %test 7.5 px
-    limR=1/20;
-    X=log(radius(radius>limR));
-    Y=log(radial_average(radius>limR));
-    noise_coeff3=polyfit(X,Y,1);
-    
-    %Choose smallest slope
-    if (abs(noise_coeff2(1))>abs(noise_coeff(1)))
-        noise_coeff=noise_coeff2;
-    end
-    if (abs(noise_coeff3(1))>abs(noise_coeff(1)))
-        noise_coeff=noise_coeff2;
-    end
-    
-    %Calculate noise_fit
-    noise_fit=radius.^(noise_coeff(1)).*exp(noise_coeff(2));
     
     if nargin >1
        pixPerUnit=varargin{1};

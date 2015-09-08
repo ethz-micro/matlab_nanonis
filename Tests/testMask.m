@@ -53,8 +53,8 @@ plot.plotChannel(channel,file6.header);
 figure
 plot.plotChannel(channel,file6.header);
 [xrange,yrange] = op.getRange(file6.header);
-mask.applyMask(maskUp,xrange,yrange,[1,0,0], .2)
-mask.applyMask(maskDown,xrange,yrange,[0,0,0], .2)
+mask.applyMask(edge(maskUp),xrange,yrange)
+mask.applyMask(edge(maskDown),xrange,yrange,[1,0,0])
 
 
 
