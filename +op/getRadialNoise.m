@@ -39,6 +39,8 @@ function [noise_fit,signal_start,signal_error, noise_coeff] =getRadialNoise(radi
 end
 
 function [noise_fit, noise_coeff,signal_start,signal_error, signal_idx] =getSingleNoise(radius, radial_average,last_point)
+    sigNbr=1+3; %need two points to detect signal
+    
     %loop while old cut != new cut
     %find noise
     %find cut
@@ -51,7 +53,7 @@ function [noise_fit, noise_coeff,signal_start,signal_error, signal_idx] =getSing
         old_sign=sign(signal_idx-old_signal_idx);
         old_signal_idx=signal_idx;
         [signal_idx,noise_fit, noise_coeff]=getNoiseCut(radius, radial_average,signal_idx,last_point);
-       % loglog(radius,radial_average)
+        %loglog(radius,radial_average)
         %hold on
         %loglog(radius,noise_fit)
         %pause
@@ -66,7 +68,7 @@ function [noise_fit, noise_coeff,signal_start,signal_error, signal_idx] =getSing
         if signal_idx == 1
             %separate by finding first >1 and expect <5 points for no
             %signal
-            if find(radial_average./noise_fit>1,1,'first') < 4;
+            if find(radial_average./noise_fit>1,1,'first') < sigNbr;
                 signal_idx=2;
                 
             end

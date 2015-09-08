@@ -1,18 +1,18 @@
 close all;
 clear all;
 %fn='Data/Aram/image035.sxm';%36:48
-cn=1;%1 is current, 3 intensity
+cn=3;%1 is current, 3 intensity
 %cn=3;
 %fn='Data/Aram/image046.sxm';%36:48
 %fn='Data/2013-12-04/image061.sxm';
 %fn='Data/2013-12-04/image054.sxm';
 %fn='Data/2013-12-06/image006.sxm';
-%fn='Data/Aram/image048.sxm';
+fn='Data/Aram/image041.sxm';
 %fn='Data/2013-12-06/image047.sxm';
 %fn='Data/2013-12-05/image036.sxm';
 %fn='Data/2013-12-05/image051.sxm';
 %fn='Data/2013-12-05/image060.sxm';
-fn='Data/2013-12-06/image028.sxm';
+%fn='Data/2013-12-06/image028.sxm';
 %fn='Data/2013-12-06/image029.sxm';%29-32
 %fn='Data/2013-12-05/image040.sxm';
 
@@ -28,8 +28,8 @@ hold all
 %loglog(radius(radius>limR),radial_amplitude(radius>limR),'x-')
 loglog(1./radius,noise_fit)
 %title('4.12.13 - image 46','FontSize',12)
-xlabel('wavelength [nm]')
-ylabel('Amplitude [unitless]')
+xlabel('\lambda [nm]')
+ylabel('amplitude')
 set(gca,'FontSize',20)
 legend('Radial Spectrum','Fitted Noise','2nd noise','FontSize',12,'Location','NorthEast')
 
@@ -42,8 +42,8 @@ figure
 %hold all
 loglog(1./radius,radial_average./noise_fit,'x-','DisplayName','signal/noise')
 %title('ratio vs substraction');
-xlabel('wavelength [nm]')
-ylabel('Amplitude [au]')
+xlabel('\lambda [nm]')
+ylabel('amplitude')
 legend(gca,'show')
 
 %%

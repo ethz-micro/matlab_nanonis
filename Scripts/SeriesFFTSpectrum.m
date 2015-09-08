@@ -116,11 +116,11 @@ signal_error(badRes)=nan;
 %% Radial Spectrum
 figure('Name','Radial Spectrum');
 loglog(1./radius',radial_average','x--')
-xlabel('wavelength [nm]')
-ylabel('amplitude [au]')
+xlabel('\lambda [nm]')
+ylabel('amplitude')
 set(gca,'FontSize',20)
 title('Radial Spectrum');
-legend(arrayfun(@(x) sprintf('Z=%.2f',x),Z,'UniformOutput',false)...
+legend(arrayfun(@(x) sprintf('d=%.2f',x),Z,'UniformOutput',false)...
     ,'FontSize',12,'Location','NorthEast')
 
 %% Signal To Noise
@@ -128,11 +128,11 @@ figure('Name','Signal to Noise Ratio');
 loglog(1./radius',radial_signal','x--');
 hold all
 loglog(1./radius(1,:),0./radius(1,:)+1)
-xlabel('Wavelength [nm]')
-ylabel('Amplitude [au]')
+xlabel('\lambda [nm]')
+ylabel('amplitude')
 set(gca,'FontSize',20)
 title('Signal to Noise Ratio');
-legend([arrayfun(@(x) sprintf('Z=%.2f',x),Z,'UniformOutput',false), 'Threshold'] ...
+legend([arrayfun(@(x) sprintf('d=%.2f',x),Z,'UniformOutput',false), 'amp=1'] ...
     ,'FontSize',12,'Location','NorthWest')
 
 %% Plot Resolution
