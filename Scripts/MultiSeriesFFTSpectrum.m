@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-chn=1;%1
+chn=3;%1
 %Data sets
 %base='/Volumes/micro/STM_AFM/2013/';
 base='Data/';
@@ -137,7 +137,7 @@ for k=1:numel(info)
             file.header.scan_pixels(1)./file.header.scan_range(1)./1e9);
         
         %Get noise
-        [noise_fit(i,:),signal_start(i),signal_error(i), noise_coeff(i,:)] =op.getRadialNoise(radius(i,:), radial_average(i,:));
+        [noise_fit(i,:),signal_start(i),signal_error(i,:), noise_coeff(i,:)] =op.getRadialNoise(radius(i,:), radial_average(i,:));
         
         %get mean value of intensity
         Nimg(i)=mean(file.channels(chn).lineMean);
@@ -167,7 +167,7 @@ for k=1:numel(info)
     %plot resolution
     name = sprintf('%s Drift:%02.1f',info{k}.name,info{k}.drift);
     figure(figR)
-    errorbar(info{k}.Z,signal_start,signal_error,'x','DisplayName',name)
+    errorbar(info{k}.Z,signal_start,signal_error(:,1),signal_error(:,2),'x','DisplayName',name)
     
     
     %plot noise slope

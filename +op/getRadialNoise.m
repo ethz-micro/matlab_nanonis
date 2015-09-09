@@ -4,11 +4,13 @@ function [noise_fit,signal_start,signal_error, noise_coeff] =getRadialNoise(radi
     
     if signal_idx<3
         signal_start=nan;
-        signal_error=nan;
+        signal_error=[nan,nan];
         
     else
+        i=1;
         %Do loop
         while signal_idx>5%need at least 5 points to work
+            i=i+1;
             %Compute noise on remaining data
             [noise_fit_j, noise_coeff_j,signal_start_j,signal_error_j, signal_idx_j] =getSingleNoise(radius(1:signal_idx), radial_average(1:signal_idx),noise_fit(signal_idx));
             
@@ -28,7 +30,7 @@ function [noise_fit,signal_start,signal_error, noise_coeff] =getRadialNoise(radi
                     
                 else % no signal
                     signal_start=nan;
-                    signal_error=nan;
+                    signal_error=[nan,nan];
                 end
             else % can't fit noise, end the loop
                 signal_idx_j=0;
@@ -39,7 +41,6 @@ function [noise_fit,signal_start,signal_error, noise_coeff] =getRadialNoise(radi
 end
 
 function [noise_fit, noise_coeff,signal_start,signal_error, signal_idx] =getSingleNoise(radius, radial_average,last_point)
-    sigNbr=1+3; %need two points to detect signal
     
     %loop while old cut != new cut
     %find noise
@@ -47,12 +48,19 @@ function [noise_fit, noise_coeff,signal_start,signal_error, signal_idx] =getSing
     
     old_signal_idx=nan;
     old_sign=nan;
-    signal_idx=floor(numel(radius)/2);
+    new_sign=nan;
+    signal_idx=floor(3*numel(radius)/4);
+    noise_coeff=[nan,nan];
+    
     %figure
-    while old_signal_idx ~=signal_idx && -sign(signal_idx-old_signal_idx)~=old_sign;
-        old_sign=sign(signal_idx-old_signal_idx);
+    while old_signal_idx ~=signal_idx && -new_sign~=old_sign;
+        old_sign=new_sign;
         old_signal_idx=signal_idx;
+        old_slope=noise_coeff(1);
+        
         [signal_idx,noise_fit, noise_coeff]=getNoiseCut(radius, radial_average,signal_idx,last_point);
+        new_sign=sign(noise_coeff(1)-old_slope);
+        
         %loglog(radius,radial_average)
         %hold on
         %loglog(radius,noise_fit)
@@ -61,22 +69,29 @@ function [noise_fit, noise_coeff,signal_start,signal_error, signal_idx] =getSing
     
     %init values
     signal_start=nan;
-    signal_error=nan;
+    signal_error=[nan,nan];
     
     % if point found
     if ~isnan(signal_idx)
         if signal_idx == 1
-            %separate by finding first >1 and expect <5 points for no
-            %signal
-            if find(radial_average./noise_fit>1,1,'first') < sigNbr;
-                signal_idx=2;
-                
+            %if there is no signal, we should go to the next part
+            %Here a test for the signal
+            
+            if find(radial_average./noise_fit>1,1,'first') < 5;%if there is less than 5 points below, it is noise probably
+                if std(radial_average./noise_fit)<0.2% if std is small, it is noise probably
+                    signal_idx=2;%anyway it is better to assume this is noise
+                end
             end
         end
         %If it is the first one, there is no signal, or no noise
         if signal_idx>1 && signal_idx<numel(radius)-1
             signal_start=1./radius(signal_idx-1);
-            signal_error=abs(1./radius(signal_idx-1)-1./radius(signal_idx));
+            signal_error(1)=abs(1./radius(signal_idx-1)-1./radius(signal_idx));%L
+            if signal_idx>2
+                signal_error(2)=abs(1./radius(signal_idx-2)-1./radius(signal_idx-1));%U
+            else
+                signal_error(2)=signal_error(1);
+            end
         end
     end
 end

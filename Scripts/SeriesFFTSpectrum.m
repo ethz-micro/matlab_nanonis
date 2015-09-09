@@ -83,7 +83,7 @@ for i=numel(files):-1:1
         file.header.scan_pixels(1)./file.header.scan_range(1)./1e9);
     
     %Get noise
-    [noise_fit(i,:),signal_start(i),signal_error(i), noise_coeff(i,:)] =op.getRadialNoise(radius(i,:), radial_average(i,:));
+    [noise_fit(i,:),signal_start(i),signal_error(i,:), noise_coeff(i,:)] =op.getRadialNoise(radius(i,:), radial_average(i,:));
     
     %Extract number of electrons (~ don't know voltage meaning)
     Ne_line(i,:)=file.channels(chn).lineMean.*(file.header.scan_time(1)/file.header.scan_pixels(1));
@@ -111,7 +111,7 @@ radial_signal=radial_average./noise_fit;
 %remove resolution with low signal to noise intensity
 badRes=max(radial_signal,[],2)<2;% cut at least at half
 signal_start(badRes)=nan;
-signal_error(badRes)=nan;
+signal_error(badRes,:)=nan;
 
 %% Radial Spectrum
 figure('Name','Radial Spectrum');
@@ -138,7 +138,7 @@ legend([arrayfun(@(x) sprintf('d=%.2f',x),Z,'UniformOutput',false), 'amp=1'] ...
 %% Plot Resolution
 
 figure
-errorbar(Z,signal_start,signal_error,'x')
+errorbar(Z,signal_start,signal_error(:,1),signal_error(:,2),'x')
 hold all
 %errorbar(Z,signal_start_2,signal_error_2,'x')
 %errorbar(Z,signal_start_3,signal_error_3,'x')
@@ -169,7 +169,6 @@ set(gca,'FontSize',20)
 %% Coeff 1
 figure
 plot(Z,noise_coeff(:,1),'x','DisplayName','C1');
-mean(noise_coeff(:,1))
 title('coeff1 vs Z')
 xlabel('Z')
 ylabel('C1')
@@ -184,7 +183,7 @@ set(gca,'FontSize',20)
 
 %%
 figure
-plot.plotFile(files{13},chn)
+plot.plotFile(files{13},chn);
 %{
 for i=numel(files):-1:1
    figure

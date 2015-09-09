@@ -1,22 +1,19 @@
 close all;
 clear all;
-%fn='Data/Aram/image035.sxm';%36:48
-cn=3;%1 is current, 3 intensity
-%cn=3;
-%fn='Data/Aram/image046.sxm';%36:48
-%fn='Data/2013-12-04/image061.sxm';
-%fn='Data/2013-12-04/image054.sxm';
-%fn='Data/2013-12-06/image006.sxm';
-fn='Data/Aram/image041.sxm';
-%fn='Data/2013-12-06/image047.sxm';
-%fn='Data/2013-12-05/image036.sxm';
-%fn='Data/2013-12-05/image051.sxm';
-%fn='Data/2013-12-05/image060.sxm';
-%fn='Data/2013-12-06/image028.sxm';
-%fn='Data/2013-12-06/image029.sxm';%29-32
-%fn='Data/2013-12-05/image040.sxm';
 
-file=load.loadProcessedSxM(fn);%Z=3.5
+cn=3;%1 is current, 3 intensity
+%%
+%fn='Data/Aram/image045.sxm';
+%fn='Data/2013-12-04/image054.sxm';
+%fn='Data/2013-12-05/image043.sxm';
+%fn='Data/2013-12-06/image007.sxm';
+
+%file=load.loadProcessedSxM(fn);%Z=3.5
+
+cn=2;
+fn='Data/Urs/m14_ori.par';
+
+file=load.loadProcessedPar(fn);
 
 %Get data
 [radius, radial_average] =op.getRadialFFT(file.channels(cn).data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
@@ -101,4 +98,9 @@ plot.plotFile(file,cn);
 %%
 figure
 loglog(1./radius,radial_average./noise_fit)
+
+%%
+%F1=figure(F1);
+%plot(1./radius,radial_average-noise_fit,'x-')
+%hold all;
 
