@@ -1,4 +1,4 @@
-clear all;
+    clear all;
 close all;
 
 chn=3;%1
@@ -78,12 +78,12 @@ end
 for i=numel(files):-1:1
     file = files{i};
     %Get data
-    [radius(i,:),radial_average(i,:)] = ...
+    [wavelength(i,:),radial_average(i,:)] = ...
         op.getRadialFFT(file.channels(chn).data,...
         file.header.scan_pixels(1)./file.header.scan_range(1)./1e9);
     
     %Get noise
-    [noise_fit(i,:),signal_start(i),signal_error(i,:), noise_coeff(i,:)] =op.getRadialNoise(radius(i,:), radial_average(i,:));
+    [noise_fit(i,:),signal_start(i),signal_error(i,:), noise_coeff(i,:)] =op.getRadialNoise(wavelength(i,:), radial_average(i,:));
     
     %Extract number of electrons (~ don't know voltage meaning)
     Ne_line(i,:)=file.channels(chn).lineMean.*(file.header.scan_time(1)/file.header.scan_pixels(1));
@@ -115,7 +115,7 @@ signal_error(badRes,:)=nan;
 
 %% Radial Spectrum
 figure('Name','Radial Spectrum');
-loglog(1./radius',radial_average','x--')
+loglog(wavelength',radial_average','x--')
 xlabel('\lambda [nm]')
 ylabel('amplitude')
 set(gca,'FontSize',20)
@@ -125,9 +125,9 @@ legend(arrayfun(@(x) sprintf('d=%.2f',x),Z,'UniformOutput',false)...
 
 %% Signal To Noise
 figure('Name','Signal to Noise Ratio');
-loglog(1./radius',radial_signal','x--');
+loglog(wavelength',radial_signal','x--');
 hold all
-loglog(1./radius(1,:),0./radius(1,:)+1)
+loglog(wavelength(1,:),0.*wavelength(1,:)+1)
 xlabel('\lambda [nm]')
 ylabel('amplitude')
 set(gca,'FontSize',20)
@@ -142,35 +142,49 @@ errorbar(Z,signal_start,signal_error(:,1),signal_error(:,2),'x')
 hold all
 %errorbar(Z,signal_start_2,signal_error_2,'x')
 %errorbar(Z,signal_start_3,signal_error_3,'x')
-xlabel('Z [nm]')
-ylabel('Wavelength [nm]')
-title('Resolution')
+xlabel('d [nm]')
+ylabel('\Delta [nm]')
+%title('Resolution')
 set(gca,'FontSize',20)
 
 %% plot max amplitude position
 
-radial_corr=radial_average-noise_fit;
+radial_corr=sqrt(radial_average.^2-noise_fit.^2);
 [~,I]=max(max(radial_corr));
 
 %% %Plot std as a function of Z
 figure
-plot(1./Z,STDImg.*sqrt(2),'x--','DisplayName','Image STD * sqrt(2)')
+name = sprintf('information @ \\lambda=%.3g [nm]',wavelength(1,I));
+loglog(Z,radial_corr(:,I),'x:','DisplayName',name);
 hold all
-name = sprintf('Amplitude @ f=%.3g [1/nm]',radius(1,I));
-plot(1./Z,radial_corr(:,I),'x-','DisplayName',name);
-%plot(1./Z,STDFiltered.*sqrt(2),'x--','DisplayName','filtered STD * sqrt(2)')
-l=legend(gca,'show','Location','NorthWest');
+loglog(Z,exp(noise_coeff(:,2)),'x:','DisplayName','noise')
+loglog(Z,sqrt(exp(2*noise_coeff(:,2))+radial_corr(:,I).^2),'x-','DisplayName','noise and information');
+loglog(Z,STDImg,'x-','DisplayName','Image STD')
+l=legend(gca,'show','Location','NorthEast');
 set(l,'FontSize',12)
-xlabel('1/Z [1/nm]')
-ylabel('Amplitude [au]')
+xlabel('d [nm]')
+ylabel('amplitude')
 set(gca,'FontSize',20)
+axis([3 27 1E-2 .5])
+set(gca,'XTick',[3 9 27]')
+%%
+figure
+
+X=sqrt(exp(2*noise_coeff(:,2))+radial_corr(:,I).^2);
+Y=STDImg;
+XY=sum(X.*Y);
+X2=sum(X.^2);
+plot(X,Y)
+hold all
+plot(X,XY/X2.*X);
+X2/XY
 
 
 %% Coeff 1
 figure
 plot(Z,noise_coeff(:,1),'x','DisplayName','C1');
 title('coeff1 vs Z')
-xlabel('Z')
+xlabel('d')
 ylabel('C1')
 set(gca,'FontSize',20)
 %% Noise Amplitude vs Ne

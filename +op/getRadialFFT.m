@@ -1,11 +1,13 @@
-function [radius, radial_average] =getRadialFFT(data,varargin)
-    %Gives the radial amplitude for a given pixel frequency and fit sa
-    %noise
+function [wavelength, radial_spectrum] =getRadialFFT(data,varargin)
+    %Gives the radial amplitude for a given pixel wavelength
+    
+    %Removes mean for FFT
     data=data-nanmean(data(:));
+    %Removes nan data
     data(isnan(data))=0;
     %Get fourrier transform
     img=abs(fft2(data));
-    
+
     %Reorder fourrier data
     sizeSq = floor(size(img)/2);
     img = swapSquares(img,sizeSq);
@@ -14,36 +16,44 @@ function [radius, radial_average] =getRadialFFT(data,varargin)
     center = size(img)/2+1;
     
     %compute size (assumed square)
-    img_size=size(img,1);
+    img_size=min(size(img));
     
-    %Create the test radius
+    %Create the radius vector
     radius_step=1;
+    
     radius = 1:radius_step:(round(0.5*img_size)-1);
     
     % Create the meshgrid to be used in resampling
-    [X,Y] = meshgrid(1:img_size,1:img_size);
+    [X,Y] = meshgrid(1:size(img,1),1:size(img,2));
     
     %Assign a distance to the center to each position
     DSquare=(X-center(2)).^2+(Y-center(1)).^2;
     
     %For each radius
-    for i=size(radius,2):-radius_step:1
+    for i=size(radius,2):-1:1
         r=radius(i);
         %Deduce which pixels are in the slice
-        slice=((r-radius_step/2).^2 <= DSquare) & ((r+radius_step/2).^2 > DSquare);
+        %slice=((r-radius_step/2).^2 <= DSquare) & ((r+radius_step/2).^2 > DSquare);
+        slice=((r.^2+(r-radius_step).^2)./2 <= DSquare) & ((r.^2+(r+radius_step).^2)./2 > DSquare);
         %save the mean value
-        radial_average(i)=mean(img(slice));
+        radial_spectrum(i)=mean(img(slice));
     end
+    
+    %Multiply by 2 pi r
+    radial_spectrum=radial_spectrum.*(2*pi*radius);
     
     %rescale radius and radial_average
     radius=radius./img_size;
-    radial_average=(radial_average./img_size).*(2*pi*radius);
+    radial_spectrum=radial_spectrum./(size(img,1).*size(img,2));
     
+    %Change radius unit
     if nargin >1
        pixPerUnit=varargin{1};
        radius=radius.*pixPerUnit;
     end
     
+    %Compute wavelength
+    wavelength=1./radius;
 end
 
 function ret = swapSquares(data, sizeSq)
@@ -54,26 +64,3 @@ function ret = swapSquares(data, sizeSq)
     ret(end-sizeSq(1)+1:end, 1: sizeSq(2))=data(1:sizeSq(1), end-sizeSq(2)+1: end);
     ret(end-sizeSq(1)+1:end, end-sizeSq(2)+1: end)=data(1:sizeSq(1), 1: sizeSq(2));
 end
-
-
-%{ 
-Old way to slice
-%loop radius
-for i=size(radius,2):-1:1
-    r=radius(i);
-    %Adapted from http://www.mathworks.com/matlabcentral/newsreader/view_original/88838
-    
-    % To avoid redundancy, sample at roughly 1 px distances
-    num_pxls = 2*pi*r;
-    theta = 0:1/num_pxls:2*pi;
-    
-    x = center(1) + r*cos(theta);
-    y = center(2) + r*sin(theta);
-    
-    sampled_radial_slice = interp2(X,Y,img,x,y);
-    
-    radial_average(i) = mean(sampled_radial_slice);
-    %radial_std(i)=std(sampled_radial_slice);
-    
-end
-%}

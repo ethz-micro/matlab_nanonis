@@ -36,13 +36,8 @@ plot.plotFile(FESTM,FEcn);
 %Find FE Resolution
 data=FESTM.channels(FEcn).data;
 data=op.interpPeaks(data);
-[radial_average, radius, noise_fit] =op.getRadialFFT(data);
-
-cutPrct=1.3;
-
-signalNorm=radial_average./noise_fit;
-rIdx=find(signalNorm>cutPrct,1,'last');
-wavelength=1./radius(rIdx);
+[radius, radial_average]=op.getRadialFFT(data);
+[noise_fit, wavelength] = op.getRadialNoise(radius, radial_average);
 
 %Compute 15% mask on DTSTM
 data=DTSTM.channels(DTcn).data;
@@ -75,7 +70,7 @@ data=FESTM.channels(FEcn).data;
 
 %Plot FESTM + masks
 figure
-plot.plotFile(FESTM,FEcn,0,0,'NoTitle');
+plot.plotFile(FESTM,FEcn,0,0);
 mask.applyMask(edge(maskUp),[1,0,0]);
 %mask.applyMask(edge(maskDown),[1,0,0]);
 
@@ -88,7 +83,7 @@ yrange = yrange+offset(2);
 
 %Plot DTSTM + FESTM masks
 figure
-plot.plotFile(DTSTM,DTcn,0,0,'NoTitle');
+plot.plotFile(DTSTM,DTcn,0,0);
 mask.applyMask(edge(maskUp),[1,0,0],1,xrange,yrange);
 %mask.applyMask(edge(maskDown),[1,0,0],1,xrange,yrange);
 
@@ -97,10 +92,14 @@ ylim(yrange*1e9)
 
 %print -dpdf -loose DTSTM
 
+figure
+plot.plotFile(DTSTM,DTcn,0,0);
+mask.applyMask(edge(maskUp),[1,0,0],1,xrange,yrange);
+
 
 %%
 figure
-plot.plotFile(FESTM,1,0,0,'NoTitle');
+plot.plotFile(FESTM,1,0,0);
 
 
 

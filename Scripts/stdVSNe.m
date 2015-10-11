@@ -10,11 +10,11 @@ close all;
 fn='Data/March/2015-03-05/image004.sxm';%DIST = 11
 ttl='2015-03-05/image004.sxm';
 %}
-%%{
+%{
 fn='Data/March/2015-03-04/image006.sxm';%DIST =0
 ttl='2015-03-04/image006.sxm';
 %}
-%%{
+%{
 fn='Data/March/2015-03-04/image005.sxm';%DIST = 11
 ttl='2015-03-04/image005.sxm';
 %}
@@ -46,7 +46,7 @@ xlabel('1/Ne')
 ylabel('Variance')
 set(gca,'FontSize',20)
 title(ttl)
-legend('Var[Line]','sigma_e^2/Ne','location','southeast')
+legend('Var[Line]','\sigma_n^2/N_e','location','southeast')
 
 %% Idem current 
 

@@ -48,44 +48,4 @@ function [offset,XC,centerOffset] = getOffset(img1, header1,img2,header2,varargi
     centerDiff=.5*(header1.scan_range-header2.scan_range);
     centerOffset=offset-centerDiff.';% remove center
     
-    
-    
-    
-    
-    
-    %{
-    %Compute padding
-    padXY=size(mask1)-size(mask2);
-    half = round(.5*padXY);
-    
-    PadPre2=half;
-    PadPost2=padXY-half;
-    PadPre1=zeros(size(PadPre2));
-    PadPost1=zeros(size(PadPre2));
-    
-    %The positive part of the padding is for mask2, the negative for mask 1
-    idx1 = PadPre2<0;
-    PadPre1(idx1)=-PadPre2(idx1);
-    PadPre2(idx1)=0;
-    
-    idx1 = PadPost2<0;
-    PadPost1(idx1)=-PadPost2(idx1);
-    PadPost2(idx1)=0;
-    
-    %Apply padding
-    mask2=padarray(mask2,PadPre2,0,'pre');
-    mask2=padarray(mask2,PadPost2,0,'post');
-    mask1=padarray(mask1,PadPre1,0,'pre');
-    mask1=padarray(mask1,PadPost1,0,'post');
-    
-    %}
-    
-   
-    
-    %{
-    mask2=circshift(mask2,[Yoff, Xoff]);
-    comb=mask1.*mask2;
-    ret =sum(comb(:))/sum(mask1(:));
-    %}
-    
 end

@@ -1,2 +1,0 @@
-In getMask.m:
-	-Automatic settings OR Modify via varargin

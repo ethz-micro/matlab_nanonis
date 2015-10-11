@@ -3,9 +3,9 @@ clear all
 
 %Get STM Data
 fileSTM=load.loadProcessedSxM('Data/2013-12-04/image035.sxm');%35
-[radial_average_STM, radius_STM, noise_fit_STM, noise_coeff_STM] =op.getRadialFFT(fileSTM.channels(1).data);
 SpP=fileSTM.header.scan_range(1)/fileSTM.header.scan_pixels(1);%distance [m] to pixels
-radius_STM=radius_STM./SpP./1e9;
+[wavelength_STM,radial_average_STM] =op.getRadialFFT(fileSTM.channels(1).data,1e9/SpP);
+noise_fit_STM = op.getRadialNoise(wavelength_STM,radial_average_STM);
 
 %Get SEM Data
 idx=36:48;
@@ -23,7 +23,8 @@ figure
 %for i=1:numel(files)
 for i=[10,3];%13 3
     files{i}.channels(3).data=op.interpPeaks(files{i}.channels(3).data);
-    [radial_average_SEM, radius_SEM, noise_fit_SEM, noise_coeff_SEM] =op.getRadialFFT(files{i}.channels(3).data);
+    [wavelength_SEM, radial_average_SEM] =op.getRadialFFT(files{i}.channels(3).data);
+    noise_fit_SEM=op.getRadialNoise(wavelength_SEM, radial_average_SEM);
     loglog(radial_average_STM,radial_average_SEM,'x--','DisplayName',sprintf('Z= %.1fnm',Z(i)))
     hold all
 end
@@ -37,16 +38,16 @@ set(gca,'FontSize',20)
 
 %% plot STM spectrum
 figure
-loglog(radius_STM,radial_average_STM,'x',radius_STM,noise_fit_STM)
-xlabel('frequency [1/nm]')
-ylabel('Amplitude [au]')
+loglog(wavelength_STM,radial_average_STM,'x',wavelength_STM,noise_fit_STM)
+xlabel('wavelength [nm]')
+ylabel('amplitude')
 set(gca,'FontSize',20)
 legend('Radial Spectrum','Fitted Noise','FontSize',12,'Location','NorthEast')
 
 
 %% plot SEM Spectum
 figure
-loglog(radius_SEM,radial_average_SEM,'x',radius_SEM,noise_fit_SEM)
+loglog(wavelength_SEM,radial_average_SEM,'x',wavelength_SEM,noise_fit_SEM)
 
 %% plot Images
 figure

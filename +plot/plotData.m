@@ -52,7 +52,7 @@ function p=plotSxm(data,header,range,varargin)
     p = imagesc(XScale,YScale,data,range);
     axis image;
     %To export image correctly
-    set(gcf,'Position',[100 100 512 512],'PaperSize',[10,10],'PaperPosition',[0,0,10,10]);
+    set(gcf,'Position',[100 100 512 512],'PaperUnits','Points','PaperSize',[512,512],'PaperPosition',[0,0,512,512]);
     
 end
 
