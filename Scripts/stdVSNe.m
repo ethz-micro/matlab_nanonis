@@ -61,7 +61,7 @@ Y=file.channels(1).lineStd.^2;
 Y(Y>prctile(Y,90))=nan;
 
 %Plot
-%figure   
+figure   
 hold all
 plot(X,Y,'x')
 xlabel('1/Ne')

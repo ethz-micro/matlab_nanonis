@@ -19,8 +19,8 @@ if nargin>2
     alpha=varargin{2};
 end
 if nargin>4
-    xrange=varargin{3}*1e9;
-    yrange=varargin{4}*1e9;
+    xrange=varargin{3};
+    yrange=varargin{4};
 end
 
 %Create uniform image

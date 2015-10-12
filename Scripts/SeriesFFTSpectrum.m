@@ -195,13 +195,3 @@ xlabel('1/sqrt(Ne)')
 ylabel('Noise Amplitude')
 set(gca,'FontSize',20)
 
-%%
-figure
-plot.plotFile(files{13},chn);
-%{
-for i=numel(files):-1:1
-   figure
-   plot.plotFile(files{i},chn)
-end
-%}
-

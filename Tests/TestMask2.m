@@ -59,8 +59,8 @@ yrange = yrange-offset(2);
 %% Plot FESTM + DTSTM masks
 figure
 plot.plotFile(FESTM,FEcn);
-mask.applyMask(edge(maskUp),[0,0,0],1,xrange,yrange);
-mask.applyMask(edge(maskDown),[1,0,0],1,xrange,yrange);
+mask.applyMask(edge(maskUp),[0,0,0],1,xrange*1e9,yrange*1e9);
+mask.applyMask(edge(maskDown),[1,0,0],1,xrange*1e9,yrange*1e9);
 
 %% Idem in the other way
 
@@ -84,7 +84,7 @@ yrange = yrange+offset(2);
 %Plot DTSTM + FESTM masks
 figure
 plot.plotFile(DTSTM,DTcn,0,0);
-mask.applyMask(edge(maskUp),[1,0,0],1,xrange,yrange);
+mask.applyMask(edge(maskUp),[1,0,0],1,xrange*1e9,yrange*1e9);
 %mask.applyMask(edge(maskDown),[1,0,0],1,xrange,yrange);
 
 xlim(xrange*1e9)
@@ -94,7 +94,7 @@ ylim(yrange*1e9)
 
 figure
 plot.plotFile(DTSTM,DTcn,0,0);
-mask.applyMask(edge(maskUp),[1,0,0],1,xrange,yrange);
+mask.applyMask(edge(maskUp),[1,0,0],1,xrange*1e9,yrange*1e9);
 
 
 %%

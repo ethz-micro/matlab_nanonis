@@ -89,7 +89,6 @@ figure
 plot.plotData(data,'5 channels','',header);
 
 %% Plot filtered data
-
 [signal,removed]=op.filterData(data,25);
 figure
 plot.plotData(signal,'Filtered - 25 px','',header);
@@ -97,77 +96,6 @@ plot.plotData(signal,'Filtered - 25 px','',header);
 figure
 plot.plotData(removed,'Removed - 25 px','',header);
 
-
-
-
-
-
-
-
-
-
-
-%% Old & discarded
-
-
-%{
-%% plot distributions
-chanN=2;
-
-[header, data] = loadsxm(fn, chanN);
-
-%plot histogram
-figure
-histogram(data,50)
-
-v=axis();
-
-v(4)=v(4)/512;
-figure
-for i= 1:10:512
-histogram(data(i,:),50)
-axis(v);
-pause(.1);
-    
-end
-%}    
-
-
-
-
-%{
-%print median and stdev for data 0
-figure        
-plot(mn0)        
-legend('median channel 0');        
-figure        
-plot(stdev0)        
-legend('std channel 0');
-figure        
-plot(slope0)        
-legend('slope channel 0');
-%}
-
-
-
-%{
-%% Blur
-kern = 1/4*[[1/4, 1/2,1/4];[1/2,1,1/2];[1/4,1/2,1/4]];
-kern = 1/9*[[1, 1,1];[1,1,1];[1,1,1]];
-B=conv2(dataFC,kern);
-
-figure
-imagesc([0 header.scan_range(1)],[0 header.scan_range(2)],B,range);
-
-%cut 1.5
-figure
-big=B>1.5;
-small = B <-1.5;
-B(big)=0;
-B(small)=0;
-mesh(B)
-
-%}
 
 
 

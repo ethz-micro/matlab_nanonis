@@ -54,13 +54,5 @@ figure
 plot.plotFile(fileSTM,1)
 figure
 plot.plotFile(files{i},3)
-%% plot Filtered dat
-[filtered, removed] = op.filterData(fileSTM.channels(1).data,4.5);
 
-figure
-imagesc(filtered)
-axis image
-figure
-imagesc(removed)
-axis image
 

@@ -53,8 +53,9 @@ plot.plotChannel(channel,file6.header);
 figure
 plot.plotChannel(channel,file6.header);
 [xrange,yrange] = op.getRange(file6.header);
-mask.applyMask(edge(maskUp),xrange,yrange)
-mask.applyMask(edge(maskDown),xrange,yrange,[1,0,0])
+
+mask.applyMask(edge(maskUp),[0,0,0],1,xrange*1e9,yrange*1e9)
+mask.applyMask(edge(maskDown),[1,0,0],1,xrange*1e9,yrange*1e9)
 
 
 
@@ -82,37 +83,8 @@ plot.plotFile(file4,1);
 %plot data + mask
 figure
 plot.plotFile(file4,1);
-mask.applyMask(maskUp,xrange,yrange,[1,0,0], .4)
-mask.applyMask(maskDown,xrange,yrange,[0,0,0], .4)
+mask.applyMask(maskUp,[1,0,0], .4,xrange*1e9,yrange*1e9)
+mask.applyMask(maskDown,[0,0,0], .4,xrange*1e9,yrange*1e9)
 title(['STM Data + Mask. Offset x:',num2str(round(centerOffset(1)*10^9)),'nm, y:',num2str(round(centerOffset(2)*10^9)),'nm'])
-%{
-[xrangeSTM,yrangeSTM]=op.getRange(file4.header);
-figure
-plot.plotChannel(file4,1);
-mask.applyMask(maskUpSTM,xrangeSTM,yrangeSTM,[1,0,0], .4);
-mask.applyMask(maskDownSTM,xrangeSTM,yrangeSTM,[0,0,0], .4);
-%}
-%{
-
-%% Load other SEM
-fn='Data/DataC2/2015-03-04/image005.sxm'; % 5-7
-%try to match the mask and sem data
-[data,header] = loadSEM(fn, 0);
-data = processSEM(data);
-xoffset=xrange(2)*.1*-.4;
-yoffset=yrange(2)*.1*-.8;
-
-figure
-plotSEM(data,header)
-applyMask(maskUp,xrange+xoffset,yrange+yoffset,[1,1,1], 0)
-title('SEM Data')
-
-figure
-plotSEM(data,header)
-applyMask(maskUp,xrange+xoffset,yrange+yoffset,[1,0,0], .4)
-applyMask(maskDown,xrange+xoffset,yrange+yoffset,[0,0,0], .4)
-title(['SEM Data + Mask. Offset x:',num2str(xoffset*10^9),'nm, y:',num2str(yoffset*10^9),'nm'])
-
-%}
 
 

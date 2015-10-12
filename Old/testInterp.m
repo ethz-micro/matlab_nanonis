@@ -19,18 +19,18 @@ histogram(data(:));
 figure
 plot.plotFile(file,chn);
 
-[radial_average, radius] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
+[wavelength,radial_average] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
 
 figure
-loglog(radius,radial_average,'x--')
+loglog(wavelength,radial_average,'x--')
 hold all
 
 data=op.interpPeaks(data);
-[radial_average, radius, noise_fit] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
-loglog(radius,radial_average,'x--')
+[wavelength, radial_average] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
+loglog(wavelength,radial_average,'x--')
 
 legend('Base', 'Interpolated', 'other')
-xlabel('Frequency [1/nm]')
+xlabel('\lambda [nm]')
 ylabel('Amplitude [au]')
 set(gca,'FontSize',20)
 
@@ -42,13 +42,12 @@ figure
 plot.plotFile(file,chn);
 
 %%
-
+[noise_fit,start]=op.getRadialNoise(wavelength, radial_average);
 signalNorm=radial_average./noise_fit;
 
-rIdx=find(signalNorm>cutPrct,1,'last');
-wavelength=1./radius(rIdx)
 
-[filtered, removed]=op.filterData(data,wavelength.*file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
+
+[filtered, removed]=op.filterData(data,start.*file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
 
 file.channels(chn).data=filtered;
 figure
