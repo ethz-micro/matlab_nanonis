@@ -10,7 +10,7 @@ close all;
 fn='Data/March/2015-03-05/image004.sxm';%DIST = 11
 ttl='2015-03-05/image004.sxm';
 %}
-%{
+%%{
 fn='Data/March/2015-03-04/image006.sxm';%DIST =0
 ttl='2015-03-04/image006.sxm';
 %}
@@ -48,6 +48,8 @@ set(gca,'FontSize',20)
 title(ttl)
 legend('Var[Line]','\sigma_n^2/N_e','location','southeast')
 
+%%
+figure 
 %% Idem current 
 
 %Get number of electrons
@@ -61,7 +63,7 @@ Y=file.channels(1).lineStd.^2;
 Y(Y>prctile(Y,90))=nan;
 
 %Plot
-figure   
+  
 hold all
 plot(X,Y,'x')
 xlabel('1/Ne')
@@ -73,7 +75,7 @@ title(ttl,'FontSize',20)
 %%
 title('','FontSize',15)
 
-legend('2015-03-05/image004.sxm - Z = 11nm','2015-03-04/image006.sxm - Z = 0nm', '2015-03-04/image005.sxm - Z = 11nm');
+legend('2015-03-05/image004.sxm - d = 11nm', '2015-03-04/image005.sxm - d = 11nm', '2015-03-04/image006.sxm - d = 0nm');
 
 
 

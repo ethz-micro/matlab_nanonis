@@ -1,8 +1,8 @@
 clear all;
 close all;
 
-chn=0;%0-1;2-3
-I=6; % index at wich the amplitude is taken (6 => f=0.06 ; 12=> f=0.12 [1/nm])
+chn=2;%0-1;2-3
+I=12; % index at wich the amplitude is taken (6 => f=0.06 ; 12=> f=0.12 [1/nm])
 %Data sets
 %base='/Volumes/micro/STM_AFM/2013/';
 base='Data/';
@@ -176,13 +176,26 @@ for k=1:numel(info)
     
     %Find highest peak
     radial_corr=sqrt(radial_average.^2-noise_fit.^2);
-    %[~,I]=max(max(radial_corr));
+    %radial_corr=radial_average;
+    
+    %{
+    start_array=signal_start;
+    start_array(isnan(signal_start))=1;
+    [~,maxI]=arrayfun(@(x) max(radial_average(x,wavelength(x,:)>start_array(x))),1:numel(signal_start));
+    amplitude=radial_corr(sub2ind(size(radial_corr),1:numel(signal_start),maxI));
+    amplitude(isnan(signal_start))=nan;
+    %}
+    
+    
+    amplitude=radial_corr(:,I);
+    
     
     
     %plot signal intensity
     name = sprintf('%s \\lambda=%02.2f [nm]',info{k}.name,wavelength(1,I));
+    %name = sprintf('%s',info{k}.name);
     figure(figA)
-    plot(info{k}.Z,radial_corr(:,I),'x','DisplayName',name);
+    plot(info{k}.Z,amplitude,'x-','DisplayName',name);
     
     %plot resolution
     name = sprintf('%s Drift:%02.1f',info{k}.name,info{k}.drift);
@@ -221,7 +234,7 @@ ylabel('amplitude')
 set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
-set(gca,'XScale','log')
+
 set(gca,'YScale','log')
 
 %%
@@ -232,7 +245,7 @@ ylabel('\alpha')
 set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
-set(gca,'XScale','log')
+
 set(gca,'YScale','linear')
 
 %%
@@ -252,8 +265,7 @@ xlabel('d [nm]')
 ylabel('A_{N0}')
 set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
-set(l,'FontSize',12)
-set(gca,'XScale','log')
+
 set(gca,'YScale','log')
 
 %%
@@ -265,7 +277,7 @@ ylabel('A_{N0} \cdot \surd(N_e)')
 set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
-set(gca,'XScale','log')
+
 set(gca,'YScale','log')
 
 %% plot signal intensity
@@ -297,6 +309,8 @@ set(gca,'FontSize',20)
 l=legend(gca,'show','Location','NorthWest');
 set(l,'FontSize',12)
 %title('Resolution')
+
+figure(figA)
 
 
 
