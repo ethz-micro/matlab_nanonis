@@ -8,7 +8,7 @@ fn='Data/Aram/image048.sxm';
 %fn='Data/2013-12-05/image045.sxm';
 %fn='Data/2013-12-06/image046.sxm';
 
-file=load.loadProcessedSxM(fn);%Z=3.5
+file=loadSxM.loadProcessedSxM(fn);%Z=3.5
 
 %%
 data=op.interpPeaks(file.channels(cn).data);
@@ -28,7 +28,7 @@ set(gca,'XScale','log')
 %{
 cn=2;
 fn='Data/Urs/m14_ori.par';
-file=load.loadProcessedPar(fn);
+file=loadSxM.loadProcessedPar(fn);
 %}
 
 %Get data
@@ -51,7 +51,7 @@ legend('Radial Spectrum','Fitted Noise','2nd noise','FontSize',12,'Location','No
 
 %%
 figure
-plot.plotFile(file,cn,0,0,'NoTitle')
+plotSxM.plotFile(file,cn,0,0,'NoTitle')
 %%
 figure
 loglog(wavelength,radial_average./noise_fit,'x-','DisplayName','signal/noise')
@@ -62,7 +62,7 @@ legend(gca,'show')
 
 %%
 figure
-plot.plotFile(file,cn);
+plotSxM.plotFile(file,cn);
 
 %%
 
@@ -117,7 +117,7 @@ set(gca,'FontSize',20)
 file.channels(cn).data=data;
 
 figure
-plot.plotFile(file,cn);
+plotSxM.plotFile(file,cn);
 %%
 figure
 loglog(wavelength,radial_average./noise_fit,'x--')

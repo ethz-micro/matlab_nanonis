@@ -51,8 +51,6 @@ idx=47:64;
 fn='Data/2013-12-05/image';
 Z=[25,20,17,14,12,10,8,6,4,2,1,0,-1,-2,-3,-4,-5,-6]+10;
 %}
-
-
 %Filp for plot purposes
 idx=flip(idx);
 Z=flip(Z);
@@ -60,8 +58,7 @@ Z=flip(Z);
 %% LOAD FILES
 ext='.sxm';
 fns=arrayfun(@(x) sprintf('%s%03d%s',fn,x,ext),idx,'UniformOutput',false);
-files=cellfun(@load.loadProcessedSxM,fns,'UniformOutput',false);
-
+files=cellfun(@(x) loadSxM.loadProcessedSxM(x),fns,'UniformOutput',false);
 %% Remove noise
 for i=1:numel(files)
     if chn<3

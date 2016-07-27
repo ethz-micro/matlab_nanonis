@@ -4,10 +4,10 @@ clear all;
 fn='Data/March/2015-03-04/image005.sxm';%DIST = 11
 ttl='2015-03-04/image005.sxm';
 
-file = load.loadProcessedSxM(fn,[0]);
+file = loadSxM.loadProcessedSxM(fn,[0]);
 
 figure
-plot.plotFile(file,1);
+plotSxM.plotFile(file,1);
 
 
 %Get number of electrons

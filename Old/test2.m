@@ -2,7 +2,7 @@ close all;
 clear all;
 
 fn='Data/March/2015-03-04/image005.sxm';
-[header,data]=load.loadsxm(fn,0);
+[header,data]=loadSxM.loadsxm(fn,0);
 
 dStdRaw=std(data,0,2);
 

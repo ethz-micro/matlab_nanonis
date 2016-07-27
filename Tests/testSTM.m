@@ -13,7 +13,7 @@ close all;
 
 %image name
 fn='Data/DataC2/2015-03-04/image004.sxm';%1-2;4;9
-file = load.loadProcessedSxM(fn,0);
+file = loadSxM.loadProcessedSxM(fn,0);
 
 %% plot data
 
@@ -28,11 +28,11 @@ title('std Z');
 
 %plot image
 figure
-[~, range] = plot.plotFile(file,1);
+[~, range] = plotSxM.plotFile(file,1);
 
 %plot histogram
 figure
-plot.plotHistogram(file.channels(1).data,range);
+plotSxM.plotHistogram(file.channels(1).data,range);
 title('Z height')
 
 

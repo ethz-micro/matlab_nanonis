@@ -1,7 +1,7 @@
 
 %clear all;
 close all;
-[header,data]=load.loadsxm('data/2015_05_05/bulk_fe_002.sxm',3);
+[header,data]=loadSxM.loadsxm('data/2015_05_05/bulk_fe_002.sxm',3);
 
 %% Prepare data
 data=flip(data,2);

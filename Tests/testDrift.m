@@ -10,8 +10,8 @@ close all;
 clear all;
 
 %Load two images
-file4=load.loadProcessedSxM('Data/March/2015-03-02/image004.sxm');
-file9=load.loadProcessedSxM('Data/March/2015-03-02/image009.sxm');
+file4=loadSxM.loadProcessedSxM('Data/March/2015-03-02/image004.sxm');
+file9=loadSxM.loadProcessedSxM('Data/March/2015-03-02/image009.sxm');
 
 %Remove peaks
 file4.channels(1).data=op.interpPeaks(file4.channels(1).data);
@@ -27,13 +27,13 @@ axis image
 %%
 %plot two images
 figure
-plot.plotFile(file9,1);
+plotSxM.plotFile(file9,1);
 hold on
-plot.plotFile(file4,1,-offset(1),-offset(2));
+plotSxM.plotFile(file4,1,-offset(1),-offset(2));
 
 %%
 figure
-plot.plotFile(file4,1);
+plotSxM.plotFile(file4,1);
 figure
-plot.plotFile(file9,1);
+plotSxM.plotFile(file9,1);
 

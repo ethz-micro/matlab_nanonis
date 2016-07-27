@@ -1,7 +1,7 @@
 close all;
 clear all;
 
-file= load.loadProcessedSxM('FeW016.sxm');
+file= loadSxM.loadProcessedSxM('FeW016.sxm');
 
 
 %Trans = fft(file.channels(1).data(:));

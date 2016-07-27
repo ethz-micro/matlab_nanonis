@@ -4,8 +4,8 @@ fn='Data/March/2015-03-04/image005.sxm';
 
 
 %%
-[header, CH0]=load.loadsxm(fn,2);
-[~, CH2]=load.loadsxm(fn,6);
+[header, CH0]=loadSxM.loadsxm(fn,2);
+[~, CH2]=loadSxM.loadsxm(fn,6);
 N0=mean(CH0,2).*(header.scan_time(1)/header.scan_pixels(1));
 N2=mean(CH2,2).*(header.scan_time(1)/header.scan_pixels(1));
 

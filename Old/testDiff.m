@@ -1,5 +1,5 @@
 close all;
-file = load.loadProcessedSxM('Data/2015_05_13/FE_Pol-N_T-50us_V-60V_001.sxm');
+file = loadSxM.loadProcessedSxM('Data/2015_05_13/FE_Pol-N_T-50us_V-60V_001.sxm');
 
 channel=op.combineChannel(file,'On Plane',[3 7],[1 -1]);
 
@@ -7,7 +7,7 @@ channel.data=blurData(channel.data,10);
 
 %channel.data=channel.data-median(channel.data(:));
 figure
-plot.plotChannel(channel,file.header)
+plotSxM.plotChannel(channel,file.header)
 %{
 data=channel.data;
 figure

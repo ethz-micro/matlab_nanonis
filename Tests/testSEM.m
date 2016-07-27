@@ -15,12 +15,12 @@ close all;
 %fn='Data/March/2015-03-05/image004.sxm';
 fn='Data/March/2015-03-04/image006.sxm';
 %Load 2,4,6,8 (current + forward channel 0 1 2 3)
-file = load.loadProcessedSxM(fn,[0 2 4 6 8]);
+file = loadSxM.loadProcessedSxM(fn,[0 2 4 6 8]);
 
 %% Image without STD correction
 
 %load
-[header, data] = load.loadsxm(fn, 2);
+[header, data] = loadSxM.loadsxm(fn, 2);
 %remove median
 data=(data-mean(data,2)*ones([1 size(data,2)]));
 
@@ -31,7 +31,7 @@ data=(data-mean(data,2)*ones([1 size(data,2)]));
 %plot
 header.scan_type='NFESEM';
 figure
-plot.plotData(data,'Raw channel 0','',header);
+plotSxM.plotData(data,'Raw channel 0','',header);
 
 %% plot median and std
 
@@ -48,14 +48,14 @@ title(['std channel 0']);
 
 %plot image
 figure
-[h, range] = plot.plotFile(file,2,0,0,'NoTitle');
+[h, range] = plotSxM.plotFile(file,2,0,0,'NoTitle');
 set(gcf,'PaperPositionMode','auto')
 print -depsc -loose BarPlot
 %%
 
 %plot histogram
 figure
-plot.plotHistogram(file.channels(2).data,range)
+plotSxM.plotHistogram(file.channels(2).data,range)
 title('channel 0')
 
 %Plot plane
@@ -71,13 +71,13 @@ channel = op.combineChannel(file,'4 channels',2:5,1/4*[1,1,1,1]);
 
 %plot image
 figure
-[~, range]=plot.plotChannel(channel,file.header);
+[~, range]=plotSxM.plotChannel(channel,file.header);
 
 %% current
 
 %plot image
 figure
-plot.plotFile(file,1);
+plotSxM.plotFile(file,1);
 
 %% 5 channels
 
@@ -86,15 +86,15 @@ data = 1/2*(channel.data+file.channels(1).data);
 
 %plot image
 figure
-plot.plotData(data,'5 channels','',header);
+plotSxM.plotData(data,'5 channels','',header);
 
 %% Plot filtered data
 [signal,removed]=op.filterData(data,25);
 figure
-plot.plotData(signal,'Filtered - 25 px','',header);
+plotSxM.plotData(signal,'Filtered - 25 px','',header);
 
 figure
-plot.plotData(removed,'Removed - 25 px','',header);
+plotSxM.plotData(removed,'Removed - 25 px','',header);
 
 
 

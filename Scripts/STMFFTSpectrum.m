@@ -2,7 +2,7 @@ close all
 clear all
 
 %Get STM Data
-fileSTM=load.loadProcessedSxM('Data/2013-12-04/image035.sxm');%35
+fileSTM=loadSxM.loadProcessedSxM('Data/2013-12-04/image035.sxm');%35
 SpP=fileSTM.header.scan_range(1)/fileSTM.header.scan_pixels(1);%distance [m] to pixels
 [wavelength_STM,radial_average_STM] =op.getRadialFFT(fileSTM.channels(1).data,1e9/SpP);
 noise_fit_STM = op.getRadialNoise(wavelength_STM,radial_average_STM);
@@ -15,7 +15,7 @@ idx=flip(idx);
 Z=flip(Z);
 ext='.sxm';
 fns=arrayfun(@(x) sprintf('%s%03d%s',fn,x,ext),idx,'UniformOutput',false);
-files=cellfun(@load.loadProcessedSxM,fns,'UniformOutput',false);
+files=cellfun(@loadSxM.loadProcessedSxM,fns,'UniformOutput',false);
 
 
 %% plot correlation for all i
@@ -29,7 +29,7 @@ for i=[10,3];%13 3
     hold all
 end
 legend(gca,'show')
-%fileSEM=load.loadProcessedSxM('Data/Aram/image037.sxm');%36-48
+%fileSEM=loadSxM.loadProcessedSxM('Data/Aram/image037.sxm');%36-48
 xlabel('Amplitude STM [au]')
 ylabel('Amplitude NFESEM [au]')
 set(gca,'FontSize',20)
@@ -51,8 +51,8 @@ loglog(wavelength_SEM,radial_average_SEM,'x',wavelength_SEM,noise_fit_SEM)
 
 %% plot Images
 figure
-plot.plotFile(fileSTM,1)
+plotSxM.plotFile(fileSTM,1)
 figure
-plot.plotFile(files{i},3)
+plotSxM.plotFile(files{i},3)
 
 

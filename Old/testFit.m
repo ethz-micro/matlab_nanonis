@@ -10,10 +10,10 @@ close all;
 clear all;
 
 %% load datas
-file5=load.loadProcessedSxM('Data/March/2015-03-02/image005.sxm');
-file6=load.loadProcessedSxM('Data/March/2015-03-02/image006.sxm');
-file7=load.loadProcessedSxM('Data/March/2015-03-02/image007.sxm');
-file8=load.loadProcessedSxM('Data/March/2015-03-02/image008.sxm');
+file5=loadSxM.loadProcessedSxM('Data/March/2015-03-02/image005.sxm');
+file6=loadSxM.loadProcessedSxM('Data/March/2015-03-02/image006.sxm');
+file7=loadSxM.loadProcessedSxM('Data/March/2015-03-02/image007.sxm');
+file8=loadSxM.loadProcessedSxM('Data/March/2015-03-02/image008.sxm');
 %%
 fit((1:size(file5.channels(3).median,1))',file5.channels(3).median,'exp2');
 %%

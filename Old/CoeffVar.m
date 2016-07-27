@@ -101,7 +101,7 @@ for i=1:numel(info)
     %Corresponding Height
     
     %Get data
-    files =cellfun(@(x) load.loadProcessedSxM(x),fns,'UniformOutput',false);
+    files =cellfun(@(x) loadSxM.loadProcessedSxM(x),fns,'UniformOutput',false);
     if i==plotIdx
         fig=figure;
         hold all
@@ -146,7 +146,7 @@ for i=1:numel(info)
     %Corresponding Height
     
     %Get data
-    [~ , data{i}] =arrayfun(@(x) load.loadsxm(x{1}, 0),fns,'UniformOutput',false);
+    [~ , data{i}] =arrayfun(@(x) loadSxM.loadsxm(x{1}, 0),fns,'UniformOutput',false);
     %{
     k=3;
     f=11;
@@ -243,8 +243,8 @@ fns=arrayfun(@(x) sprintf('%s%03d%s',fn,x,ext),idx,'UniformOutput',false);
 
 
 %Get data
-[~ , Fdata] =arrayfun(@(x) load.loadsxm(x{1}, 0),fns,'UniformOutput',false);
-[~ , Bdata] =arrayfun(@(x) load.loadsxm(x{1}, 1),fns,'UniformOutput',false);
+[~ , Fdata] =arrayfun(@(x) loadSxM.loadsxm(x{1}, 0),fns,'UniformOutput',false);
+[~ , Bdata] =arrayfun(@(x) loadSxM.loadsxm(x{1}, 1),fns,'UniformOutput',false);
 
 %Fdata=cellfun(@(x) diff(x,1,2),Fdata,'UniformOutput',false);
 

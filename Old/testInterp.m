@@ -5,19 +5,19 @@ fn='Data/2013-12-04/image046.sxm';
 chn=3;
 cutPrct=1.3;
 
-[header, data]= load.loadsxm(fn,chn);
+[header, data]= loadSxM.loadsxm(fn,chn);
 
 figure
 histogram(data(:));
 
-file=load.loadProcessedSxM(fn);
+file=loadSxM.loadProcessedSxM(fn);
 data=file.channels(chn).data;
 
 figure
 histogram(data(:));
 
 figure
-plot.plotFile(file,chn);
+plotSxM.plotFile(file,chn);
 
 [wavelength,radial_average] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
 
@@ -39,7 +39,7 @@ histogram(data(:));
 
 file.channels(chn).data=data;
 figure
-plot.plotFile(file,chn);
+plotSxM.plotFile(file,chn);
 
 %%
 [noise_fit,start]=op.getRadialNoise(wavelength, radial_average);
@@ -51,15 +51,15 @@ signalNorm=radial_average./noise_fit;
 
 file.channels(chn).data=filtered;
 figure
-plot.plotFile(file,chn);
+plotSxM.plotFile(file,chn);
 
 file.channels(chn).data=removed;
 figure
-plot.plotFile(file,chn);
+plotSxM.plotFile(file,chn);
 
 file.channels(chn).data=filtered+removed;
 figure
-plot.plotFile(file,chn);
+plotSxM.plotFile(file,chn);
 
 
 

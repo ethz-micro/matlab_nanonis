@@ -24,7 +24,7 @@ function [wavelength, radial_spectrum] =getRadialFFT(data,varargin)
     radius = 1:radius_step:(round(0.5*img_size)-1);
     
     % Create the meshgrid to be used in resampling
-    [X,Y] = meshgrid(1:size(img,1),1:size(img,2));
+    [X,Y] = meshgrid(1:size(img,2),1:size(img,1));
     
     %Assign a distance to the center to each position
     DSquare=(X-center(2)).^2+(Y-center(1)).^2;

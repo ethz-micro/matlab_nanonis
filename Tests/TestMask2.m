@@ -8,8 +8,8 @@ clear all;
 DTSTMfn='Data/Aram/image035.sxm';
 FESTMfn='Data/Aram/image046.sxm';
 
-DTSTM=load.loadProcessedSxM(DTSTMfn);
-FESTM=load.loadProcessedSxM(FESTMfn);
+DTSTM=loadSxM.loadProcessedSxM(DTSTMfn);
+FESTM=loadSxM.loadProcessedSxM(FESTMfn);
 
 DTcn=1;
 FEcn=3;
@@ -20,17 +20,17 @@ FEcn=3;
 DTSTMfn='Data/Urs/m2_ori.par';
 FESTMfn='Data/Urs/m14_ori.par';
 
-DTSTM=load.loadProcessedPar(DTSTMfn);
-FESTM=load.loadProcessedPar(FESTMfn);
+DTSTM=loadSxM.loadProcessedPar(DTSTMfn);
+FESTM=loadSxM.loadProcessedPar(FESTMfn);
 
 DTcn=1;
 FEcn=2;
 %}
 %%
 figure
-plot.plotFile(DTSTM,DTcn);
+plotSxM.plotFile(DTSTM,DTcn);
 figure
-plot.plotFile(FESTM,FEcn);
+plotSxM.plotFile(FESTM,FEcn);
 %%
 
 %Find FE Resolution
@@ -45,7 +45,7 @@ data=DTSTM.channels(DTcn).data;
 
 %Plot DTSTM + masks
 figure
-plot.plotFile(DTSTM,DTcn);
+plotSxM.plotFile(DTSTM,DTcn);
 mask.applyMask(edge(maskUp));
 mask.applyMask(edge(maskDown),[1,0,0]);
 
@@ -58,7 +58,7 @@ yrange = yrange-offset(2);
 
 %% Plot FESTM + DTSTM masks
 figure
-plot.plotFile(FESTM,FEcn);
+plotSxM.plotFile(FESTM,FEcn);
 mask.applyMask(edge(maskUp),[0,0,0],1,xrange*1e9,yrange*1e9);
 mask.applyMask(edge(maskDown),[1,0,0],1,xrange*1e9,yrange*1e9);
 
@@ -70,7 +70,7 @@ data=FESTM.channels(FEcn).data;
 
 %Plot FESTM + masks
 figure
-plot.plotFile(FESTM,FEcn,0,0);
+plotSxM.plotFile(FESTM,FEcn,0,0);
 mask.applyMask(edge(maskUp),[1,0,0]);
 %mask.applyMask(edge(maskDown),[1,0,0]);
 
@@ -83,7 +83,7 @@ yrange = yrange+offset(2);
 
 %Plot DTSTM + FESTM masks
 figure
-plot.plotFile(DTSTM,DTcn,0,0);
+plotSxM.plotFile(DTSTM,DTcn,0,0);
 mask.applyMask(edge(maskUp),[1,0,0],1,xrange*1e9,yrange*1e9);
 %mask.applyMask(edge(maskDown),[1,0,0],1,xrange,yrange);
 
@@ -93,13 +93,13 @@ ylim(yrange*1e9)
 %print -dpdf -loose DTSTM
 
 figure
-plot.plotFile(DTSTM,DTcn,0,0);
+plotSxM.plotFile(DTSTM,DTcn,0,0);
 mask.applyMask(edge(maskUp),[1,0,0],1,xrange*1e9,yrange*1e9);
 
 
 %%
 figure
-plot.plotFile(FESTM,1,0,0);
+plotSxM.plotFile(FESTM,1,0,0);
 
 
 

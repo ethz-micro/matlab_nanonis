@@ -21,7 +21,7 @@ ttl='2015-03-04/image005.sxm';
 
 
 %Load 2,4,6,8 (current + forward channel 0 1 2 3)
-file = load.loadProcessedSxM(fn,[0 2 4 6 8]);
+file = loadSxM.loadProcessedSxM(fn,[0 2 4 6 8]);
 
 
 %% plot CH 0
