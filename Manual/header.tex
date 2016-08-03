@@ -1,0 +1,167 @@
+% !TEX encoding = UTF-8 Unicode
+\documentclass[a4paper, 12pt]{article}
+
+\usepackage[T1]{fontenc}%encodage texte (Accents, ...) output
+\usepackage[utf8]{inputenc}%encodage entrée
+
+
+%		Bases Latex:
+%
+% Le texte s'écrit dans un environnement. L'environnement commence par un \begin{}
+% et fini par \end{}. Il peut y avoir des environnements dans des environnements mais 
+% ils ne doivent jamais se croiser:
+% 
+% \begin{A}\begin{B}\end{B}\end{A} => OK
+% \begin{A}\begin{B}\end{A}\end{B} => NON!!!!!
+% 
+% L'environnement du document est "document", pour les maths: "displaymath", etc.
+% 
+% Le texte doit être structuré. La structure la plus commune est:
+% \section{TITRE}, \subsection{TITRE}, \subsubsection{TITRE}
+% une étoile évite la numérotation: \section*{}
+% Le texte s'écrit simplement au dessous de ces definitions
+% 
+% Si les maths ne sont pas dans un environnement special, ils doivent être
+% entourés de $ ou de $$. Par exemple pour écrire un mu, il faut écrire $\mu$
+% 
+% \def ou \newcommand permettent de définir des raccourcis. Préférez \newcommand 
+% qui fait plus de vérifications. voila la syntaxe:
+% \newcommand{\myCommand}[NbrArguments][Default value first argument]{What my command do}
+% Dans la commande, on se réfère au premier(etc.) argument avec #1
+% Les [] sont optionnels. Si on met un premier argument optionnel,
+% on appelle la fonction avec \myCommand[first]{second}. Sinon, \myCommand{1}{2}
+% 
+
+
+\usepackage{graphicx}%Affichage d'images
+\graphicspath{{../figures/}}%search for images in figures/
+\usepackage[colorlinks,bookmarks=false,linkcolor=blue,urlcolor=blue]{hyperref}%links
+\usepackage[all]{hypcap}%correct bug figures+link
+\usepackage{gensymb}%Generic symbols (\degree, ...)
+\usepackage{ifthen}% conditional statement
+\usepackage{makeidx}%index
+\usepackage[]{algorithm2e}%affichage algorithmes
+\usepackage{caption}%Do caption job
+\usepackage{subcaption}%If we want to use subfigures
+
+
+
+%ALGORITHM
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RestyleAlgo{boxed} % I want box around algorithms
+\newcommand{ \ba }{\begin{algorithm}[H]} %algortihm displays algorithms
+\newcommand{ \ea }{\end{algorithm}}
+
+
+%MATH
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% equations
+\newcommand{ \be }{\begin{equation}} %maths numérotés
+\newcommand{ \ee }{\end{equation}}
+\newcommand{ \bdm }{\begin{displaymath}}%maths non numérotés
+\newcommand{ \edm }{\end{displaymath}}
+
+
+%tableaux
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\bt}[1]{\begin{table}[!h]\begin{center}\begin{tabular}{#1}\hline}
+\newcommand{\et}[1]{\hline\end{tabular}\caption{#1}\end{center}\end{table}}
+
+
+%figures
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{centeredFigure}[1][hptb]
+{
+\begin{figure}[#1]
+\begin{center}
+}{
+\end{center}
+\end{figure}
+}
+
+\newcommand{\multiFig}[3][hptb]{
+\begin{centeredFigure}[#1]
+#2
+\caption{#3}
+\end{centeredFigure}
+}
+
+\newcommand{\insertFig}[4][hptb]{%Par défaut, le premier argument est hp
+	\begin{centeredFigure}[#1]
+		\ifthenelse{\equal{#4}{}}{%Si le #4 est vide, 
+			\includegraphics[width=\textwidth]{#2}
+		}{
+			\includegraphics[width=#4]{#2}
+		}
+		\caption{ \label{fig_#2} #3}
+	\end{centeredFigure}
+}
+
+
+\newcommand{\subFig}[3][.45\textwidth]{
+\begin{subfigure}{#1}
+  \centering
+  \includegraphics[width=\linewidth]{#2}
+  \caption{\label{fig_#2}#3}
+\end{subfigure}
+}
+
+
+\newcommand{\fig}[1]{Figure \ref{fig_#1}}% ref fait référence à un \label{}
+
+%listes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newcommand{\+}[1][{}]{
+%\ifthenelse{\equal{#1}{}}{%Si le #1 est vide, on envoie \item
+%\item
+%}{
+%\item[#1]
+%}}
+%Itemize
+\newcommand{ \bi }{\begin{itemize}} %Itemize fait une liste avec des bullet, enumerate avec chiffres
+\newcommand{ \ei }{\end{itemize}}
+\newcommand{ \bis }{\bi \setlength{\itemsep}{-3pt}}%Small
+%definitions
+\newcommand{ \bdf }{\begin{description}}% liste de description
+\newcommand{ \edf }{\end{description}}
+
+
+%Liens
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\mail}[1]{{\href{mailto:#1}{#1}}} %Lien mail
+\newcommand{\ftplink}[1]{{\href{ftp://#1}{#1}}}
+\newcommand{\link}[1]{{\href{http://#1}{#1}}} %Lien Internet
+
+%comment
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\cmt}[2]{
+\if0#2%On compare 0 et #2 si ils sont égaux on affiche #1 
+#1
+\fi
+}
+
+%Detection of environnment
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter %pour pouvoir utiliser le @ dans les commandes
+\def\subs#1{ %on défini une commande nommée \subs avec 1 argument
+   \def\@tempa{itemize} % on défini \@tempa comme étant itemize 
+   %(Le \@ retiens un nom d'environnement)
+   \ifx\@tempa\@currenvir %\@currenvir est l'environnement courrant
+   % si c'est bon on fait un truc
+    \ei
+	\subsection{#1}
+	\bi
+	%fin du truc
+    \else
+    %Sinon on fait autre chose
+      \subsection{#1}
+      
+   \fi
+}
+\makeatother % le @ redeviens normal
+
+%index
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\makeindex
+\newcommand{\idx}[1]{#1\index{#1}}
