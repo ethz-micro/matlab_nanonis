@@ -8,16 +8,17 @@ The first version was developed by Quentin Peter during its master thesis *Spin 
 
 The repository is divided in three sections:
 * Manual
-* Library
-  * +load
+* NanoLib
+  * +loadSXM
+  * +plotSXM
   * +op
-  * +plot
-  * ..
+  * +mask
+  * +convolve2
 * Examples
-  * Files
-  * Scripts
-  * Test
-  * ...
+  * Files/
+  * Scripts/
+  * Test/
+  * example_open_SxM
 
 ## Installation and setup
 
@@ -30,17 +31,18 @@ A simple example of how to load and to plot an image is given below
 ```matlab
 % load file
 fileName = 'SXM_file.sxm';
-sxm = load.loadProcessedSxM(fileName);
+sxmFile = loadSxM.loadProcessedSxM(fileName);
 
-% plot file
+%% plot data
+iCh = 1; % Channel number
+
+%plot image
 figure('Name',sprintf('file: %s',fileName));
-
-iCh = 1; % number of the channel to plot
-plot.plotChannel(sxm.channels(iCh),sxm.header);
+plotSxM.plotFile(sxmFile,iCh);
 ```
 
 This and other example can be found in the section *Example*.
 
 ## Licence
 
-Distributed under the GNU General Public License, Version 3.0. (See accompanying file [LICENSE.txt](LICENSE.txt) or copy at [https://www.gnu.org/licenses/gpl-3.0.html](https://www.gnu.org/licenses/gpl-3.0.html))
+Distributed under the GNU General Public License, Version 3.0. (See accompanying file [LICENSE](LICENSE) or copy at [https://www.gnu.org/licenses/gpl-3.0.html](https://www.gnu.org/licenses/gpl-3.0.html))
