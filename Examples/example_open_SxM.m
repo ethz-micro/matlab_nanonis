@@ -11,7 +11,7 @@ addpath('../NanoLib/')
 
 %% load image
 
-fileName = 'Files/Si_7x7_200x200.sxm';% image name
+fileName = 'Files/Si_7x7_012.sxm';% image name
 sxmFile = loadSxM.loadProcessedSxM(fileName);
 
 %% plot data
