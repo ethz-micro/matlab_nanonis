@@ -3,14 +3,9 @@ clear all;
 %% add NanoLib
 addpath('../NanoLib/')
 
-cn=1;%1 is current, 3 intensity
+cn=1;
 %%
-%fn='/Volumes/micro/STM_AFM/2013/2013-12-04/image048.sxm';
-fn='Files/Si_7x7_050.sxm';
-%fn='Data/2013-12-04/image035.sxm';%46
-%fn='Data/2013-12-05/image045.sxm';
-%fn='Data/2013-12-06/image046.sxm';
-
+fn='Files/Si_7x7_051.sxm';
 file=loadSxM.loadProcessedSxM(fn);%Z=3.5
 
 %%
@@ -27,12 +22,6 @@ plot(wavelength, -0.04*noise_fit)
 set(gca,'XScale','log')
 
 %%
-
-%{
-cn=2;
-fn='Data/Urs/m14_ori.par';
-file=loadSxM.loadProcessedPar(fn);
-%}
 
 %Get data
 [wavelength, radial_average] =op.getRadialFFT(file.channels(cn).data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
