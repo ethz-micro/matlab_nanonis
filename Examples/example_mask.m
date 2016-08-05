@@ -11,7 +11,7 @@ addpath('../NanoLib/')
 
 %% load data
 fileName='Files/Si_7x7_051.sxm';
-sxm = loadSxM.loadProcessedSxM(fileName,0);
+sxm = loadSxM.loadProcessedSxM(fileName,'Z');
 
 %% Get mask 
 

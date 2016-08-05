@@ -1,14 +1,28 @@
 function file=loadProcessedSxM(fn, varargin)
-    
-    
-    if nargin > 1  && (strcmp(varargin{1},'PlaneLineCorrection') || strcmp(varargin{1},'Median'))
-        corrStr=varargin{1};
-    else
-        corrStr='';
+    %%
+    corrStr='';
+    channelDir = 'both';
+    ch_idx = nan(size(varargin));
+    channelNum = [];
+    if nargin > 1  
+        for i = 1:numel(varargin)
+            if isfloat(varargin{i})
+                channelNum = varargin{i};
+            else
+                switch varargin{i}
+                    case {'PlaneLineCorrection','Median'}
+                        corrStr=varargin{i};
+                    case {'fwd','bwd','forward','backward'}
+                        channelDir = varargin{i};
+                    otherwise                       
+                        ch_idx(i) = i;
+                end
+            end
+        end
     end
-    
-    
-    
+    ch_idx(isnan(ch_idx)) = [];
+    channelName = arrayfun(@(x) varargin{x},ch_idx,'UniformOutput',false);
+    %
     %read header
     file.header = loadSxM.loadsxm(fn);
     
@@ -24,8 +38,10 @@ function file=loadProcessedSxM(fn, varargin)
     file.header.scan_type = scanType(data_info);
     
     %Channels numbers to save
-    if nargin > 1 && strcmp(corrStr,'') % varargin already used
-        nArray=varargin{1};
+    if ~isempty(channelNum)
+        nArray=channelNum;
+    elseif ~isempty(channelName)
+        nArray=get_channelNumber(data_info,channelName,channelDir)-1;
     else
         nArray=0:2*numel(data_info)-1;
     end
@@ -126,4 +142,35 @@ function scan_type = scanType(data_info)
         otherwise
             scan_type='Unknown';
     end
+end
+
+function channelNumber = get_channelNumber(data_info,channelNames,channelDir)
+
+if ~iscellstr(channelNames)
+    channelNames = {channelNames};
+end
+channelNumber = nan(1,2*numel(data_info));
+ % find channel
+k = 1;
+for j = 1:numel(channelNames)
+    channelName = channelNames{j};
+    for i = 1:numel(data_info)
+        iCh = 2*(i-1)+1;
+        if ~isempty(strfind(upper(data_info(i).Name),upper(channelName)))
+            switch channelDir
+                case 'both'
+                    channelNumber(k:k+1) = iCh:iCh+1;
+                    k = k+2;
+                case {'fwd','forward'}
+                    channelNumber(k) = iCh;
+                    k = k+1;
+                case {'bwd','backward'}
+                    channelNumber(k) = iCh+1;
+                    k = k+1;
+            end
+        end
+    end
+end
+
+channelNumber(isnan(channelNumber)) = [];
 end

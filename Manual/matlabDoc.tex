@@ -9,18 +9,35 @@
 \newcommand{\+}[1]{\item \textbf{#1}}
 
 %Title
-\title{Matlab Files Documentation}
+\title{NanoLib Documentation}
 %Utiliser \breakline plutôt que \\ dans du texte normal
-\author{Quentin Peter\\{\small \mail{qpeter@stud.phys.ethz.ch}}}
+%\author{Quentin Peter\\{\small \mail{qpeter@stud.phys.ethz.ch}}}
+\author{
+ETH Zurich\\
+Laboratory of Solid State Physics\\\vspace{.5em}
+Microstructure Research\\ 
+{\small Danilo A. Zanin - \mail{dzanin@phys.ethz.ch}}\\
+{\small Lorenzo G. De Pietro - \mail{depietro@phys.ethz.ch}}\\
+{\small Quentin Peter - \mail{qpeter@stud.phys.ethz.ch}}
+}
+
 \date{\today}
 
 \begin{document}
 \maketitle
+
+
+
 \tableofcontents
 \newpage
 
-\section*{Package Folders}
-A function in a folder called \emph{+folder} can be called as \emph{folder.function} . This folder is called a package folder. In the following discussion, the section names with a + refers to a package folder.
+\section{Introduction}
+NanoLib library allows to open and analyze data saved using the \href{http://www.specs-zurich.com/en/home.html;jsessionid=FCD8A587EE447665C3F4A8CC374671EE}{Nanonis SPM Control System}.
+The first version was developed by Quentin Peter during its master thesis \emph{Spin Polarized Field Emission STM and Image Processing} in the Solid State Laboratory for \href{http://www.microstructure.ethz.ch}{Microstruture Research} at the ETH Zurich under the supervision of Dr. U. Ramsperger and L. De Pietro.
+
+The library is divided in package folders \emph{+folder}. 
+A function in a folder called \emph{+folder} can be called as \emph{folder.function}.
+In the following discussion, the section names with a + refers to a package folder.
 
 \section{STM\_SEM}
 \subsection{Image Structure}

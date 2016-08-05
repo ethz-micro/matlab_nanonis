@@ -7,18 +7,9 @@ The first version was developed by Quentin Peter during its master thesis *Spin 
 ## Content
 
 The repository is divided in three sections:
-* Manual
-* NanoLib
-  * +loadSXM
-  * +plotSXM
-  * +op
-  * +mask
-  * +convolve2
-* Examples
-  * Files/
-  * Scripts/
-  * Test/
-  * example_open_SxM
+* Manual: pdf of the user manual and source file
+* NanoLib: library
+* Examples: sample of dummy files and code example for using the library
 
 ## Installation and setup
 
