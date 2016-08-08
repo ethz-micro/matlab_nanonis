@@ -7,6 +7,11 @@ function colorMap = nanonisMap(nPti)
 % outpu: colorMap = nPti x 3 rgb color matrix
 %
 
+narginchk(0,1)
+
+if nargin == 0
+    nPti = 64;
+end
 
 % RGB map of the nanonis colors
 rgbPti = [...
