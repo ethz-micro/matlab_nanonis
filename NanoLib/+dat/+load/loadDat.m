@@ -68,7 +68,7 @@ function experiment_fnc = getExperiment(experiment)
         'Oscilloscope',      'load.experiment_oscilloscope';
     };
 %}
-experiment_list = load.getAllExperiments();
+experiment_list = dat.load.getAllExperiments();
 
 %Create header
 experiment_name = @(x) experiment_list{strcmp(x,experiment_list(:,1)),2};
