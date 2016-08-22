@@ -52,7 +52,13 @@ A function in a folder called \emph{+folder} can be called as \emph{folder.funct
 \section{+utility}
 
 The package folder \emph{+utility} contains generic functions, which can be used when analyzing both \emph{sxmFiles} and \emph{datFiles}
+% ------------------------------ %
+\subsubsection{getChannel}
+\bdf
+\+{channelNumber = getChannel(channels,channelNames)} returns all channel numbers where \emph{channels.Name} matches the \emph{channelNames}. \emph{channelNames} can be either a single string or a list of strings.
 
+\+{channelNumber = getChannel(channels,channelNames,direction)} returns only the channel number where \emph{channels.Direction} matches the \emph{direction}, too.
+\edf
 % ------------------------------ %
 \subsubsection{getColor}
 \bdf

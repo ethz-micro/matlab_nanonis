@@ -1,12 +1,13 @@
+%!TEX root = matlabDoc.tex
 \section{The +dat package folder}
 
-Besides surface imaging \nanonis allows to store data measured by the experimental channels. Data from the so called experiments are stored in a \emph{file.dat}.
+Besides surface imaging \nanonis{} allows to store data measured by the physical channels. Data from the so called experiments are stored in a \emph{file.dat}.
 Once loaded, variable, from now on \emph{datFile}, is a structure divided in: \emph{i}) \textbf{header}, a structure containing all information present in the header of the \emph{file.dat}, and \emph{ii}) \textbf{channels}, an array of channel structures containing data and information about every channel.
 Both, \textbf{header} and \textbf{channels} can be called by
 \begin{center}
-\emph{sxmFile.header} \quad \text{and} \quad \emph{sxmfile.channels\{\#\}}
+\emph{datFile.header} \quad \text{and} \quad \emph{datfile.channels\{\#\}}
 \end{center}
-\# being the number of the channel. When only one channel is loaded one refers to the channel simply as \emph{sxmfile.channels}. 
+\# being the number of the channel. When only one channel is loaded one refers to the channel simply as \emph{datfile.channels}. 
 More information about the substructure of header and channels is presented below.
 
 
@@ -18,16 +19,28 @@ The functions works with a structure that holds every relevant informations. To 
 \bdf
 \item[header] is a structure composed of:
   \bdf
-  \item[scan\_file] name of the file
-  \item[$\cdots$] Others informations extracted from the file
+  \item[file] name of the file
+  \item[path] path of the file
+  \item[experiment] experiment name
+  \item[sweep\_signal] signal that is varied during the experiment, it can be also the time
+  \item[rec\_date] date of the scan
+  \item[rec\_time] time of the scan
+  \item[points] number of experiment points
+  \item[grid\_points] number of experiment repetition
+  \item[channels] list of registered channels
+  \item[list] is a $2 \times n$ list of string, $n$ being the number of lines in the text header. Lines in the \emph{header.list} are of the form \{'Key','data'\}, e.g., \{'rec\_date','22.08.2016'\}
+  \item[$\cdots$] Others informations extracted from the file depending on the specific experiment
   \edf
 
-\item[experiments] is an array of channel structures composed of:
+\item[channels] is an array of channel structures composed of:
   \bdf
+  \item[Direction] 'forward' or 'backward'
+  \item[Unit] 'Z' or whatever the unit is
+  \item[Name] The name of the channel
   \item[data] A $n\times m$ matrix of processed data
   \edf
 \edf
-
+\textbf{The first channel, i.e. channel(1), is reserved to the sweep\_signal.}
 
 %-------------------------------------------------------------------------------%
 %  +load                                                                        %
@@ -35,13 +48,43 @@ The functions works with a structure that holds every relevant informations. To 
 \subsection{+load}
 This folder contains everything needed to load and process \emph{.dat} files.
 % ------------------------------ %
-\subsubsection{loadsxm}
+\subsubsection{experiment\_$\ast$}
+\emph{files.dat} are all characterized by a unique \textbf{experiment\_name}, that is saved in the first line of every \emph{.dat} file.
+In the follow we refer to those \emph{files.dat} simply as \emph{experiments}.
+Different \emph{experiments} have different headers and data characteristics.
+Every \emph{experiment} have a specific function called \emph{experiment\_$\ast$}, \emph{$\ast$} being the name of the experiment.
+\emph{experiment\_$\ast$} are called automatically by the \emph{loadDat} function as listed below.
+
+\bdf
+\+ {experiment\_name = experiment\_$\ast$('get experiment')} returns the \textbf{experiment\_name}.
+\+ {header = experiment\_$\ast$('get header',header,datasForKey)} returns the complete \emph{header} of the \emph{experiment}. 
+The input variable \emph{header} contains only the variables \emph{experiment} and \emph{list}.
+  \bdf
+  \+ {data = datasForKey(key)} is function returns the \emph{data} according to a specific \emph{key} as stored in the variable \emph{header.list}.
+  \edf  
+\+ {[header,channels] = experiment\_$\ast$('process data',header,data)} stores data into the \emph{channels} structure described above. Where needed some additional processing are applied to the data. Header's information are adjusted accordingly.
+\edf
+
+Further \emph{experiments} can be implemented by simply defining a function called \emph{experiment\_newExperiment}. New \emph{experiment} functions \textbf{must} have the same structure described above and should be saved in the \emph{+load} package folder.
 
 % ------------------------------ %
-\subsubsection{processChannel}
+\subsubsection{getAllExperiments}
+\bdf
+\+{experiment\_list = getAllExperiments()} returns a $2 \times n$ list, where $n$ is the number of the function \emph{experiment\_$\ast$}.
+In the first column is listed the unique name of the experiment saved in the \emph{+load} package folder.
+In the second column compare the correspondent function, i.e., \emph{experiment\_$\ast$}.
+\edf
+This function is used by the function \emph{loadDat} when loading different \emph{experiments}.
+
 
 % ------------------------------ %
-\subsubsection{loadProcessedSxM}
+\subsubsection{loadDat}
+By mean of the \emph{experiment} structure described in the two previous sections, \emph{loadDat} automatically recognize the type of \emph{experiment} and load it.
+\bdf
+\+{file=loadDat()} ask for a \emph{fileName.dat} and load it.
+\+{file=loadDat(fileName)} load the file named \emph{fileName.dat}.
+\+{file=loadDat(fileName,pathName)} load the file named \emph{fileName.dat} at a given \emph{pathName}.
+\edf
 
 %-------------------------------------------------------------------------------%
 %  +plotDat                                                                     %
@@ -82,11 +125,11 @@ To be written
 %-------------------------------------------------------------------------------%
 %  +opDat                                                                       %
 %-------------------------------------------------------------------------------%
-\subsection{+opDat}
+% \subsection{+op}
 % ------------------------------ %
-\subsubsection{getChannel}
-\bdf
-\+{channelNumber = getChannel(channels,channelNames)} returns all channel numbers where \emph{header.ChannelList} matches the \emph{channelNames}. \emph{channelNames} can be either a single string or a list of strings.
-
-\+{channelNumber = getChannel(channels,channelNames,direction)} returns only the channel number where \emph{channels.Direction} matches the \emph{direction}, too.
-\edf
+% \subsubsection{getChannel}
+% \bdf
+% \+{channelNumber = getChannel(channels,channelNames)} returns all channel numbers where \emph{header.ChannelList} matches the \emph{channelNames}. \emph{channelNames} can be either a single string or a list of strings.
+%
+% \+{channelNumber = getChannel(channels,channelNames,direction)} returns only the channel number where \emph{channels.Direction} matches the \emph{direction}, too.
+% \edf

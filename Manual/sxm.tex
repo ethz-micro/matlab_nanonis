@@ -1,6 +1,7 @@
+%!TEX root = matlabDoc.tex
 \section{The +sxm package folder}
 
-Images generated via the scanning interface of the \nanonis have extension \emph{file.sxm}. 
+Images generated via the scanning interface of the \nanonis{} have extension \emph{file.sxm}. 
 Once loaded, variable, from now on \emph{sxmFile}, is a structure divided in: \emph{i}) \textbf{header}, a structure containing all information present in the header of the \emph{file.sxm}, and \emph{ii}) \textbf{channels}, an array of channel structures containing data and information about every channel.
 Both, \textbf{header} and \textbf{channels} can be called by
 \begin{center}
@@ -63,7 +64,7 @@ This folder contains everything needed to load and process \emph{.sxm} files.
 \edf
 
 \emph{.sxm} files are composed of an ascii header and of single precision binary data. They are separated by 0x1A 0x04 (SUB EOT).
-This file is provided by NANONIS\texttrademark and loads a specified channel from a \emph{.sxm} file.
+This file is provided by \nanonis{} and loads a specified channel from a \emph{.sxm} file.
 % ------------------------------ %
 \subsubsection{processChannel}
 
@@ -163,13 +164,6 @@ This package contains various useful functions.
 \+{[filtered, removed] = filterData(data, pixSize)} filters the \emph{data} with Fourier transform. The filtering keeps structures of approximatively \emph{pixSize} pixels. It returns the filtered data \emph{filtered} and the removed noise \emph{removed}.
 
 \+{[filtered, removed] = filterData(data, pixSize, 'plotFFT', zoom)} additionally plots the Fourier plane. The optional variable \emph{zoom} has default value $8$ and is used to zoom in the Fourier plane.
-\edf
-% ------------------------------ %
-\subsubsection{getChannel}
-\bdf
-\+{channelNumber = getChannel(channels,channelNames)} returns all channel numbers where \emph{channels.Name} matches the \emph{channelNames}. \emph{channelNames} can be either a single string or a list of strings.
-
-\+{channelNumber = getChannel(channels,channelNames,direction)} returns only the channel number where \emph{channels.Direction} matches the \emph{direction}, too.
 \edf
 % ------------------------------ %
 \subsubsection{getOffset}
