@@ -57,9 +57,108 @@ header.integration_time = str2double(datasForKey('Integration Time (ms)'));
 
 end
 
-function [header,experiment] = processData(header,experiment)
-[header,experiment] = split_loops(header,experiment);
-[header,experiment] = split_fwd_bwd(header,experiment);
+function [header,channels] = processData(header,data)
+
+[header,channels] = split_loops(header,data);
+[header,channels] = split_fwd_bwd(header,channels);
+
+end
+
+function [header,channels] = split_loops(header,data)
+channels = struct;
+loops = header.loops/2;
+if loops > 1
+    pti = size(data,1)/loops;
+    for i = 1:size(data,2);
+        chnName = strsplit(header.channels{i},{'(',')'});
+        channels(i).Name = strcat(chnName{1},chnName{3});
+        channels(i).Unit = chnName{2};
+        channels(i).Direction = 'forward';
+        channels(i).data = reshape(data(:,i),pti,loops);
+    end
+else
+    for i = 1:size(data,2);
+        chnName = strsplit(header.channels{i},{'(',')'});
+        channels(i).Name = strcat(chnName{1},chnName{3});
+        channels(i).Unit = chnName{2};
+        channels(i).Direction = 'forward';
+        channels(i).data = data(:,i);
+    end
+end
+
+end
+
+function [header,channels] = split_fwd_bwd(header,raw_chn)
+
+
+sweepMax = find(raw_chn(1).data(:,1)==max(raw_chn(1).data(:,1)),1,'last');
+if sweepMax ~= length(raw_chn(1).data)
+%if channels(1).data(1,1)==channels(1).data(end,1)
+    % find maximal values
+    % !!! one can have more points per energy !!!
+    maxV = find(raw_chn(1).data(:,1)==max(raw_chn(1).data(:,1)));
+    imax = maxV(floor(end/2));
+    xup = raw_chn(1).data(1:imax,1);
+    xdown = raw_chn(1).data(imax+1:end,1);
+        
+    energies = unique(raw_chn(1).data(:,1));
+
+    channels = struct;
+    for i = 1:numel(raw_chn)
+        k = 2*(i-1)+1;
+        % forward
+        channels(k).Name = raw_chn(i).Name;
+        channels(k).Unit = raw_chn(i).Unit;
+        channels(k).Direction = 'forward';
+        channels(k).data = nan(length(energies),1);
+        % do mean        
+        yup = raw_chn(i).data(1:imax);
+        for j = 1:length(energies)
+            channels(k).data(j) = mean(yup(xup==energies(j)));
+        end
+        % backward
+        channels(k+1).Name = raw_chn(i).Name;
+        channels(k+1).Unit = raw_chn(i).Unit;
+        channels(k+1).Direction = 'backward';
+        channels(k+1).data = nan(length(energies),1);
+        % do mean
+        ydown = raw_chn(i).data(imax+1:end);
+        for j = 1:length(energies)
+            channels(k+1).data(j) = mean(ydown(xdown==energies(j)));
+        end
+    end
+    
+else
+    fprintf('only forward\n');
+end
+
+chnName = repmat(header.channels',1,2);
+header.channels = reshape(chnName',2*numel(header.channels),1)';
+
+%% remove energy backward
+channels(2) = [];
+header.channels(2) = [];
+
+end
+
+%{
+function [header,experiment] = split_loops(header,experiment)
+loops = header.loops/2;
+if loops > 1
+    
+    loopsName = arrayfun(@(x) sprintf('Counts %d',x),1:loops,'UniformOutput',false');
+    channels = [header.channels(1),loopsName,header.channels(3:end)];
+    
+    pti = size(experiment.data,1)/loops;
+    data = [experiment.data(1:pti,1),...
+        reshape(experiment.data(:,2),pti,loops)...
+        experiment.data(1:pti,3:end)];
+    
+    experiment.data = data;
+    header.channels = channels;
+    
+end
+
 end
 
 function [header,experiment] = split_fwd_bwd(header,experiment)
@@ -106,23 +205,5 @@ experiment.data = data;
 header.channels = channels;
 
 end
-
-function [header,experiment] = split_loops(header,experiment)
-loops = header.loops/2;
-if loops > 1
-    
-    loopsName = arrayfun(@(x) sprintf('Counts %d',x),1:loops,'UniformOutput',false');
-    channels = [header.channels(1),loopsName,header.channels(3:end)];
-    
-    pti = size(experiment.data,1)/loops;
-    data = [experiment.data(1:pti,1),...
-        reshape(experiment.data(:,2),pti,loops)...
-        experiment.data(1:pti,3:end)];
-    
-    experiment.data = data;
-    header.channels = channels;
-    
-end
-
-end
+%}
 

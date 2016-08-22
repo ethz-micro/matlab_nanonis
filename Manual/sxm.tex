@@ -1,0 +1,254 @@
+\section{The +sxm package folder}
+
+Images generated via the scanning interface of the \nanonis have extension \emph{file.sxm}. 
+Once loaded, variable, from now on \emph{sxmFile}, is a structure divided in: \emph{i}) \textbf{header}, a structure containing all information present in the header of the \emph{file.sxm}, and \emph{ii}) \textbf{channels}, an array of channel structures containing data and information about every channel.
+Both, \textbf{header} and \textbf{channels} can be called by
+\begin{center}
+\emph{sxmFile.header} \quad \text{and} \quad \emph{sxmfile.channels\{\#\}}
+\end{center}
+\# being the number of the channel. When only one channel is loaded one refers to the channel simply by \emph{sxmfile.channels}. 
+More information about the substructure of header and channels is presented below.
+
+
+\subsection{sxmFile: header and channels structures}
+\label{sec:sxmFile}
+
+The functions works with a structure that holds every relevant informations. Header and channels structure have following fields:
+
+\bdf
+\item[header] is a structure composed of:
+  \bdf
+  \item[scan\_file] name of the file
+  \item[rec\_date] date of the scan
+  \item[rec\_time] time of the scan
+  \item[scan\_pixels] [nx;ny], number of pixels
+  \item[scan\_range] [rx;ry], range [m]
+  \item[scan\_offset] [ox;oy], offset [m]
+  \item[scan\_angle] tilt angle of the scan
+  \item[scan\_dir] 'up' or 'down'
+  \item[bias] bias voltage [V]
+  \item[scan\_type] 'STM', 'SEMPA', 'NFESEM', etc.
+  \item[$\cdots$] Others informations extracted from the file
+  \edf
+
+\item[channels] is an array of channel structures composed of:
+  \bdf
+  \item[Direction] 'forward' or 'backward'
+  \item[Unit] 'Z' or whatever the unit is
+  \item[Name] The name of the channel
+  \item[data] A $n\times m$ matrix of processed data
+  \item[lineMedian] A $n\times 1$ matrix of raw line median
+  \item[lineMean] A $n\times 1$ matrix of raw line mean
+  \item[linePlane] A $n\times 1$ matrix of raw line mean linear fit
+  \item[lineResidualSlope] a $1\times m$ matrix of processed column mean linear fit
+  \item[lineStd] A $n\times 1$ matrix of processed line standard deviation
+  \edf
+\edf
+
+To access the scan data on a structure named \emph{sxmFile}, one should type, e.g., \emph{sxmFile.header.rec\_date}.
+
+%-------------------------------------------------------------------------------%
+%  +load                                                                        %
+%-------------------------------------------------------------------------------%
+\subsection{+load}
+This folder contains everything needed to load and process \emph{.sxm} files.
+% ------------------------------ %
+\subsubsection{loadsxm}
+\bdf
+
+\+{header = loadsxm(fn)} loads a file named \emph{fn.sxm} and returns the Header. This function is called by \emph{load.loadProcessedSxM} and \textbf{should not be called directly}.
+
+\+{[header, data] = loadsxm(fn, i)} reads the channel \emph{i} and returns its \emph{data}.
+
+\edf
+
+\emph{.sxm} files are composed of an ascii header and of single precision binary data. They are separated by 0x1A 0x04 (SUB EOT).
+This file is provided by NANONIS\texttrademark and loads a specified channel from a \emph{.sxm} file.
+% ------------------------------ %
+\subsubsection{processChannel}
+
+\bdf
+\+{channel = processChannel(channel, header)} Process the \emph{channel} as described below using the informations form \emph{header}. This function is called by \emph{load.loadProcessedXXX} and should not be called directly.
+
+\+{channel = processChannel(channel,header,corrType)} If \emph{corrType} is set to 'Median', the median is used instead of the mean for lines corrections. If it is set to 'PlaneLineCorrection' a linear fit is used.  
+\edf
+
+The processing orientate and rotate the data so that all the images are comparable.
+Everything that is removed is saved in the output structure to avoid loosing informations.
+
+The mean value of the measurement under the conditions of each pixel must be extracted from the data. As there is drift and other instabilities, the mean value of the data is generally not a good value. The mean of each line is used instead, as the measurement conditions doesn't change too much during one line. Others possibility include the median or the mean plane. The mean plane along the line is also removed.
+
+For STM, This offset is subtracted. For NFESEM and SEMPA, it is divided, as justified in the thesis.
+% ------------------------------ %
+\subsubsection{loadProcessedSxM}
+\bdf
+\+{file=loadProcessedSxM(fn)} loads and process all the channels of \emph{.sxm} file named \emph{fn}. The structure \emph{file} contains all the informations and is used in a large number of other functions.
+
+\+{file=loadProcessedSxM(fn, chn)} only loads the channels whose numbers are in the array \emph{chn}
+
+\+{file=loadProcessedSxM(fn, corrType)} If \emph{corrType} is set to 'MedianCorrection', the median is used instead of the mean for lines corrections. If it set to 'PlaneLineCorrection' a linear fit is used. 
+
+\edf
+
+The loading is done with \emph{load.loadsxm} and processing with \emph{load.processChannel}.
+
+% \subsubsection{loadProcessedPar}
+% \bdf
+% \+{file=loadProcessedPar(fn)} loads and process the \emph{.par} file named \emph{fn}. The structure \emph{file} contains all the informations and is used in a large number of other functions.
+%
+% \+{file=loadProcessedPar(fn, corrType)} If \emph{corrType} is set to 'MedianCorrection', the median is used instead of the mean for lines corrections. If it set to 'PlaneLineCorrection' a linear fit is used.
+%
+% \edf
+%
+% The par data are composed of a \emph{.par} file that holds the header and of several \emph{.tfi} files that holds int 16 binary data for each channel.
+%
+% A header structure that match the \emph{.sxm} header structure is extracted from the \emph{.par} file, as well as infos about the Channels.
+
+%-------------------------------------------------------------------------------%
+%  +plot                                                                        %
+%-------------------------------------------------------------------------------%
+\subsection{+plot}
+This package contains everything needed to plot the data.
+
+\subsubsection{folder2png} 
+\bdf
+\+{folder2png(folderName)} finds every \emph{.par} and \emph{.sxm} files in \emph{folderName}, plot all relevant channels and saves the images in a \emph{image} folder.
+\edf
+% ------------------------------ %
+\subsubsection{plotData}
+\bdf
+\+{[h, range] = plotData(data, name, unit, header)} plots the \emph{data} using informations from the \emph{header}. The figure title is deduced from \emph{name} and \emph{unit}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
+ 
+\+{[h, range] = plotData(data, name, unit, header, xoffset, yoffset)} adds an offset to the plot.
+\edf
+
+The range is 2 STD. If the data is STM, only the lines with low std are considered for the range.
+% ------------------------------ %
+\subsubsection{plotChannel}
+\bdf
+\+{[h, range] = plotChannel(channel, header)} plots the \emph{channel} using informations from the \emph{header}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
+
+\+{[h, range] = plotChannel(channel, header, xoffset, yoffset)} adds an offset to the plot.
+\edf
+
+It calls \emph{plot.plotData} on the channel data.
+% ------------------------------ %
+\subsubsection{plotFile}
+
+\bdf
+\+{[h, range] = plotFile(file, n)} plots the $n^{th}$ channel of \emph{file}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
+
+\+{[h, range] = plotFile(file, n, xoffset, yoffset)} adds an offset to the plot.
+\edf
+
+It calls \emph{plot.plotChannel}. 
+% ------------------------------ %
+\subsubsection{plotHistogram}
+\bdf
+\+{plotHistogram(data, range)} plots an histogram of \emph{data} and draw lines on the limit of \emph{range}. It removes the $.1\%$ most extreme values. 
+\edf
+
+%-------------------------------------------------------------------------------%
+%  +op                                                                          %
+%-------------------------------------------------------------------------------%
+\subsection{+op}
+This package contains various useful functions.
+\subsubsection{combineChannel}
+\bdf
+\+{channel=combineChannel(file, name, chn, chw)} combined the channels \emph{chn} of the \emph{file} structure with weights \emph{chw} and return a new \emph{channel} with name \emph{name}.
+\edf
+% ------------------------------ %
+\subsubsection{filterData}
+\bdf
+\+{[filtered, removed] = filterData(data, pixSize)} filters the \emph{data} with Fourier transform. The filtering keeps structures of approximatively \emph{pixSize} pixels. It returns the filtered data \emph{filtered} and the removed noise \emph{removed}.
+
+\+{[filtered, removed] = filterData(data, pixSize, 'plotFFT', zoom)} additionally plots the Fourier plane. The optional variable \emph{zoom} has default value $8$ and is used to zoom in the Fourier plane.
+\edf
+% ------------------------------ %
+\subsubsection{getChannel}
+\bdf
+\+{channelNumber = getChannel(channels,channelNames)} returns all channel numbers where \emph{channels.Name} matches the \emph{channelNames}. \emph{channelNames} can be either a single string or a list of strings.
+
+\+{channelNumber = getChannel(channels,channelNames,direction)} returns only the channel number where \emph{channels.Direction} matches the \emph{direction}, too.
+\edf
+% ------------------------------ %
+\subsubsection{getOffset}
+\bdf
+\+{[offset, XC, centerOffset] = getOffset(img1, header1, img2, header2)} compares the images matrices \emph{img1} and \emph{img2} using informations from the two \emph{headeri} to find the most probable \emph{offset}. The units of \emph{offset} are from header.scan\_range. It correspond to the maximum of the cross correlation matrix \emph{XC}. The corresponding offset relative to the centre of the two images is returned in \emph{centerOffset}.
+
+\+{[offset, XC, centerOffset] = getOffset(img1, header1, img2, header2, 'mask')} compares masks instead of images.
+\edf
+The offset is from the origin of the image, which is in a corner. The offset of the center is the centerOffset, but is less convenient to work with.
+% ------------------------------ %
+\subsubsection{getRadialFFT}
+\bdf
+\+{[wavelength, radial\_spectrum] =getRadialFFT(data)} Computes the \emph{radial spectrum} of the image saved in \emph{data} and the corresponding \emph{wavelength}. The wavelength unit is pixel.
+
+\+{[wavelength, radial\_spectrum] =getRadialFFT(data,pixPerUnit)} Changes the wavelength unit with the number of pixels per units, \emph{pixPerUnit}.
+\edf
+This function is used to study the radial spectrum of an image computed from the FFT.
+% ------------------------------ %
+\subsubsection{getRadialNoise}
+\bdf
+\+{[noise\_fit, signal\_start, signal\_error, noise\_coeff] = getRadialNoise( wavelength, radial\_average)} tries to fit a noise from the data of \emph{getRadialFFT}. \emph{noise\_fit} is the detected noise. \emph{signal\_start} is the first position where the signal is detected. \emph{signal\_error} is the error caused by the discrete nature of the signal on \emph{signal\_start}. \emph{noise\_coeff} gives the power law coefficients for the first detected noise.
+
+\+{[noise\_fit, signal\_start, signal\_error, noise\_coeff] = getRadialNoise( wavelength, radial\_average, maxNbrNoise)} Limits the number of noises to \emph{maxNbrNoise}. The default value is 10.
+\edf
+% ------------------------------ %
+\subsubsection{getRange}
+\bdf
+\+{[xrange, yrange] = getRange(header)} extract the ranges \emph{xrange}, \emph{yrange} from \emph{header}.
+\edf
+% ------------------------------ %
+\subsubsection{nanHighStd}
+\bdf
+\+{data = nanHighStd(data)} is useful for STM measurements. Usually the lines with very high std don't carry informations, and thus if a line has $std > 3 median$, it is set to nan.
+\edf
+% ------------------------------ %
+\subsubsection{nanonisMap}
+\bdf
+\+{colorMap = nanonisMap(nPti)} is a color map function that generates a Nanonis color like mapping of \emph{nPti} number of colors. \emph{nPti} is an optional value. If not provided \emph{nPti} = 64 per default. 
+\edf
+% ------------------------------ %
+\subsubsection{interpHighStd}
+\bdf
+\+{data = interpHighStd(data)} Removes the lines with high STD values and interpolates the missing values.
+\edf
+% ------------------------------ %
+\subsubsection{interpPeaks}
+\bdf
+\+{data = interpPeaks(data)} Removes the data witch are too far from the mean and interpolates the missing values.
+\edf
+
+%-------------------------------------------------------------------------------%
+%  +mask                                                                        %
+%-------------------------------------------------------------------------------%
+\subsection{+mask}
+Theses functions are useful to compute threshold mask and apply them.
+% ------------------------------ %
+\subsubsection{applyMask}
+\bdf
+\+{applyMask(mask)} apply the boolean mask \emph{mask} to the current figure.
+
+\+{applyMask(mask, color, alpha, xrange, yrange)} apply the boolean mask \emph{mask} in the range \emph{xrange}, \emph{yrange} with color \emph{color} and transparency \emph{alpha}. 
+\edf
+
+The ranges are vectors containing a start point and an end point. See MATLAB's \emph{image} documentation.
+% ------------------------------ %
+\subsubsection{getMask}
+\bdf
+\+{[maskUp, maskDown, flatData] = getMask(data, pixSize, prctUp, prctDown)}
+ flatten and filter the \emph{data} before computing threshold masks. \emph{flatData} is the flattened and filtered data. \emph{maskUp} marks everithing above \emph{prctUp} and \emph{maskDown} below \emph{prctDown}. The filtering is done using \emph{op.filterData}, to which \emph{pixSize} is passed to keep features of this approximate size.
+
+\+{[maskUp, maskDown, flatData] =  getMask(data, pixSize, prctUp, prctDown, 'plotFFT', zoom)}
+Additionally passes \emph{'plotFFT',zoom} to \emph{op.filterData} to visualize the Fourier plane. \emph{zoom} is optional.
+\edf
+
+The flattening is done using sliding mean.
+
+%-------------------------------------------------------------------------------%
+%  +convolve2                                                                   %
+%-------------------------------------------------------------------------------%
+\subsection{+convolve2}
+This in an improved version of MATLAB's conv2 matrix. It allows a better gestion of boundaries. 
+It was downloaded from \href{http://www.mathworks.com/matlabcentral/fileexchange/22619-fast-2-d-convolution}{MATLAB file exchange}. See the license file.

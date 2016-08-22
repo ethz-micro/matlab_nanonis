@@ -24,7 +24,7 @@ function file=loadProcessedSxM(fn, varargin)
     channelName = arrayfun(@(x) varargin{x},ch_idx,'UniformOutput',false);
     %
     %read header
-    file.header = loadSxM.loadsxm(fn);
+    file.header = sxm.load.loadsxm(fn);
     
     if ~isfield(file.header,'scan_pixels')
         fprintf('File header malformed\n');
@@ -112,14 +112,14 @@ function channel = loadChannel(fn,n,data_info,varargin)
     if loadData
         
         %load data in channel
-        [header, data]=loadSxM.loadsxm(fn,n);
+        [header, data]=sxm.load.loadsxm(fn,n);
         
         header.scan_type = scanType(data_info);
         
         %Save data
         channel.data=data;
         
-        channel=loadSxM.processChannel(channel,header,varargin{:});
+        channel=sxm.load.processChannel(channel,header,varargin{:});
         
         
     else

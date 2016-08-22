@@ -1,5 +1,5 @@
 % read data file saved with nanonis
-function myData=loadDat(varargin)
+function file=loadDat(varargin)
 % varargin{1} = filename
 % varargin{2} = pathname
 
@@ -8,7 +8,7 @@ if isempty(varargin)
     [fN,pN] = uigetfile('*.dat');
     if isequal(fN,0)
         disp('User selected Cancel')
-        myData = nan;
+        file = nan;
         return
     end
 elseif length(varargin) == 1
@@ -33,20 +33,19 @@ fileName = [pN,fN];
 inputData = importdata(fileName,'\t',iLine);
 
 header.channels = inputData.colheaders;
-experiment.data = inputData.data;
 
 % process data if needed
-[header,experiment] = experiment_fnc('process data',header,experiment);
+[header,channels] = experiment_fnc('process data',header,inputData.data);
 
 %add number of points to header
-header.points = size(experiment.data,1);
+header.points = size(channels(1).data,1);
 
 % save file info to header
 header.path = pN;
 header.file = fN;
 
 % save to output
-myData = struct('header',header,'experiment',experiment);
+file = struct('header',header,'channels',channels);
 
 end
 

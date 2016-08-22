@@ -14,10 +14,10 @@ switch action
         
     case 'process data'
         header = varargin{1};
-        experiment = varargin{2}; 
-        [header,experiment] = processData(header,experiment);
+        data = varargin{2}; 
+        [header,channels] = processData(header,data);
         varargout{1} = header;
-        varargout{2} = experiment;
+        varargout{2} = channels;
         
     otherwise
         error('action should be: get header, process data')
@@ -46,21 +46,28 @@ header.user = datasForKey('User');
 end
 
 % data for longterm are already good
-function [header,experiment] = processData(header,experiment)
+function [header,channels] = processData(header,data)
 
 % add sweep signal
 signalName = header.sweep_signal;
-signalValues = (0:length(experiment.data(:,1))-1)'*header.sampling_time/1000;
-[header,experiment] = addSignal(header,experiment,signalName,signalValues);
-
-end
-
-% add first row: signal name
-function [header,experiment] = addSignal(header,experiment,signalName,signalValues)
-
 header.channels = [signalName header.channels];
-newData = [signalValues,experiment.data];
 
-experiment.data = newData;
 
+channels = struct;
+% add sweep signal to channels
+chnName = strsplit(signalName(1:end-1),'(');
+channels(1).Name = strtrim(chnName{1});
+channels(1).Unit = chnName{2};
+channels(1).Direction = 'forward';
+channels(1).data = (0:size(data,1)-1)'*header.sampling_time/1000;
+% !!! units changed to s !!!
+channels(1).Unit = 's';
+
+for i = 1:size(data,2);
+    chnName = strsplit(header.channels{i}(1:end-1),'(');
+    channels(1+i).Name = strtrim(chnName{1});
+    channels(1+i).Unit = chnName{2};
+    channels(1+i).Direction = 'forward';
+    channels(1+i).data = data(:,i);
+end
 end

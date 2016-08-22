@@ -7,47 +7,50 @@
 %-------------------------------------------------------------------------
 
 %% add NanoLib
-addpath('../NanoLib/')
+addpath('../../NanoLib/')
 
 %% image name
-fileName = 'Files/Si_7x7_012.sxm';
+fileName = '../Files/Si_7x7_012.sxm';
 
 %% load image with all channels
-sxmFile = loadSxM.loadProcessedSxM(fileName);
+sxmFile = sxm.load.loadProcessedSxM(fileName);
 % plot data
-figure; plotSxM.plotFile(sxmFile,1);
+figure; sxm.plot.plotFile(sxmFile,1);
 %% load image with only first channel !! start from 0
-sxmFile = loadSxM.loadProcessedSxM(fileName,0);
+sxmFile = sxm.load.loadProcessedSxM(fileName,0);
 % plot data
-figure; plotSxM.plotFile(sxmFile,1);
+figure; sxm.plot.plotFile(sxmFile,1);
 
 %% load image with only first and last channels !! start from 0
-sxmFile = loadSxM.loadProcessedSxM(fileName,[0,3]);
+sxmFile = sxm.load.loadProcessedSxM(fileName,[0,3]);
 % plot data
-figure; plotSxM.plotFile(sxmFile,2);
+figure; sxm.plot.plotFile(sxmFile,2);
+% plot specific channel
+iCh = utility.getChannel(sxmFile.channels,'Current','backward');
+figure; sxm.plot.plotFile(sxmFile,iCh);
 
 %% load image channel 'Z' forward and backward
-sxmFile = loadSxM.loadProcessedSxM(fileName,'Z');
+sxmFile = sxm.load.loadProcessedSxM(fileName,'Z');
 % plot data
-figure; plotSxM.plotFile(sxmFile,1);
+figure; sxm.plot.plotFile(sxmFile,1);
 
 %% load image channel 'Z' forward and backward with Processing MEDIAN
-sxmFile = loadSxM.loadProcessedSxM(fileName,'Z','Median');
+sxmFile = sxm.load.loadProcessedSxM(fileName,'Z','Median');
 % plot data
-figure; plotSxM.plotFile(sxmFile,1);
+figure; sxm.plot.plotFile(sxmFile,1);
 
 %% load image channel 'Z' forward
-sxmFile = loadSxM.loadProcessedSxM(fileName,'Z','fwd');
+sxmFile = sxm.load.loadProcessedSxM(fileName,'Z','fwd');
 % plot data
-figure; plotSxM.plotFile(sxmFile,1);
+figure; sxm.plot.plotFile(sxmFile,1);
 
 %% load image with list of channels to load, fwd and bwd
-sxmFile = loadSxM.loadProcessedSxM(fileName,'Z','Current');
+sxmFile = sxm.load.loadProcessedSxM(fileName,'Z','Current');
 % plot data
 iCh = 2; % Chennel 2 is Z bwd
 figure
-[~, range] = plotSxM.plotFile(sxmFile,iCh);
+[~, range] = sxm.plot.plotFile(sxmFile,iCh);
 %plot histogram
 figure
-plotSxM.plotHistogram(sxmFile.channels(iCh).data,range);
+sxm.plot.plotHistogram(sxmFile.channels(iCh).data,range);
 title('Z height')

@@ -10,7 +10,7 @@ function [maskUp, maskDown, flatData] = getMask(data,pixSize, prctUp, prctDown,v
     scanFrac = 4;%Fraction of the image on which the sliding averaging is done
     
     %Filter the data
-    filtered = op.filterData(data,pixSize,varargin);
+    filtered = sxm.op.filterData(data,pixSize,varargin);
     
     %Flatten the datas
     flatData = flattenData(filtered,scanFrac);
@@ -57,7 +57,7 @@ function data=flattenData(data,scanFrac)
      %calculate sliding mean
     sldArea=floor(size(data)/scanFrac);
     normalMtx=flip(sldArea)*sldArea.'/size(sldArea,2);%X*Y
-    slidingmean=convolve2.convolve2(data,ones(sldArea)/normalMtx,'symmetric');
+    slidingmean=sxm.convolve2.convolve2(data,ones(sldArea)/normalMtx,'symmetric');
     
     %Get flattened data
     data= data-double(slidingmean);

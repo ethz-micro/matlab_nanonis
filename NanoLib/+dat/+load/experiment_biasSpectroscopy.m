@@ -45,12 +45,32 @@ header.user = datasForKey('User');
 
 end
 
-% data for longterm are already good
-function [header,experiment] = processData(header,experiment)
-fprintf('%s\n','add information for sweep forward');
-for i = 2:2:numel(header.channels);
-    chn = header.channels{i};
-    iBrkt = strfind(chn,'(');
-    header.channels{i} = [chn(1:iBrkt-1),'[fwd]',chn(iBrkt-1:end)];
+% process Data
+function [header,channels] = processData(header,data)
+channels = struct;
+i = 1; % first is time
+chnName = strsplit(header.channels{i},{'(',')'});
+channels(i).Name = strtrim(chnName{1});
+channels(i).Unit = chnName{2};
+channels(i).Direction = 'both';
+channels(i).data = data(:,i);
+
+for i = 2:size(data,2);
+    ib = strfind(header.channels{i},'[bwd]');
+    if isempty(ib)
+        chnName = strsplit(header.channels{i},{'(',')'});
+        channels(i).Name = strcat(chnName{1},chnName{3});
+        channels(i).Unit = chnName{2};
+        channels(i).Direction = 'forward';
+    else
+        chnName = header.channels{i};
+        chnName(ib:ib+5) = [];
+        chnName = strsplit(chnName,{'(',')'});
+        channels(i).Name = strcat(chnName{1},chnName{3});
+        channels(i).Unit = chnName{2};
+        channels(i).Direction = 'backward';
+        channels(i).data = data(:,i);
+    end
+    channels(i).data = data(:,i); 
 end
 end

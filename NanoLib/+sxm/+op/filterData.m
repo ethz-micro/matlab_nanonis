@@ -80,7 +80,7 @@ function [filtered, removed] = filterData(data,pixSize,varargin)
             axis image
             title('Fourrier plane and selected area')
             %apply index mask
-            mask.applyMask(swapSquares(indx,sizeSq),[1,0,0],.2,[0 size(dis,1)],[0 size(dis,2)])
+            sxm.mask.applyMask(swapSquares(indx,sizeSq),[1,0,0],.2,[0 size(dis,1)],[0 size(dis,2)])
         end
         
     end

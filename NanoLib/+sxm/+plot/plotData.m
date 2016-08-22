@@ -58,7 +58,7 @@ end
 
 function range = rangeNFESEM(data)
     %Plot SEM data
-    data=op.nanHighStd(data);
+    data=sxm.op.nanHighStd(data);
     %Range = 2*std of data
     range = [-2 2]*nanstd(data(:))+nanmean(data(:));
     %range=[.7 1.3];
@@ -66,7 +66,7 @@ end
 
 function range = rangeSTM(data)
     %Plot STM Data. Will use STDev to determine the noisy parts
-    signal=op.nanHighStd(data);
+    signal=sxm.op.nanHighStd(data);
     %Use 2 std
     stdData=nanstd(signal(:));
     

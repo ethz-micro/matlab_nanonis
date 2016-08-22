@@ -52,7 +52,7 @@ function par2png(parFN,pngRootFN)
     file=loadSxM.loadProcessedPar(parFN);
     
     for j=1:numel(file.channels)
-        plotSxM.plotFile(file,j);
+        sxm.plot.plotFile(file,j);
         savePNG(pngRootFN,file.channels(j).Name);
     end
 end
@@ -68,40 +68,40 @@ function sxm2png(sxmFN,pngRootFN)
                 
                 %Plot
                 
-                plotSxM.plotFile(file,1);
+                sxm.plot.plotFile(file,1);
                 savePNG(pngRootFN,'ZF');
                 
-                plotSxM.plotFile(file,2);
+                sxm.plot.plotFile(file,2);
                 savePNG(pngRootFN,'ZB');
                 
             case 'NFESEM'
                 
                 %Save current Forward
-                plotSxM.plotFile(file,1);
+                sxm.plot.plotFile(file,1);
                 savePNG(pngRootFN,'FCF');
                 
                 %Save current Backward
-                plotSxM.plotFile(file,2);
+                sxm.plot.plotFile(file,2);
                 savePNG(pngRootFN,'FCB');
                 
                 if numel(file.channels)>8
                     %Add and plot 4 channels
                     channel= op.combineChannel(file,'4 channels',3:2:9,1/4*[1 1 1 1]);
-                    plotSxM.plotChannel(channel,file.header);
+                    sxm.plot.plotChannel(channel,file.header);
                     savePNG(pngRootFN,'4CF');
                     
                     %Idem backwards
                     channel= op.combineChannel(file,'4 channels',4:2:10,1/4*[1 1 1 1]);
-                    plotSxM.plotChannel(channel,file.header);
+                    sxm.plot.plotChannel(channel,file.header);
                     savePNG(pngRootFN,'4CB');
                 else % old files, single channel
                     
                     %plot bians voltage forward
-                    plotSxM.plotFile(file,3);
+                    sxm.plot.plotFile(file,3);
                     savePNG(pngRootFN,'NF');
                     
                     %plot bias voltage backwards
-                    plotSxM.plotFile(file,4);
+                    sxm.plot.plotFile(file,4);
                     savePNG(pngRootFN,'NB');
                     
                 end

@@ -1,0 +1,92 @@
+\section{The +dat package folder}
+
+Besides surface imaging \nanonis allows to store data measured by the experimental channels. Data from the so called experiments are stored in a \emph{file.dat}.
+Once loaded, variable, from now on \emph{datFile}, is a structure divided in: \emph{i}) \textbf{header}, a structure containing all information present in the header of the \emph{file.dat}, and \emph{ii}) \textbf{channels}, an array of channel structures containing data and information about every channel.
+Both, \textbf{header} and \textbf{channels} can be called by
+\begin{center}
+\emph{sxmFile.header} \quad \text{and} \quad \emph{sxmfile.channels\{\#\}}
+\end{center}
+\# being the number of the channel. When only one channel is loaded one refers to the channel simply as \emph{sxmfile.channels}. 
+More information about the substructure of header and channels is presented below.
+
+
+\subsection{sxmFile: header and channels tructures}
+\label{sec:sxmFile}
+
+The functions works with a structure that holds every relevant informations. To access the scan data on a structure named \emph{expFile}, one should type \emph{expFile.header.rec\_date}. Header and channels structure have following fields:
+
+\bdf
+\item[header] is a structure composed of:
+  \bdf
+  \item[scan\_file] name of the file
+  \item[$\cdots$] Others informations extracted from the file
+  \edf
+
+\item[experiments] is an array of channel structures composed of:
+  \bdf
+  \item[data] A $n\times m$ matrix of processed data
+  \edf
+\edf
+
+
+%-------------------------------------------------------------------------------%
+%  +load                                                                        %
+%-------------------------------------------------------------------------------%
+\subsection{+load}
+This folder contains everything needed to load and process \emph{.dat} files.
+% ------------------------------ %
+\subsubsection{loadsxm}
+
+% ------------------------------ %
+\subsubsection{processChannel}
+
+% ------------------------------ %
+\subsubsection{loadProcessedSxM}
+
+%-------------------------------------------------------------------------------%
+%  +plotDat                                                                     %
+%-------------------------------------------------------------------------------%
+\subsection{+plotDat}
+This package contains everything needed to plot the data.
+% ------------------------------ %
+\subsubsection{plotData}
+To be written
+% \bdf
+% \+{[h, range] = plotData(data, name, unit, header)} plots the \emph{data} using informations from the \emph{header}. The figure title is deduced from \emph{name} and \emph{unit}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
+%
+% \+{[h, range] = plotData(data, name, unit, header, xoffset, yoffset)} adds an offset to the plot.
+% \edf
+%
+% The range is 2 STD. If the data is STM, only the lines with low std are considered for the range.
+% ------------------------------ %
+\subsubsection{plotChannel}
+To be written
+% \bdf
+% \+{[h, range] = plotChannel(channel, header)} plots the \emph{channel} using informations from the \emph{header}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
+%
+% \+{[h, range] = plotChannel(channel, header, xoffset, yoffset)} adds an offset to the plot.
+% \edf
+%
+% It calls \emph{plot.plotData} on the channel data.
+% ------------------------------ %
+\subsubsection{plotFile}
+To be written
+% \bdf
+% \+{[h, range] = plotFile(file, n)} plots the $n^{th}$ channel of \emph{file}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
+%
+% \+{[h, range] = plotFile(file, n, xoffset, yoffset)} adds an offset to the plot.
+% \edf
+
+
+
+%-------------------------------------------------------------------------------%
+%  +opDat                                                                       %
+%-------------------------------------------------------------------------------%
+\subsection{+opDat}
+% ------------------------------ %
+\subsubsection{getChannel}
+\bdf
+\+{channelNumber = getChannel(channels,channelNames)} returns all channel numbers where \emph{header.ChannelList} matches the \emph{channelNames}. \emph{channelNames} can be either a single string or a list of strings.
+
+\+{channelNumber = getChannel(channels,channelNames,direction)} returns only the channel number where \emph{channels.Direction} matches the \emph{direction}, too.
+\edf

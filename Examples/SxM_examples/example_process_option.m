@@ -7,21 +7,21 @@
 %--------------------------------------------------------------------------
 
 %% add NanoLib
-addpath('../NanoLib/')
+addpath('../../NanoLib/')
 
 %% Load 
-fileName='Files/Si_7x7_012.sxm';
+fileName='../Files/Si_7x7_012.sxm';
 
-fileMean=loadSxM.loadProcessedSxM(fileName);
-fileMedian=loadSxM.loadProcessedSxM(fileName,'Median');
-fileUniform=loadSxM.loadProcessedSxM(fileName,'PlaneLineCorrection');
+fileMean=sxm.load.loadProcessedSxM(fileName);
+fileMedian=sxm.load.loadProcessedSxM(fileName,'Median');
+fileUniform=sxm.load.loadProcessedSxM(fileName,'PlaneLineCorrection');
 
 %% plot
 figure('Name','Process: Mean');
-plotSxM.plotFile(fileMean,1);
+sxm.plot.plotFile(fileMean,1);
 
 figure('Name','Process: Median');
-plotSxM.plotFile(fileMedian,1);
+sxm.plot.plotFile(fileMedian,1);
 
 figure('Name','Process: PlaneLineCorrection');
-plotSxM.plotFile(fileUniform,1);
+sxm.plot.plotFile(fileUniform,1);

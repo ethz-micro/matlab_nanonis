@@ -1,18 +1,18 @@
 close all;
 clear all;
 %% add NanoLib
-addpath('../NanoLib/')
+addpath('../../NanoLib/')
 
 cn=1;
 %%
-fn='Files/Si_7x7_051.sxm';
-file=loadSxM.loadProcessedSxM(fn);%Z=3.5
+fn='../Files/Si_7x7_051.sxm';
+file=sxm.load.loadProcessedSxM(fn);%Z=3.5
 
 %%
-data=op.interpPeaks(file.channels(cn).data);
+data=sxm.op.interpPeaks(file.channels(cn).data);
 %Get data
-[wavelength, radial_average] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
-[noise_fit] =op.getRadialNoise(wavelength, radial_average);
+[wavelength, radial_average] =sxm.op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
+[noise_fit] =sxm.op.getRadialNoise(wavelength, radial_average);
 
 figure
 plot(wavelength,(radial_average-noise_fit),'x');
@@ -24,7 +24,7 @@ set(gca,'XScale','log')
 %%
 
 %Get data
-[wavelength, radial_average] =op.getRadialFFT(file.channels(cn).data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
+[wavelength, radial_average] =sxm.op.getRadialFFT(file.channels(cn).data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
 
 
 figure
@@ -33,7 +33,7 @@ hold all
 
 %%
 hold all
-[noise_fit] =op.getRadialNoise(wavelength, radial_average,2);
+[noise_fit] = sxm.op.getRadialNoise(wavelength, radial_average,2);
 loglog(wavelength,noise_fit)
 %title('4.12.13 - image 46','FontSize',12)
 xlabel('\lambda [nm]')
@@ -43,7 +43,7 @@ legend('Radial Spectrum','Fitted Noise','2nd noise','FontSize',12,'Location','No
 
 %%
 figure
-plotSxM.plotFile(file,cn,0,0,'NoTitle')
+sxm.plot.plotFile(file,cn,0,0,'NoTitle')
 %%
 figure
 loglog(wavelength,radial_average./noise_fit,'x-','DisplayName','signal/noise')
@@ -54,7 +54,7 @@ legend(gca,'show')
 
 %%
 figure
-plotSxM.plotFile(file,cn);
+sxm.plot.plotFile(file,cn);
 
 %%
 
@@ -63,23 +63,23 @@ loglog(wavelength,radial_average,'x-')
 
 hold all
 
-data=op.interpHighStd(file.channels(cn).data); % interpolate lines
+data=sxm.op.interpHighStd(file.channels(cn).data); % interpolate lines
 %Get data
-[wavelength, radial_average] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
+[wavelength, radial_average] =sxm.op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
 %loglog(wavelength,radial_average,'x-')
 
 
-data=op.interpPeaks(file.channels(cn).data); %interpolate peaks
+data=sxm.op.interpPeaks(file.channels(cn).data); %interpolate peaks
 
 %Get data
-[wavelength, radial_average] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
+[wavelength, radial_average] =sxm.op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
 loglog(wavelength,radial_average,'x-')
 
-data=op.interpPeaks(op.interpHighStd(file.channels(cn).data));
+data=sxm.op.interpPeaks(sxm.op.interpHighStd(file.channels(cn).data));
 
 
 %Get data
-[wavelength, radial_average] =op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
+[wavelength, radial_average] =sxm.op.getRadialFFT(data,file.header.scan_pixels(1)/file.header.scan_range(1)/1e9);
 %loglog(wavelength,radial_average,'x-')
 
 %loglog(wavelength,noise_fit,'-')
@@ -92,7 +92,7 @@ ylabel('amplitude')
 set(gca,'FontSize',20)
 
 
-[noise_fit,signal_start,signal_error] =op.getRadialNoise(wavelength, radial_average,1);
+[noise_fit,signal_start,signal_error] =sxm.op.getRadialNoise(wavelength, radial_average,1);
 
 figure
 loglog(wavelength,radial_average,'x-')
@@ -109,7 +109,7 @@ set(gca,'FontSize',20)
 file.channels(cn).data=data;
 
 figure
-plotSxM.plotFile(file,cn);
+sxm.plot.plotFile(file,cn);
 %%
 figure
 loglog(wavelength,radial_average./noise_fit,'x--')

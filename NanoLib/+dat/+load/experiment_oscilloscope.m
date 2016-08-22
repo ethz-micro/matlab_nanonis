@@ -48,7 +48,14 @@ header.Signal_Unit = datasForKey('Signal Unit');
 
 end
 
-% data for longterm are already good
-function [header,experiment] = processData(header,experiment)
-    fprintf('nothing done at data \n');
+% process Data
+function [header,channels] = processData(header,data)
+channels = struct;
+for i = 1:size(data,2);
+    chnName = strsplit(header.channels{i}(1:end-1),'(');
+    channels(i).Name = strtrim(chnName{1});
+    channels(i).Unit = chnName{2};
+    channels(i).Direction = 'forward';
+    channels(i).data = data(:,i);
+end
 end
