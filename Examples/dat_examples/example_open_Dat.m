@@ -57,7 +57,7 @@ iCh = utility.getChannel(file6.channels,'Z');
 figure; dat.plot.plotFile(file6,iCh);
 
 %% Load clamSpectra
-file7=dat.load.loadDat('../Files/clamSpectra00003.dat');
+file7=dat.load.loadDat('../Files/clamSpectra1.dat');
 iCh = utility.getChannel(file7.channels,'CLAM');%,'backward');
 figure; hold on; dat.plot.plotFile(file7,iCh);
 
