@@ -14,15 +14,23 @@ file1=dat.load.loadDat('HistoryData.dat','../Files/');
 iCh = utility.getChannel(file1.channels,'Current');
 figure; dat.plot.plotFile(file1,iCh);
 
+% return
 %% Load Spectrum
 file2=dat.load.loadDat('../Files/Spectrum.dat');
 iCh = utility.getChannel(file2.channels,'Current');
-figure; dat.plot.plotFile(file2,iCh);
+figure; 
+dat.plot.plotChannel(file2.channels(iCh),file2.channels(1),'Color','r',...
+    'hideLabels','DisplayName',file2.channels(iCh).Name);
+xlabel(sprintf('%s in %s',file2.channels(1).Name,file2.channels(1).Unit));
+ylabel(sprintf('%s in %s',file2.channels(iCh).Name,file2.channels(iCh).Unit));
 
 %% Load Spectrum
 file3=dat.load.loadDat('../Files/Oscilloscope.dat');
+%%
 iCh = utility.getChannel(file3.channels,'Current');
-figure; dat.plot.plotFile(file3,iCh);
+figure;
+dat.plot.plotData(file3.channels(iCh).data,file3.channels(iCh).Name,...
+    file3.channels(iCh).Unit,file3.channels(1),'o-','MarkerSize',6);
 
 %% Load LongTerm
 file4=dat.load.loadDat('../Files/LongTerm.dat');
@@ -55,4 +63,5 @@ figure; hold on; dat.plot.plotFile(file7,iCh);
 
 %% Load clamSpectra
 file8=dat.load.loadDat('../Files/WinOS-EA-003.txt');
-
+iCh = utility.getChannel(file8.channels,'counts');%,'backward');
+figure; hold on; dat.plot.plotFile(file8,iCh);

@@ -37,7 +37,7 @@ The functions works with a structure that holds every relevant informations. To 
   \item[Direction] 'forward' or 'backward'
   \item[Unit] 'Z' or whatever the unit is
   \item[Name] The name of the channel
-  \item[data] A $n\times m$ matrix of processed data
+  \item[data] A $n\times m$ matrix of processed data, where $n$ is the number of points and $m$ is the loop number (default $m=1$)
   \edf
 \edf
 \textbf{The first channel, i.e. channel(1), is reserved to the sweep\_signal.}
@@ -93,39 +93,37 @@ By mean of the \emph{experiment} structure described in the two previous section
 This package contains everything needed to plot the data.
 % ------------------------------ %
 \subsubsection{plotData}
-To be written
-% \bdf
-% \+{[h, range] = plotData(data, name, unit, header)} plots the \emph{data} using informations from the \emph{header}. The figure title is deduced from \emph{name} and \emph{unit}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
-%
-% \+{[h, range] = plotData(data, name, unit, header, xoffset, yoffset)} adds an offset to the plot.
-% \edf
-%
-% The range is 2 STD. If the data is STM, only the lines with low std are considered for the range.
+\bdf
+\+{hObject = plotData(data, name, unit, sweep\_channel,varargin)} plots the \emph{data} using according to the \emph{sweep\_channel}. The figure title is deduced from \emph{name} and \emph{unit}. It returns the plot handle \emph{hObject}. \emph{varargin} are the standard plot options. Additional options are provided.
+\bi
+\+ varargin = \{'xOffset', NUMBER \} shifts the x axis by the given offset
+\+ varargin = \{'hideLabels'\} leaves all extra labels out.
+\ei
+\edf
 % ------------------------------ %
 \subsubsection{plotChannel}
-To be written
-% \bdf
-% \+{[h, range] = plotChannel(channel, header)} plots the \emph{channel} using informations from the \emph{header}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
-%
-% \+{[h, range] = plotChannel(channel, header, xoffset, yoffset)} adds an offset to the plot.
-% \edf
-%
-% It calls \emph{plot.plotData} on the channel data.
+\bdf
+\+{hObject = plotChannel(channel,sweep\_channel,varargin)} plots the \emph{channel} using informations from the \emph{sweep\_channel}. It returns the plot handle  \emph{hObject}. It calls \emph{plot.plotData} on the channel data, \emph{varargin} are therefore the same as \emph{plot.plotData}.
+\edf
+
+
 % ------------------------------ %
 \subsubsection{plotFile}
-To be written
-% \bdf
-% \+{[h, range] = plotFile(file, n)} plots the $n^{th}$ channel of \emph{file}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
-%
-% \+{[h, range] = plotFile(file, n, xoffset, yoffset)} adds an offset to the plot.
-% \edf
 
+\bdf
+\+{hObject = plotFile(file,channel\_numbers)} plots the $n^{th}$ channel of \emph{file}. \emph{channel\_numbers} may be a $n \times 1$ array. It returns the plot handle \emph{h}.
 
+\+{hObject = plotFile(file,channel\_numbers,run\_numbers)} plots the $n^{th}$ repetition of the provided \emph{channel\_numbers} . Whenever an \emph{experiment} has more loops, repetitions are characterized by a \emph{run\_numbers}.
+\edf
+
+It calls \emph{plot.plotData} on the channel data.
 
 %-------------------------------------------------------------------------------%
 %  +opDat                                                                       %
 %-------------------------------------------------------------------------------%
-% \subsection{+op}
+\subsection{+op}
+
+To be done
 % ------------------------------ %
 % \subsubsection{getChannel}
 % \bdf

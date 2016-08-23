@@ -48,45 +48,13 @@ A function in a folder called \emph{+folder} can be called as \emph{folder.funct
 %-------------------------------------------------------------------------------%
 \include{dat}
 
-
-\section{+utility}
-
-The package folder \emph{+utility} contains generic functions, which can be used when analyzing both \emph{sxmFiles} and \emph{datFiles}
-% ------------------------------ %
-\subsubsection{getChannel}
-\bdf
-\+{channelNumber = getChannel(channels,channelNames)} returns all channel numbers where \emph{channels.Name} matches the \emph{channelNames}. \emph{channelNames} can be either a single string or a list of strings.
-
-\+{channelNumber = getChannel(channels,channelNames,direction)} returns only the channel number where \emph{channels.Direction} matches the \emph{direction}, too.
-\edf
-% ------------------------------ %
-\subsubsection{getColor}
-\bdf
-\+{[color,colorScale] = getColor(x,xRange)} computes the ratio between a value \emph{x} and the \emph{xRange} (2 by 1 array). It returns the \emph{color} --  and the \emph{colorScale}  -- according to a predefined color map. \emph{Jet} is the default color map. 
-
-\+{[color,colorScale] = getColor(x,xRange,mapping)} allows to provide e specified \emph{mapping} other than the default, i.e. \emph{jet}. \emph{mapping} should be a color map function, e.g. \emph{hsv}, \emph{parula}, \emph{hot}, \emph{summer}m \emph{autumn}. Note that, since \emph{mapping} is an argument of functions \emph{getColor}, it must be called by function handle ``at'' -- @.
-\edf
-
-\newpage
+%-------------------------------------------------------------------------------%
+%  DAT FILES                                                                    %
+%-------------------------------------------------------------------------------%
+\include{utility}
 
 %-------------------------------------------------------------------------------%
 %  EXAMPLE                                                                      %
 %-------------------------------------------------------------------------------%
-\section{Examples} 
-
-NanoLib library comes with few example showing the basics usage of the library. Some files are also provided in the directory \emph{Files}.
-Below a list of all examples with a short explanation.
-% ------------------------------ %
-\subsection{SxM\_Example}
-\bdf
-\item[example\_open\_SxM] shows different ways to load a \emph{file.sxm}.
-\item[example\_process\_option] shows different ways to process a file while loading a \emph{file.sxm}.
-\item[example\_get\_drift] detect XY-offset between two different \emph{sxmFiles}.
-\item[example\_mask] generates a mask of a \emph{sxmFile} and apply on the original image.
-\item[example\_RadialFFT] applies \emph{op.getRadialFFT} and plots some interesting quantities.
-\edf
-\subsection{dat\_Example}
-\bdf
-\item[example\_open\_Dat] shows different ways to load some \emph{experiment.dat}.
-\edf
+\include{example}
 \end{document}
