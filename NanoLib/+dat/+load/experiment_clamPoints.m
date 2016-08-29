@@ -7,10 +7,9 @@ switch action
     case 'get experiment'
         varargout{1} = 'CLAMPoints-dat';
     
-    case 'get header'
+    case 'process header'
         header = varargin{1};
-        datasForKey = varargin{2};
-        varargout{1} =  readHeader(header,datasForKey);
+        varargout{1} =  processHeader(header);
         
     case 'process data'
         header = varargin{1};
@@ -24,10 +23,9 @@ switch action
         
 end
 
-
 end
 
-function header = readHeader(header,datasForKey)
+function header = processHeader(header)
 
 % grid information
 header.grid_points = 1;
@@ -37,23 +35,20 @@ header.loops = 1; % 2016.04.03
 header.sweep_signal = 'Energy';
 
 % user defined informations
-Date=strsplit(datasForKey('Date'),' ');
-header.rec_date=Date{1}; header.rec_time=Date{2};
-header.user = datasForKey('User');
-
-header.tip_information = strtok(datasForKey('Tip Information'),'""');
-header.sample_material = strtok(datasForKey('Sample material'),'""');
+Date=strsplit(header.date,' ');
+header.rec_date=Date{1};
+header.rec_time=Date{2};
 
 % energy analysis informations
 cmode = {'CAE';'CRR'};
-header.clam_mode = cmode(str2double(datasForKey('CLAM Mode'))+1);
-header.pass_energy = str2double(datasForKey('Pass Energy (eV)'));
-header.retarding_ratio = str2double(datasForKey('Retarding Ratio'));
-header.focus_mode = sprintf('1:%d',str2double(datasForKey('Focus Mode')));
-header.focus_prcnt = str2double(datasForKey('Focus (%)'));
-header.channeltron_front = str2double(datasForKey('Channeltron front (V)'));
-header.channeltron_rear = str2double(datasForKey('Channeltron rear (V)'));
-header.integration_time = str2double(datasForKey('Integration Time (ms)'));
+header.clam_mode = cmode{str2double(header.clam_mode)+1};
+% header.pass_energy = str2double(datasForKey('Pass Energy (eV)'));
+% header.retarding_ratio = str2double(datasForKey('Retarding Ratio'));
+header.focus_mode = sprintf('1:%s',header.focus_mode);
+% header.focus_prcnt = str2double(datasForKey('Focus (%)'));
+% header.channeltron_front = str2double(datasForKey('Channeltron front (V)'));
+% header.channeltron_rear = str2double(datasForKey('Channeltron rear (V)'));
+% header.integration_time = str2double(datasForKey('Integration Time (ms)'));
 
 end
 

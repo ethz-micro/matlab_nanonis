@@ -7,10 +7,9 @@ switch action
     case 'get experiment'
         varargout{1} = 'myLongTerm';
     
-    case 'get header'
-        header = varargin{1};
-        datasForKey = varargin{2};        
-        varargout{1} =  readHeader(header,datasForKey);
+    case 'process header'
+        header = varargin{1};        
+        varargout{1} =  processHeader(header);
         
     case 'process data'
         header = varargin{1};
@@ -24,10 +23,9 @@ switch action
         
 end
 
-
 end
 
-function header = readHeader(header,datasForKey)
+function header = processHeader(header)
 
 % grid information
 header.grid_points = 1;
@@ -36,11 +34,9 @@ header.grid_points = 1;
 header.sweep_signal = 'Time (s)';
 
 % user defined informations
-Date=strsplit(datasForKey('Date'),' ');
-header.rec_date=Date{1}; header.rec_time=Date{2};
-header.user = datasForKey('User');
-header.tip_information = strtok(datasForKey('Tip Information'),'""');
-header.sample_material = strtok(datasForKey('Sample material'),'""');
+Date=strsplit(header.date,' ');
+header.rec_date=Date{1};
+header.rec_time=Date{2};
 
 end
 

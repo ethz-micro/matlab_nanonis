@@ -1,7 +1,5 @@
 % read data file saved with nanonis
-function file=loadDat(varargin)
-% varargin{1} = filename
-% varargin{2} = pathname
+function file=loadProcessedDat(varargin)
 
 % open document
 if isempty(varargin)
@@ -27,15 +25,21 @@ display(['read file: ' fN]);
 
 % get header
 fileName = [pN,fN];
-[header,iLine,experiment_fnc] = getHeader(fileName);
 
-% get data
-inputData = importdata(fileName,'\t',iLine);
+[header,data,channelsList] = dat.load.loaddat(fileName);
 
-header.channels = inputData.colheaders;
+% Default parameters values in the header.
+header.grid_points = 1; % dafault value
+header.sweep_signal = 'define sweep signal'; % default value
+header.channels = channelsList;
+
+% get function for specific experiemt
+experiment_fnc = getExperiment(header.experiment);
+% read header
+header = experiment_fnc('process header',header);
 
 % process data if needed
-[header,channels] = experiment_fnc('process data',header,inputData.data);
+[header,channels] = experiment_fnc('process data',header,data);
 
 %add number of points to header
 header.points = size(channels(1).data,1);
@@ -53,74 +57,11 @@ end
 function experiment_fnc = getExperiment(experiment)
 
 % list of experiments
-%{
-    % version 0
-    experiment_list = {
-        'bias spectroscopy', 'load.experiment_biasSpectroscopy';
-        'LongTerm Data',     'load.experiment_longTerm';
-        'myLongTerm',        'load.experiment_myLongTerm';
-        'LongTerm',          'readMyLongTermHeader'; % find such file!
-        'History Data',      'load.experiment_history';
-        'CLAMPoints-dat',    'load.experiment_clamPoints';
-        'CLAM-python-txt',   'load.experiment_clamPoints_pyton';
-        'Spectrum',          'load.experiment_spectrum';
-        'Oscilloscope',      'load.experiment_oscilloscope';
-    };
-%}
 experiment_list = dat.load.getAllExperiments();
 
-%Create header
 experiment_name = @(x) experiment_list{strcmp(x,experiment_list(:,1)),2};
-
 fprintf('Use function: %s\n',experiment_name(experiment));
 
 experiment_fnc = str2func(experiment_name(experiment));
 
 end
-
-function [header,hLine,experiment_fnc] = getHeader(fileName)
-
-% open file
-fid = fopen(fileName);
-
-% read file header
-hLine = 0;
-tLine = fgets(fid);
-while ~strcmp(strtrim(tLine),'[DATA]')
-    hLine = hLine+1;
-    %header{hLine} = tLine;
-    switch fileName(end-2:end)
-        case 'dat'
-            sLine = strsplit(tLine(1:end-3),'\t'); % last 4 characters are \t\n
-        case 'txt'
-            sLine = strsplit(tLine(1:end-2),'\t'); % last 2 characters are \t\n
-        otherwise
-            error('not allowd format');
-    end
-    %fprintf('%s \n',tLine);
-    header.list(hLine,:) = {sLine{1},sLine{2:end}};
-    tLine = fgets(fid);
-end
-
-hLine = hLine+2;
-
-%close file
-fclose(fid);
-
-% Default parameters values in the header.
-header.grid_points = 1; % dafault value
-header.sweep_signal = 'define sweep signal'; % default value
-
-% interprete header according to specific experiments
-% function for extract datas from header at a given key
-datasForKey= @(x) header.list{strcmp(x,header.list(:,1)),2};
-% get experiment name
-header.experiment = datasForKey('Experiment');
-% get function for specific experiemt
-experiment_fnc = getExperiment(header.experiment);
-% read header
-header = experiment_fnc('get header',header,datasForKey);
-
-end
-
-
