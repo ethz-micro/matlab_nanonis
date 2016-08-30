@@ -19,22 +19,17 @@ switch action
         varargout{2} = channels;
         
     otherwise
-        error('action should be: get header, process data')
+        error('action should be: process header, process data')
         
 end
 
-
 end
 
+% process header
 function header = processHeader(header)
 
-% grid information
-header.grid_points = 1;
-
-% parameters 
-header.sweep_signal = 'Time (ms)';
+% parameters from header
 header.sampling_time = str2double(header.sample_period__ms_);
-header.sampling_time_unit = '(ms)';
 
 % user defined informations
 Date=strsplit(header.date,' ');
@@ -43,29 +38,27 @@ header.rec_time=Date{2};
 
 end
 
-% data for longterm are already good
+% process data
 function [header,channels] = processData(header,data)
-
-% add sweep signal
-signalName = header.sweep_signal;
-header.channels = [signalName header.channels];
-
 
 channels = struct;
 % add sweep signal to channels
-chnName = strsplit(signalName(1:end-1),'(');
-channels(1).Name = strtrim(chnName{1});
-channels(1).Unit = chnName{2};
+channels(1).Name = 'Time';
+channels(1).Unit = 's'; % !!! units changed to s !!!
 channels(1).Direction = 'forward';
 channels(1).data = (0:size(data,1)-1)'*header.sampling_time/1000;
-% !!! units changed to s !!!
-channels(1).Unit = 's';
 
+% add data to channels
 for i = 1:size(data,2);
-    chnName = strsplit(header.channels{i}(1:end-1),'(');
-    channels(1+i).Name = strtrim(chnName{1});
-    channels(1+i).Unit = chnName{2};
+    chnName = regexp(header.channels{i}, '(?<name>.*?)+\((?<unit>.*?)\)','names');
+    channels(1+i).Name = strtrim(chnName.name);
+    channels(1+i).Unit = chnName.unit;
     channels(1+i).Direction = 'forward';
     channels(1+i).data = data(:,i);
 end
+
+% update header.channels
+header.channels = [...
+    sprintf('s (%s)',channels(1).Name,channels(1).Unit),...
+    header.channels];
 end

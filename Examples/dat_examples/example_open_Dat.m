@@ -24,7 +24,7 @@ dat.plot.plotChannel(file2.channels(iCh),file2.channels(1),'Color','r',...
 xlabel(sprintf('%s in %s',file2.channels(1).Name,file2.channels(1).Unit));
 ylabel(sprintf('%s in %s',file2.channels(iCh).Name,file2.channels(iCh).Unit));
 
-%% Load Spectrum
+%% Load Oscilloscope
 file3=dat.load.loadProcessedDat('../Files/Oscilloscope.dat');
 %
 iCh = utility.getChannel(file3.channels,'Current');

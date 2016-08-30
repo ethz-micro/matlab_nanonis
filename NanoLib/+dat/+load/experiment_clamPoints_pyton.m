@@ -19,25 +19,23 @@ switch action
         varargout{2} = experiment;
         
     otherwise
-        error('action should be: get header, process data')
+        error('action should be: process header, process data')
         
 end
 
 end
 
+% process header
 function header = processHeader(header)
 
-% grid information
-header.grid_points = 1;
-
-% parameters 
-header.sweep_signal = 'Energy (eV)';
+% parameters from header
 
 % user defined informations
 Date=strsplit(header.date,' ');
 header.rec_date=Date{1};
 header.rec_time=Date{2};
 
+% energy information
 header.focus_mode = sprintf('1:%s',header.focus_mode);
 header.loops = str2double(header.loops);
 

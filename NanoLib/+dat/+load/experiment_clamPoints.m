@@ -19,36 +19,32 @@ switch action
         varargout{2} = experiment;
         
     otherwise
-        error('action should be: get header, process data')
+        error('action should be: process header, process data')
         
 end
 
 end
 
+% process header
 function header = processHeader(header)
-
-% grid information
-header.grid_points = 1;
-header.loops = 1; % 2016.04.03
-
-% parameters
-header.sweep_signal = 'Energy';
 
 % user defined informations
 Date=strsplit(header.date,' ');
 header.rec_date=Date{1};
 header.rec_time=Date{2};
 
-% energy analysis informations
+% energy informations
 cmode = {'CAE';'CRR'};
 header.clam_mode = cmode{str2double(header.clam_mode)+1};
-% header.pass_energy = str2double(datasForKey('Pass Energy (eV)'));
-% header.retarding_ratio = str2double(datasForKey('Retarding Ratio'));
+header.pass_energy__ev_ = str2double(header.pass_energy__ev_);
+header.retarding_ratio = str2double(header.retarding_ratio);
 header.focus_mode = sprintf('1:%s',header.focus_mode);
-% header.focus_prcnt = str2double(datasForKey('Focus (%)'));
-% header.channeltron_front = str2double(datasForKey('Channeltron front (V)'));
-% header.channeltron_rear = str2double(datasForKey('Channeltron rear (V)'));
-% header.integration_time = str2double(datasForKey('Integration Time (ms)'));
+header.focus_prcnt = str2double(header.focus____);
+header = rmfield(header,'focus____');
+header.channeltron_front__v_ = str2double(header.channeltron_front__v_);
+header.channeltron_rear__v_ = str2double(header.channeltron_rear__v_);
+header.integration_time__ms_ = str2double(header.integration_time__ms_);
+header.loops = 1; % 2016.04.03
 
 end
 
@@ -65,17 +61,17 @@ loops = header.loops/2;
 if loops > 1
     pti = size(data,1)/loops;
     for i = 1:size(data,2);
-        chnName = strsplit(header.channels{i},{'(',')'});
-        channels(i).Name = strcat(chnName{1},chnName{3});
-        channels(i).Unit = chnName{2};
+        chnName = regexp(header.channels{i}, '(?<name>.*?)+\((?<unit>.*?)\)','names');
+        channels(i).Name = strtrim(chnName.name);
+        channels(i).Unit = chnName.unit;
         channels(i).Direction = 'forward';
         channels(i).data = reshape(data(:,i),pti,loops);
     end
 else
     for i = 1:size(data,2);
-        chnName = strsplit(header.channels{i},{'(',')'});
-        channels(i).Name = strcat(chnName{1},chnName{3});
-        channels(i).Unit = chnName{2};
+        chnName = regexp(header.channels{i}, '(?<name>.*?)+\((?<unit>.*?)\)','names');
+        channels(i).Name = strtrim(chnName.name);
+        channels(i).Unit = chnName.unit;
         channels(i).Direction = 'forward';
         channels(i).data = data(:,i);
     end

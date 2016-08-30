@@ -19,7 +19,7 @@ switch action
         varargout{2} = experiment;
         
     otherwise
-        error('action should be: get header, process data')
+        error('action should be: process header, process data')
      
 end
 

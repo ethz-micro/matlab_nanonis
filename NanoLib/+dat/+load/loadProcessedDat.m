@@ -30,7 +30,6 @@ fileName = [pN,fN];
 
 % Default parameters values in the header.
 header.grid_points = 1; % dafault value
-header.sweep_signal = 'define sweep signal'; % default value
 header.channels = channelsList;
 
 % get function for specific experiemt
