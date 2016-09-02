@@ -46,7 +46,7 @@ figure; hold on; dat.plot.plotFile(file5,iCh);
 %% combine channels
 iCh = [2,3];
 figure; hold on; dat.plot.plotFile(file5,iCh);
-combined_channels = sxm.op.combineChannel(file5,'count fwd+bwd',[2,3],[1,1]);
+combined_channels = utility.combineChannel(file5,'count fwd+bwd',[2,3],[1,1]);
 dat.plot.plotChannel(combined_channels,file5.channels(1));
 
 %% example of user defined experiments
