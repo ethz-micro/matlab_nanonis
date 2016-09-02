@@ -10,6 +10,11 @@ The package folder \emph{+utility} contains generic functions, which can be used
 \+{channelNumber = getChannel(channels,channelNames,direction)} returns only the channel number where \emph{channels.Direction} matches the \emph{direction}, too.
 \edf
 % ------------------------------ %
+\subsubsection{combineChannel}
+\bdf
+\+{channel=combineChannel(file, name, chn, chw)} combined the channels \emph{chn} of the \emph{file} structure with weights \emph{chw} and return a new \emph{channel} with name \emph{name}.
+\edf
+% ------------------------------ %
 \subsubsection{getColor}
 \bdf
 \+{[color,colorScale] = getColor(x,xRange)} computes the ratio between a value \emph{x} and the \emph{xRange} (2 by 1 array). It returns the \emph{color} --  and the \emph{colorScale}  -- according to a predefined color map. \emph{Jet} is the default color map. 
