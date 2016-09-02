@@ -1,8 +1,30 @@
 function hObject = plotFile(file,chn_number,run_number)
-% hObject = plotFile(file,chn_number,run_number)
+%plotFile - plots the channels and optionally the running number of a file
 %
-% plots all channels and repetition of the experiments
+% Syntax: 
+%   hObject = plotFile(file,chn_number)
+%   hObject = plotFile(file,chn_number,run_number)
+%
+% Inputs:
+%    file - structure containing fields: header and channels as loaded by 
+%           dat.load.loadProcessedDat
+%    chn_number - channel number(s) to plot
+%    run_number - repetition number(s) to plot
+%
+% Outputs:
+%    hObject - figure handle
+%
+% Example: 
+%
+% Other m-files required: dat.plot.plotData.m
+% Subfunctions: none
+% MAT-files required: none
+%
+% See also: dat.load.loadProcessedDat
 
+% September 2016
+
+%------------- BEGIN CODE --------------
 
 % check variables number
 narginchk(2,3)
