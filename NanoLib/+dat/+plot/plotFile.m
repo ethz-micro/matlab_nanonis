@@ -1,9 +1,9 @@
 function hObject = plotFile(file,chn_number,run_number)
-%plotFile - plots the channels and optionally the running number of a file
+%PLOTFILE - plots the channels and optionally the running number of a file
 %
 % Syntax: 
-%   hObject = plotFile(file,chn_number)
-%   hObject = plotFile(file,chn_number,run_number)
+%   hObject = PLOTFILE(file,chn_number)
+%   hObject = PLOTFILE(file,chn_number,run_number)
 %
 % Inputs:
 %    file - structure containing fields: header and channels as loaded by 
@@ -17,10 +17,8 @@ function hObject = plotFile(file,chn_number,run_number)
 % Example: 
 %
 % Other m-files required: dat.plot.plotData.m
-% Subfunctions: none
-% MAT-files required: none
 %
-% See also: dat.load.loadProcessedDat
+% See also DAT.LOAD.loadProcessedDat, dat.plot.plotData.m
 
 % September 2016
 
