@@ -44,8 +44,7 @@ header = rmfield(header,'focus____');
 header.channeltron_front__v_ = str2double(header.channeltron_front__v_);
 header.channeltron_rear__v_ = str2double(header.channeltron_rear__v_);
 header.integration_time__ms_ = str2double(header.integration_time__ms_);
-header.loops = 1; % 2016.04.03
-
+header.loops = str2double(header.loops);
 end
 
 function [header,channels] = processData(header,data)
@@ -57,15 +56,14 @@ end
 
 function [header,channels] = split_loops(header,data)
 channels = struct;
-loops = header.loops/2;
-if loops > 1
-    pti = size(data,1)/loops;
+if header.loops > 1
+    pti = size(data,1)/header.loops;
     for i = 1:size(data,2);
         chnName = regexp(header.channels{i}, '(?<name>.*?)+\((?<unit>.*?)\)','names');
         channels(i).Name = strtrim(chnName.name);
         channels(i).Unit = chnName.unit;
         channels(i).Direction = 'forward';
-        channels(i).data = reshape(data(:,i),pti,loops);
+        channels(i).data = reshape(data(:,i),pti,header.loops);
     end
 else
     for i = 1:size(data,2);
@@ -96,29 +94,35 @@ if sweepMax ~= length(raw_chn(1).data)
 
     channels = struct;
     for i = 1:numel(raw_chn)
+        
         k = 2*(i-1)+1;
         % forward
         channels(k).Name = raw_chn(i).Name;
         channels(k).Unit = raw_chn(i).Unit;
         channels(k).Direction = 'forward';
-        channels(k).data = nan(length(energies),1);
-        % do mean        
-        yup = raw_chn(i).data(1:imax);
-        for j = 1:length(energies)
-            channels(k).data(j) = mean(yup(xup==energies(j)));
-        end
+        channels(k).data = nan(length(energies),header.loops);
         % backward
         channels(k+1).Name = raw_chn(i).Name;
         channels(k+1).Unit = raw_chn(i).Unit;
         channels(k+1).Direction = 'backward';
-        channels(k+1).data = nan(length(energies),1);
-        % do mean
-        ydown = raw_chn(i).data(imax+1:end);
-        for j = 1:length(energies)
-            channels(k+1).data(j) = mean(ydown(xdown==energies(j)));
+        channels(k+1).data = nan(length(energies),header.loops); 
+        
+        % save data
+        for l = 1:header.loops
+            
+            % do mean
+            yup = raw_chn(i).data(1:imax,l);
+            for j = 1:length(energies)
+                channels(k).data(j,l) = mean(yup(xup==energies(j)));
+            end
+
+            % do mean
+            ydown = raw_chn(i).data(imax+1:end,l);
+            for j = 1:length(energies)
+                channels(k+1).data(j,l) = mean(ydown(xdown==energies(j)));
+            end
         end
     end
-    
 else
     fprintf('only forward\n');
 end
@@ -131,70 +135,4 @@ channels(2) = [];
 header.channels(2) = [];
 
 end
-
-%{
-function [header,experiment] = split_loops(header,experiment)
-loops = header.loops/2;
-if loops > 1
-    
-    loopsName = arrayfun(@(x) sprintf('Counts %d',x),1:loops,'UniformOutput',false');
-    channels = [header.channels(1),loopsName,header.channels(3:end)];
-    
-    pti = size(experiment.data,1)/loops;
-    data = [experiment.data(1:pti,1),...
-        reshape(experiment.data(:,2),pti,loops)...
-        experiment.data(1:pti,3:end)];
-    
-    experiment.data = data;
-    header.channels = channels;
-    
-end
-
-end
-
-function [header,experiment] = split_fwd_bwd(header,experiment)
-
-if experiment.data(1,1)==experiment.data(end,1)
-    channels = cell(1,2*numel(header.channels));
-    
-    maxV = find(experiment.data(:,1)==max(experiment.data(:,1)));
-    imax = maxV(floor(end/2));
-    energies = unique(experiment.data(:,1));
-    data = nan(length(energies),2*numel(header.channels));
-    for ii = 1:numel(header.channels)
-        channels{(ii-1)*2+1} = sprintf('%s (fwd)', header.channels{ii});
-        channels{ii*2} = sprintf('%s (bwd)', header.channels{ii});
-        
-        % do mean
-        xup = experiment.data(1:imax,1);
-        yup = experiment.data(1:imax,ii);
-        for jj = 1:length(energies)
-            data(jj,(ii-1)*2+1) = mean(yup(xup==energies(jj)));
-        end
-        xup = experiment.data(imax+1:end,1);
-        yup = experiment.data(imax+1:end,ii);
-        for jj = 1:length(energies)
-            data(jj,ii*2) = mean(yup(xup==energies(jj)));
-        end
-    end
-    
-else
-    channels = cell(1,numel(header.channels));
-    for ii = 1:numel(header.channels)
-        channels{ii} = sprintf('%s (fwd)', header.channels{ii});
-    end
-    energies = unique(experiment.data(:,1));
-    data = nan(length(energies),numel(header.channels));
-    xup = experiment.data(:,1);
-    yup = experiment.data(:,ii);
-    for jj = 1:length(energies)
-        data(:,ii*2) = mean(yup(xup==energies(jj)));
-    end
-end
-
-experiment.data = data;
-header.channels = channels;
-
-end
-%}
 
