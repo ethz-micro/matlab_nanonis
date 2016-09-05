@@ -1,4 +1,4 @@
-function channel=divideChannel(file,name,chn_N,chn_D,chw)
+function channel=divideByChannel(file,name,chn_N,chn_D,chw)
     
     % direction
     if strcmp(file.channels(chn_N).Direction,file.channels(chn_D).Direction)
