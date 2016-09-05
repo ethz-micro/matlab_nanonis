@@ -34,11 +34,14 @@ header.rec_date=Date{1};
 header.rec_time=Date{2};
 
 % energy informations
+header.x__m_ = str2double(header.x__m_);
+header.y__m_ = str2double(header.y__m_);
 cmode = {'CAE';'CRR'};
 header.clam_mode = cmode{str2double(header.clam_mode)+1};
 header.pass_energy__ev_ = str2double(header.pass_energy__ev_);
 header.retarding_ratio = str2double(header.retarding_ratio);
-header.focus_mode = sprintf('1:%s',header.focus_mode);
+fmode = {'1:1';'1:3'};
+header.focus_mode = fmode{1+str2double(header.focus_mode)};
 header.focus_prcnt = str2double(header.focus____);
 header = rmfield(header,'focus____');
 header.channeltron_front__v_ = str2double(header.channeltron_front__v_);
