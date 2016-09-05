@@ -1,11 +1,36 @@
 function hObject =  plotData(data,name,unit,x_channel,varargin)
-% hObject = plotData(data,name,unit,x_channel,varargin)
+%PLOTDATA - plots the data with name and unit according the the x_channel.
+%   x_channel is a channel from a file loaded with
+%   dat.load.loadProcessedDat.
 %
-% varargin are the same as for normal matlab plot function
-% additional options are:
-%      varargin = {'loops',NUMBER}   : loops to display
-%      varargin = {'xOffset',NUMBER} : shift of the x axis 
-%      varargin = {'hideLabels'}     : leave labels out
+% Syntax: 
+%   hObject = PLOTDATA(data,name,unit,x_channel)
+%   hObject = PLOTDATA(data,name,unit,x_channel,varargin)
+%
+% Inputs:
+%    data - data in matrix/vector form to be plotted
+%    name - string name of the data
+%    unit - string unit of the data
+%    x_channel - channel relative the x-axis
+%    varargin - varargin are the same as for normal matlab plot function
+%       additional options are:
+%       varargin = {'loops',NUMBER}   : loops to display
+%       varargin = {'xOffset',NUMBER} : shift of the x axis 
+%       varargin = {'hideLabels'}     : leave labels out
+%
+% Outputs:
+%    hObject - figure handle
+%
+% Example: 
+%   file = dat.load.loadProcessedDat(fn);
+%   data = norm(file.channels(2).data);
+%   hObj = dat.plot.PLOTDATA(data,'normalized data','a.u.',file.channels(1));
+%
+% See also dat.load.loadProcessedDat
+
+% September 2016
+
+%------------- BEGIN CODE --------------
 
 % search for options
 xOffset = 0;
@@ -46,8 +71,16 @@ end
 
 if showLabels
     title(name);
-    xlabel(sprintf('%s in %s',x_channel.Name,x_channel.Unit));
-    ylabel(sprintf('%s in %s',name,unit));
+    if isempty(strtrim(x_channel.Unit))
+        xlabel(sprintf('%s',x_channel.Name));
+    else
+        xlabel(sprintf('%s in %s',x_channel.Name,x_channel.Unit));
+    end
+    if isempty(strtrim(unit))
+        ylabel(sprintf('%s',name));
+    else
+        ylabel(sprintf('%s in %s',name,unit));
+    end
 end
 
 end
