@@ -1,5 +1,30 @@
-% read data file saved with nanonis
 function file=loadProcessedDat(varargin)
+%LOADPROCESSEDDAT - loads a file.dat calling the function loaddat.m 
+% provided by Nanonis. And process the header and the data according
+% to the type of experiment by calling – automatically – 
+% the corresponding experiment_#.
+% 
+% Syntax: 
+%   file = LOADPROCESSEDDAT() ask for a fileName.dat and load it.
+%   file = LOADPROCESSEDDAT(fileName) load the file named fileName.dat.
+%   file = LOADPROCESSEDDAT(fileName,pathName) load the file named 
+%          fileName.dat at a given pathName.
+%
+% Inputs:
+%    fileName - name of file.
+%    pathName - path of the file
+%
+% Outputs:
+%    file - structure with fields: header and channels
+%
+% Example:
+%   file = dat.load.loaddat(fn);
+%
+% See also dat.plot.plotData.m
+
+% September 2016
+
+%------------- BEGIN CODE --------------
 
 % open document
 if isempty(varargin)
