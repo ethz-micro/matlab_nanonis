@@ -19,7 +19,7 @@ figure; dat.plot.plotFile(file1,iCh);
 file2=dat.load.loadProcessedDat('../Files/Spectrum.dat');
 iCh = utility.getChannel(file2.channels,'Current');
 figure; 
-dat.plot.plotChannel(file2.channels(iCh),file2.channels(1),'Color','r',...
+dat.plot.plotChannel(file2,file2.channels(iCh),'Color','r',...
     'hideLabels','DisplayName',file2.channels(iCh).Name);
 xlabel(sprintf('%s in %s',file2.channels(1).Name,file2.channels(1).Unit));
 ylabel(sprintf('%s in %s',file2.channels(iCh).Name,file2.channels(iCh).Unit));
@@ -30,7 +30,7 @@ file3=dat.load.loadProcessedDat('../Files/Oscilloscope.dat');
 iCh = utility.getChannel(file3.channels,'Current');
 figure;
 dat.plot.plotData(file3.channels(iCh).data,file3.channels(iCh).Name,...
-    file3.channels(iCh).Unit,file3.channels(1),'o-','MarkerSize',6);
+    file3.channels(iCh).Unit,file3.channels(1),'LineStyle','-','MarkerSize',6);
 
 %% Load LongTerm
 file4=dat.load.loadProcessedDat('../Files/LongTerm.dat');
@@ -47,7 +47,7 @@ figure; hold on; dat.plot.plotFile(file5,iCh);
 iCh = [2,3];
 figure; hold on; dat.plot.plotFile(file5,iCh);
 combined_channels = utility.combineChannel(file5,'count fwd+bwd',[2,3],[1,1]);
-dat.plot.plotChannel(combined_channels,file5.channels(1));
+dat.plot.plotChannel(file5,combined_channels);
 
 %% example of user defined experiments
 
