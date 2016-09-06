@@ -3,16 +3,19 @@ function hObject = plotChannel(x_channel,y_channel,varargin)
 %    of the file loaded with the function dat.load.loadProcessedDat
 %
 % Syntax: 
-%   hObject = PLOTCHANNEL(x_channel)
+%   hObject = PLOTCHANNEL(y_channel)
 %   hObject = PLOTCHANNEL(x_channel,y_channel)
 %   hObject = PLOTCHANNEL(x_channel,y_channel,varargin)
+%   hObject = PLOTCHANNEL(file,y_channel)
 %
 % Inputs:
-%    x_channel - channel relative to the x-axis. If only the x_channel is 
-%                given, it is plotted vs the number of points.
-%    y_channel - channel relative to the y-axis
-%    varargin - are the same as for starndard matlab plot function
+%   x_channel - channel relative to the x-axis. If only the x_channel is 
+%       given, it is plotted vs the number of points.
+%   y_channel - channel relative to the y-axis
+%   varargin - are the same as for starndard matlab plot function
 %       additional options are the same as dat.plot.plotData.m
+%   (optional instead of x_channel)
+%   file - structure containing filed: header and channel. 
 %
 % Outputs:
 %    hObject - figure handle
@@ -49,6 +52,12 @@ end
 % check if more than 1 channel given
 if numel(y_channel) > 1
     error('plotchannel only plots 1 channel at the time. %d provided',numel(y_channel));
+end
+
+% if x_channel is a file structure, i.e., with header and channel use
+% default channel
+if isfield(x_channel,'header') && isfield(x_channel,'channels')
+    x_channel = x_channel.channels(1);
 end
 
 name = sprintf('%s - %s',y_channel.Name,y_channel.Direction);
