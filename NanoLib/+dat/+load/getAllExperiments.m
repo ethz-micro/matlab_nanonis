@@ -24,9 +24,14 @@ function experimentList = getAllExperiments()
 
 %------------- BEGIN CODE --------------
 
+% semicolon
+sc = ':';
+if ispc
+    sc = ';';
+end
 
 % get path of the NanoLib directory
-mp = strsplit(path,';');
+mp = strsplit(path,sc);
 
 % get NanoLib Experiments
 iN = strfind(mp,'NanoLib');
@@ -88,17 +93,17 @@ end
 dirList = dir(path);
 for i = 1 : numel(dirList)
     
-	if dirList(i).isdir && strcmp(dirList(i).name,'+load')
-%        fprintf('%s/%s\n',path,dirList(i).name)
+    if dirList(i).isdir && strcmp(dirList(i).name,'+load')
+        % fprintf('%s/%s\n',path,dirList(i).name)
         loadPath = sprintf('%s;%s/%s',loadPath,path(ip:end),dirList(i).name);
         return
-	elseif dirList(i).isdir && strcmp(dirList(i).name(1),'+')
-%        fprintf('%s/%s\n',path,dirList(i).name)
+    elseif dirList(i).isdir && strcmp(dirList(i).name(1),'+')
+        % fprintf('%s/%s\n',path,dirList(i).name)
         loadPath = findLoad(sprintf('%s/%s',path(ip:end),dirList(i).name),loadPath,basePath);
     end
 end
 
-if strcmp(loadPath(1),';')
+if strcmp(loadPath(1),';') %|| strcmp(loadPath(1),':')
     loadPath(1) = [];
 end
 
