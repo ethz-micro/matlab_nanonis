@@ -7,10 +7,9 @@ switch action
     case 'get experiment'
         varargout{1} = 'CLAM-python-txt';
     
-    case 'get header'
+    case 'process header'
         header = varargin{1};
-        datasForKey = varargin{2};
-        varargout{1} =  readHeader(header,datasForKey);
+        varargout{1} =  processHeader(header);
         
     case 'process data'
         header = varargin{1};
@@ -20,36 +19,25 @@ switch action
         varargout{2} = experiment;
         
     otherwise
-        error('action should be: get header, process data')
+        error('action should be: process header, process data')
         
 end
 
-
 end
 
-function header = readHeader(header,datasForKey)
+% process header
+function header = processHeader(header)
 
-% grid information
-header.grid_points = 1;
-
-% parameters 
-header.sweep_signal = 'Energy (eV)';
+% parameters from header
 
 % user defined informations
-Date=strsplit(datasForKey('Date'),' ');
-header.rec_date=Date{1}; header.rec_time=Date{2};
-header.user = datasForKey('User');
+Date=strsplit(header.date,' ');
+header.rec_date=Date{1};
+header.rec_time=Date{2};
 
-% energy analysis informations
-header.clam_mode = str2double(datasForKey('Clam Mode'));
-header.pass_energy = str2double(datasForKey('Pass Energy (eV)'));
-% header.retarding_ratio = str2double(datasForKey('Retarding Ratio:'));
-header.focus_mode = sprintf('1:%d',str2double(datasForKey('Focus Mode')));
-header.focus_prcnt = str2double(datasForKey('Focus Value'));
-header.channeltron_front = str2double(datasForKey('Channeltron Front (V)'));
-header.channeltron_rear = str2double(datasForKey('Channeltron Rear (V)'));
-header.integration_time = str2double(datasForKey('Integration Time (ms)'));
-header.loops = str2double(datasForKey('Loops'));
+% energy information
+header.focus_mode = sprintf('1:%s',header.focus_mode);
+header.loops = str2double(header.loops);
 
 end
 

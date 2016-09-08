@@ -12,7 +12,8 @@ Focus Mode	1
 Focus (%)	0.600000	
 Channeltron front (V)	200.000000	
 Channeltron rear (V)	3600.000000	
-Integration Time (ms)	100.000000	
+Integration Time (ms)	100.000000
+loops	1
 
 [DATA]
 Energy (eV)	Current (A)	CLAM ctr (cp int.time)	Bias (V)	Z (m)

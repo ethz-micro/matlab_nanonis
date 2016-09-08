@@ -55,6 +55,7 @@ To access the scan data on a structure named \emph{sxmFile}, one should type, e.
 This folder contains everything needed to load and process \emph{.sxm} files.
 % ------------------------------ %
 \subsubsection{loadsxm}
+This file is provided by \nanonis{} and loads a specified channel from a \emph{.sxm} file.
 \bdf
 
 \+{header = loadsxm(fn)} loads a file named \emph{fn.sxm} and returns the Header. This function is called by \emph{load.loadProcessedSxM} and \textbf{should not be called directly}.
@@ -64,7 +65,7 @@ This folder contains everything needed to load and process \emph{.sxm} files.
 \edf
 
 \emph{.sxm} files are composed of an ascii header and of single precision binary data. They are separated by 0x1A 0x04 (SUB EOT).
-This file is provided by \nanonis{} and loads a specified channel from a \emph{.sxm} file.
+
 % ------------------------------ %
 \subsubsection{processChannel}
 
@@ -154,10 +155,6 @@ It calls \emph{plot.plotChannel}.
 %-------------------------------------------------------------------------------%
 \subsection{+op}
 This package contains various useful functions.
-\subsubsection{combineChannel}
-\bdf
-\+{channel=combineChannel(file, name, chn, chw)} combined the channels \emph{chn} of the \emph{file} structure with weights \emph{chw} and return a new \emph{channel} with name \emph{name}.
-\edf
 % ------------------------------ %
 \subsubsection{filterData}
 \bdf

@@ -1,35 +1,42 @@
-function hObject = plotFile(file,chn_number,run_number)
-% hObject = plotFile(file,chn_number,run_number)
+function hObject = plotFile(file,chn_number,varargin)
+%PLOTFILE - plots the channels of the file loaded with the function
+%           dat.load.loadProcessedDat
 %
-% plots all channels and repetition of the experiments
+% Syntax: 
+%   hObject = PLOTFILE(file,chn_number)
+%   hObject = PLOTFILE(file,chn_number,run_number)
+%
+% Inputs:
+%    file - structure containing fields: header and channels as loaded by 
+%           dat.load.loadProcessedDat
+%    chn_number - channel number(s) to plot
+%    varargin - are the same as for starndard matlab plot function
+%               additional options are the same as dat.plot.plotData.m
+%
+% Outputs:
+%    hObject - figure handle
+%
+% Example:
+%   file = dat.load.loadProcessedDat(fn);
+%   hObj = dat.plot.PLOTFILE(file,2);
+%
+% See also dat.plot.plotData.m
 
+% September 2016
+
+%------------- BEGIN CODE --------------
 
 % check variables number
-narginchk(2,3)
-
-% get information form file
-header = file.header;
-fileStr = strsplit(header.file,'/');
-fN = strsplit(fileStr{end},'.');
-
-% if not specific run_number plot all runs of experiment
-if ~exist('run_number','var')
-    run_number = 1:header.grid_points;
-end
+narginchk(2,inf)
 
 % plot
-hObject = gobjects(length(chn_number)*length(run_number));
-i = 1;
-for iRun = run_number
-    for iCh = chn_number
-        
-        curveName = sprintf('%s - %d %s - %s',fN{1},iRun,file.channels(iCh).Name,file.channels(iCh).Direction);
-        hObject(i) = dat.plot.plotData(file.channels(iCh).data(:,iRun),' ',...
-            file.channels(iCh).Unit,file.channels(1),'hideLabels',...
-            'DisplayName',curveName);
-        i = i + 1;
-    end
-    
+hObject = [];
+
+for i = 1:numel(chn_number)
+    iCh = chn_number(i);
+    hObj = dat.plot.plotChannel(file.channels(1),file.channels(iCh),...
+        varargin{:});
+    hObject = [hObject;hObj];
 end
 
 xlabel(sprintf('%s in %s',file.channels(1).Name,file.channels(1).Unit));

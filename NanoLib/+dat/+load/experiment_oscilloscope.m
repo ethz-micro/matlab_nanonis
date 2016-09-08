@@ -7,10 +7,9 @@ switch action
     case 'get experiment'
         varargout{1} = 'Oscilloscope';
     
-    case 'get header'
-        header = varargin{1};
-        datasForKey = varargin{2};        
-        varargout{1} =  readHeader(header,datasForKey);
+    case 'process header'
+        header = varargin{1};      
+        varargout{1} =  processHeader(header);
         
     case 'process data'
         header = varargin{1};
@@ -20,41 +19,31 @@ switch action
         varargout{2} = experiment;
         
     otherwise
-        error('action should be: get header, process data')
+        error('action should be: process header, process data')
         
 end
 
-
 end
 
-function header = readHeader(header,datasForKey)
+% process header
+function header = processHeader(header)
 
-% grid information
-header.grid_points = 1;
-
-% parameters 
-header.sweep_signal = 'Time (s)';
+% parameters from header
 
 % user defined informations
-Date=strsplit(datasForKey('Date'),' ');
-header.rec_date=Date{1}; header.rec_time=Date{2};
-header.user = datasForKey('User');
-
-% Oscilloscope Informations
-header.AC = str2double(datasForKey('AC'));
-header.DC = str2double(datasForKey('DC'));
-header.PkPk = str2double(datasForKey('Pk-Pk'));
-header.Signal_Unit = datasForKey('Signal Unit');
+Date=strsplit(header.date,' ');
+header.rec_date=Date{1};
+header.rec_time=Date{2};
 
 end
 
-% process Data
+% process data
 function [header,channels] = processData(header,data)
 channels = struct;
 for i = 1:size(data,2);
-    chnName = strsplit(header.channels{i}(1:end-1),'(');
-    channels(i).Name = strtrim(chnName{1});
-    channels(i).Unit = chnName{2};
+    chnName = regexp(header.channels{i}, '(?<name>.*?)+\((?<unit>.*?)\)','names');
+    channels(i).Name = strtrim(chnName.name);
+    channels(i).Unit = chnName.unit;
     channels(i).Direction = 'forward';
     channels(i).data = data(:,i);
 end

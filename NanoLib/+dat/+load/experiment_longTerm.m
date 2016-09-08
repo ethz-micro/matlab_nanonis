@@ -7,10 +7,9 @@ switch action
     case 'get experiment'
         varargout{1} = 'LongTerm Data';
     
-    case 'get header'
-        header = varargin{1};
-        datasForKey = varargin{2};        
-        varargout{1} =  readHeader(header,datasForKey);
+    case 'process header'
+        header = varargin{1};     
+        varargout{1} =  processHeader(header);
         
     case 'process data'
         header = varargin{1};
@@ -20,42 +19,31 @@ switch action
         varargout{2} = experiment;
         
     otherwise
-        error('action should be: get header, process data')
+        error('action should be: process header, process data')
         
 end
 
-
 end
 
-function header = readHeader(header,datasForKey)
+% process header
+function header = processHeader(header)
 
-% grid information
-header.grid_points = 1;
-
-% parameters 
-header.sweep_signal = 'Time';
-timeStamp = strsplit(datasForKey('Base Timestamp'),' ');
-header.base_timestamp_date=timeStamp{1};
-header.base_timestamp_time=timeStamp{2};
+% parameters from header
 
 % user defined informations
-Date=strsplit(datasForKey('Date'),' ');
-if size(Date,2)==2
-    header.rec_date=Date{1}; header.rec_time=Date{2};
-else
-    header.rec_date = Date;
-end
-header.user = datasForKey('User');
+Date=strsplit(header.date,' ');
+header.rec_date=Date{1};
+header.rec_time=Date{2};
 
 end
 
-% process Data
+% process data
 function [header,channels] = processData(header,data)
 channels = struct;
 for i = 1:size(data,2);
-    chnName = strsplit(header.channels{i}(1:end-1),'(');
-    channels(i).Name = strtrim(chnName{1});
-    channels(i).Unit = chnName{2};
+    chnName = regexp(header.channels{i}, '(?<name>.*?)+\((?<unit>.*?)\)','names');
+    channels(i).Name = strtrim(chnName.name);
+    channels(i).Unit = chnName.unit;
     channels(i).Direction = 'forward';
     channels(i).data = data(:,i);
 end
