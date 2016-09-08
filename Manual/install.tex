@@ -1,0 +1,38 @@
+%!TEX root = matlabDoc.tex
+\section{Installation and Use}
+
+\subsection{Installation}
+
+The preferred way to access the NanoLib is to make use of the free version control system Git.
+
+\subsubsection{Git} \label{git-install}
+If you are familiar to git, you can directly clone the repository to your workstation. With the command: \\
+\texttt{git clone \url{https://github.com/ethz-micro/matlab_nanonis} ~/mynanolib} you will clone the repository to a subdirectory called \texttt{mynanonlib} in your actual working directory.
+\subsubsection{Manual Download} \label{man-install}
+If you do not know git probably the best is to simply download the ZIP file from the homepage. You will find the file here: \url{https://github.com/ethz-micro/matlab_nanonis} and click on the green field called ``Clone or download'', then ``Download ZIP''.
+
+You can clone the repository to your computer or download the ZIP file and unzip it to a directory of your choice, for example: ```~/myFunctions```.
+
+%In order to use and access the library you need to add the path to the directory where you copied the library with the ```addpath``` standard function of MatLab. Before you begin with your project just type in the MatLab prompt:
+%```
+%>>> addpath ~/myFunctions
+%```
+%
+%You may use the functions of the library by calling first the ''class'' and then the specific function. For example, in order to load a SXM image, you can simply write ```load.loadSXM```.
+%
+%A simple example of how to load and to plot an image is given below:
+%
+%```matlab
+%% load file
+%fileName = 'SXM_file.sxm';
+%sxmFile = loadSxM.loadProcessedSxM(fileName);
+%
+%%% plot data
+%iCh = 1; % Channel number
+%
+%%plot image
+%figure('Name',sprintf('file: %s',fileName));
+%plotSxM.plotFile(sxmFile,iCh);
+%```
+%
+%This and other examples can be found in the section *Example*.
