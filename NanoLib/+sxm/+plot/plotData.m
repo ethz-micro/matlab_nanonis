@@ -30,7 +30,7 @@ function [h, range] = plotData(data,name,unit,header,varargin)
         end
     end
     if mkttl    
-        title({l1;l2;l3},'FontSize',12);
+        title({l1;l2;l3})%,'FontSize',12);
     end
     set(gca,'OuterPosition',[0,0,1,1])
 end
@@ -52,7 +52,7 @@ function p=plotSxm(data,header,range,varargin)
     p = imagesc(XScale,YScale,data,range);
     axis image;
     %To export image correctly
-    set(gcf,'Position',[100 100 512 512],'PaperUnits','Points','PaperSize',[512,512],'PaperPosition',[0,0,512,512]);
+    % set(gcf,'Position',[100 100 512 512],'PaperUnits','Points','PaperSize',[512,512],'PaperPosition',[0,0,512,512]);
     
 end
 
