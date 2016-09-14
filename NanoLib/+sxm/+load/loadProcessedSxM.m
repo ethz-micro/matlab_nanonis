@@ -10,7 +10,7 @@ function file=loadProcessedSxM(fn, varargin)
                 channelNum = varargin{i};
             else
                 switch varargin{i}
-                    case {'PlaneLineCorrection','Median'}
+                    case {'Mean','PlaneLineCorrection','Median'}
                         corrStr=varargin{i};
                     case {'fwd','bwd','forward','backward'}
                         channelDir = varargin{i};
