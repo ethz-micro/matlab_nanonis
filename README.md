@@ -35,7 +35,7 @@ iCh = 1; % Channel number
 
 %plot image
 figure('Name',sprintf('file: %s',fileName));
-plotSxM.plotFile(sxmFile,iCh);
+sxm.plot.plotFile(sxmFile,iCh);
 ```
 
 This and other examples can be found in the section *Example*.
