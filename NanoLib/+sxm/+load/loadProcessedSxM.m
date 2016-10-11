@@ -137,13 +137,17 @@ function scan_type = scanType(data_info)
     channels = {data_info.Name};
     
     % NFESEM
-    if sum(strcmp(channels,'Channel_'))==4
+    cellIdx = strfind(channels,'Channel_');
+    idx = find(not(cellfun('isempty',cellIdx)));
+    if numel(idx)==4
         scan_type='NFESEM';
         return
     end
     
     % Video
-    if sum(strcmp(channels,'Video'))>0
+    cellIdx = strfind(channels,'Video');
+    idx = find(not(cellfun('isempty',cellIdx)));
+    if numel(idx)>0
         scan_type='SEMPA';
         return
     end
