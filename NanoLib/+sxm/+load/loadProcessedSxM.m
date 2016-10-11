@@ -47,7 +47,7 @@ function file=loadProcessedSxM(fn, varargin)
     end
     
     %save channels
-    for n=numel(nArray):-1:1;
+    for n=numel(nArray):-1:1
         idx=nArray(n);
         file.channels(n)=loadChannel(fn,idx,data_info,corrStr);
     end
@@ -130,18 +130,24 @@ end
 
 function scan_type = scanType(data_info)
     
-    %For STM scans, Z is the first data, for NFESEM, it is the current,
-    %For SEM, Video
-    switch data_info(1).Name
-        case 'Z'
-            scan_type='STM';
-        case 'Current'
-            scan_type='NFESEM';
-        case 'Video'
-            scan_type='SEMPA';
-        otherwise
-            scan_type='Unknown';
+    % STM default scan_type
+    scan_type='STM';
+    
+    % channel name list
+    channels = {data_info.Name};
+    
+    % NFESEM
+    if sum(strcmp(channels,'Channel_'))==4
+        scan_type='NFESEM';
+        return
     end
+    
+    % Video
+    if sum(strcmp(channels,'Video'))>0
+        scan_type='SEMPA';
+        return
+    end
+    
 end
 
 function channelNumber = get_channelNumber(data_info,channelNames,channelDir)
