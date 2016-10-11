@@ -35,6 +35,8 @@ function channel = processChannel(channel,header,varargin)
     %Check varargin for different value
     if nargin >2
         switch varargin{1}
+            case 'Raw'
+                methodStr='Raw';
             case 'PlaneLineCorrection'
                 columnCorr=channel.linePlane;
             case 'Median'
@@ -44,17 +46,26 @@ function channel = processChannel(channel,header,varargin)
         end
     end
     
-    %Correct data
-    channel.data=correctData(channel.data,columnCorr,header.scan_type);
+    %store raw data
+    channel.rawData = channel.data;
     
-    %Get residual slope
-    channel.lineResidualSlope= getLineFit(channel.data,1,methodStr);
-    
-    %Correct data
-    channel.data=correctData(channel.data,channel.lineResidualSlope,header.scan_type);
-    
-    %Compute STD
-    channel.lineStd = std(channel.data,0,2);
+    switch methodStr
+        case 'Raw'
+            % nothing to do
+        otherwise
+            
+            %Correct data
+            channel.data=correctData(channel.data,columnCorr,header.scan_type);
+            
+            %Get residual slope
+            channel.lineResidualSlope= getLineFit(channel.data,1,methodStr);
+            
+            %Correct data
+            channel.data=correctData(channel.data,channel.lineResidualSlope,header.scan_type);
+            
+            %Compute STD
+            channel.lineStd = std(channel.data,0,2);
+    end
     
     %turn the datas - done after the rest because scan was line by line
     channel.data = rotateData(channel.data,header.scan_angle);
