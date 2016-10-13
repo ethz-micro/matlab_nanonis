@@ -35,12 +35,21 @@ if isempty(varargin)
         return
     end
 elseif length(varargin) == 1
-    if strcmp(getenv('OS'),'Windows_NT')
-        pN = [pwd,'\']; %pwd: print working directory
-    else
-        pN = [pwd,'/']; %pwd: print working directory
+    % check if path and file are provided together
+    [pN,fN,ext] = fileparts(varargin{1});
+    
+    fN = sprintf('%s%s',fN,ext);
+    
+    if isempty(pN)
+        pN = pwd;
     end
-    fN = varargin{1};
+    
+    if strcmp(getenv('OS'),'Windows_NT')
+        pN = [pN,'\']; %pwd: print working directory
+    else
+        pN = [pN,'/']; %pwd: print working directory
+    end
+    
 else
     pN = varargin{2};
     fN = varargin{1};
