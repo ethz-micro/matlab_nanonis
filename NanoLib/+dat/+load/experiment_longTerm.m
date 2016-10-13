@@ -29,18 +29,20 @@ end
 function header = processHeader(header)
 
 % parameters from header
-
+try
 % user defined informations
 Date=strsplit(header.date,' ');
 header.rec_date=Date{1};
 header.rec_time=Date{2};
-
+catch
+    fprintf('date field does not exist.\n')
+end
 end
 
 % process data
 function [header,channels] = processData(header,data)
 channels = struct;
-for i = 1:size(data,2);
+for i = 1:size(data,2)
     chnName = regexp(header.channels{i}, '(?<name>.*?)+\((?<unit>.*?)\)','names');
     channels(i).Name = strtrim(chnName.name);
     channels(i).Unit = chnName.unit;
