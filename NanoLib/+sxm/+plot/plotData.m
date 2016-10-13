@@ -13,7 +13,29 @@ function [h, range] = plotData(data,name,unit,header,varargin)
     if abs(delta)==0
         range=[-1,1];
     end
-    h=plotSxm(data,header,range,varargin{:});
+    %  decompose varargin information and remove whats already used
+    j = nan(numel(varargin),1);
+    mkttl=true;
+    scale={'m',1};
+    setOuterPostion = true;
+    for i = 1:numel(varargin)
+        switch varargin{i}
+            case 'NoTitle'
+                mkttl=false;
+                j(i) = i;
+            case {'units','Units'}
+                scale_legend={'m',1;'mum',1e6;'nm',1e9};
+                datasForKey= @(x) scale_legend(strcmp(x,scale_legend(:,1)),:);
+                scale = datasForKey(varargin{i+1});
+                j(i:i+1) = i:i+1;
+            case 'holdPosition'
+                setOuterPostion = false;
+                j(i) = i;
+        end
+    end
+    varargin(j(~isnan(j))) = [];
+    % plot
+    h=plotSxm(data,header,range,scale{2},varargin{:});
     l1=[header.rec_date, ' - '];
     l1=[l1,getName(header)];%' - '];
     %Remove _
@@ -21,18 +43,12 @@ function [h, range] = plotData(data,name,unit,header,varargin)
     l2=regexprep(name,'_','\\_');
     l3=['Delta= ',num2str(delta,3),' ',unit];
     set(gca,'FontSize',20);
-    xlabel('x [nm]');
-    ylabel('y [nm]');
-    mkttl=true;
-    if nargin>6
-        if strcmp(varargin{3},'NoTitle')
-            mkttl=false;
-        end
-    end
+    xlabel(sprintf('x [%s]',scale{1}));
+    ylabel(sprintf('y [%s]',scale{1}));
     if mkttl    
         title({l1;l2;l3})%,'FontSize',12);
     end
-    set(gca,'OuterPosition',[0,0,1,1])
+    if setOuterPostion; set(gca,'OuterPosition',[0,0,1,1]); end
 end
 
 function p=plotSxm(data,header,range,varargin)
