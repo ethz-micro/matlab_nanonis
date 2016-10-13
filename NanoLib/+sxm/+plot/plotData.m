@@ -51,20 +51,20 @@ function [h, range] = plotData(data,name,unit,header,varargin)
     if setOuterPostion; set(gca,'OuterPosition',[0,0,1,1]); end
 end
 
-function p=plotSxm(data,header,range,varargin)
+function p=plotSxm(data,header,range,scale,varargin)
     %Plot
     
     %Varargin gives x and y offset
     xoffset=0;
     yoffset=0;
-    if nargin>4
+    if nargin>5
         xoffset=varargin{1};
         yoffset=varargin{2};
     end
     XScale=[0 header.scan_range(1)]+xoffset;
     YScale=[0 header.scan_range(2)]+yoffset;
-    XScale=XScale*1e9;
-    YScale=YScale*1e9;
+    XScale=XScale*scale;
+    YScale=YScale*scale;
     p = imagesc(XScale,YScale,data,range);
     axis image;
     %To export image correctly
