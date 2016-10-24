@@ -45,8 +45,8 @@ else
     end
 end
 
-% get user define experiments
-iN = strfind(mp,'matlab_nanonis_experiments');
+% get user defined experiments
+iN = strfind(mp,'NanoLib_userLibrary');
 if cellfun('isempty', iN)
     userNanoList={[]};
 else
