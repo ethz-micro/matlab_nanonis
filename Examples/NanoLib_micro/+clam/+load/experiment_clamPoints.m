@@ -42,8 +42,12 @@ header.pass_energy__ev_ = str2double(header.pass_energy__ev_);
 header.retarding_ratio = str2double(header.retarding_ratio);
 fmode = {'1:1';'1:3'};
 header.focus_mode = fmode{1+str2double(header.focus_mode)};
-header.focus_prcnt = str2double(header.focus____);
-header = rmfield(header,'focus____');
+try 
+    header.focus__prcnt = str2double(header.focus____);
+    header = rmfield(header,'focus____');
+catch
+    warning('new focuse mode');
+end
 header.channeltron_front__v_ = str2double(header.channeltron_front__v_);
 header.channeltron_rear__v_ = str2double(header.channeltron_rear__v_);
 header.integration_time__ms_ = str2double(header.integration_time__ms_);
