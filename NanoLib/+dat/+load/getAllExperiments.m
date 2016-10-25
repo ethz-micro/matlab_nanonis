@@ -20,10 +20,39 @@ function experimentList = getAllExperiments()
 %
 % See also loadProcessedDat
 
-% September 2016
+% October 2016
 
 %------------- BEGIN CODE --------------
 
+fn = '+dat/+load/datSettings.txt';
+if exist(fn,'file') == 2
+    flist = importdata(fn,'\t');
+    flist = cellfun(@(x) strsplit(x,'\t'),{flist{:}},'UniformOutput',false);
+    allPath = cellfun(@(x) x{2},flist,'UniformOutput',false);
+else
+    [nanoLib,userNanoLib]=dat.load.setSettings();
+    allPath = {nanoLib;userNanoLib};
+end
+
+if strcmp(allPath{2},'none')
+    allPath = (allPath(1));
+else
+    addpath(allPath{2});
+end
+
+i = 1;
+for j = 1:numel(allPath)
+    baseNanoPath = allPath{j};
+    nanoPath = strsplit(findLoad(baseNanoPath,''),';');
+    for k = 1:numel(nanoPath)
+        nanoList{i} = getList(baseNanoPath,nanoPath{k});
+        i = i + 1;
+    end
+end
+
+experimentList = cat(1,nanoList{:});
+
+%{
 % semicolon
 sc = ':';
 if ispc
@@ -37,6 +66,7 @@ mp = strsplit(path,sc);
 iN = strfind(mp,'NanoLib');
 if cellfun('isempty', iN)
     nanoList={[]};
+    error('any NanoLib path found');
 else
     baseNanoPath = mp{not(cellfun('isempty', iN))};
     nanoPath = strsplit(findLoad(baseNanoPath,''),';');
@@ -46,6 +76,7 @@ else
 end
 
 % get user define experiments
+
 iN = strfind(mp,'matlab_nanonis_experiments');
 if cellfun('isempty', iN)
     userNanoList={[]};
@@ -57,9 +88,11 @@ else
     end
 end
 
-% set all experiments together
-experimentList = cat(1,nanoList{:},userNanoList{:});
 
+% set all experiments together
+
+experimentList = cat(1,nanoList{:},userNanoList{:});
+%}
 end
 
 function experiment_list = getList(basePath,path)

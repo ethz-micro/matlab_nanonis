@@ -1,3 +1,8 @@
+## MATLAB files
+*.m~
+*.asv
+*Settings.txt
+
 ## System files
 ._*
 .DS*

@@ -51,8 +51,6 @@ dat.plot.plotChannel(file5,combined_channels);
 
 %% example of user defined experiments
 
-addpath('../../Examples/matlab_nanonis_experiments/')
-
 %% Load LongTerm
 file6=dat.load.loadProcessedDat('../Files/myLongTerm.dat');
 iCh = utility.getChannel(file6.channels,'Z');
