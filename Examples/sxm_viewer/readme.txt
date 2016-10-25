@@ -8,13 +8,13 @@ The SXM viewer allows to open sxm files and have a fast overview of all channels
 #  Setup
 # --------------------------------------------------
 
-In order to use the SXM viewer you need to set local paths for the NanoLib and the path to directory where images are saved.
-To this end you have to save a MATLAB script called ‘viewerSettings’ in the same directory  where ‘SXM.m’ is (this directory) with the following informations:
+In order to use the DAT viewer you need to set local paths for the NanoLib and the path to directory where images are saved.
+The first time you run the viewer you will be asked to find paths. Information will be saved in a file ‘localSettings.tct’ in the same directory  where ‘SXM.m’ is (this directory) with the following informations:
 
 % local path to NanoLib. variable ‘nanoPath’ MUST be a cell.
-nanoPath = {‘../../matlab_nanonis/NanoLib/‘};
+nanoLib	/Users/grandegiove/Documents/MATLAB/matlab_nanonis/NanoLib
 % your path to sxm data
-sxmPath = '/Volumes/micro/CLAM2/hpt_c6.2/Nanonis/Data/';
+dataPath	/Volumes/micro/CLAM2/hpt_c6.2/Nanonis/Data
 
 # --------------------------------------------------
 #  Usage

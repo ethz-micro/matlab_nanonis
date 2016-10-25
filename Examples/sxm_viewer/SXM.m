@@ -10,36 +10,35 @@ SXM_CreateFcn(hSXM);
 
 set(hSXM,'DeleteFcn',@(hObject,eventdata)closeViewer(hObject,eventdata,guidata(hSXM)))
 
-openError = SXM_OpeningFcn(hSXM, guidata(hSXM), varargin);
+SXM_OpeningFcn(hSXM, guidata(hSXM), varargin);
 
-if ~openError
-    % set dialog to visible
-    set(hSXM, 'menubar', 'none');
-    hSXM.Visible = 'on';
-end
+% set dialog to visible
+set(hSXM, 'menubar', 'none');
+hSXM.Visible = 'on';
 
 % wait for closing of the main figure.
 % uiwait(hSXM);
 
-function openError = SXM_OpeningFcn(~, handles, varargin)
+function SXM_OpeningFcn(~, handles, varargin)
 
-openError = false; 
-
-if exist('viewerSettings.m','file')==2
-    run('viewerSettings.m');
-    addpath(nanoPath{:});
-    handles.hFolderName.UserData = sxmPath;
-    
-    handles.hSystem.UserData = '/';
-    handles.hSystem.String = 'OS X';
-    if ispc
-        handles.hSystem.String = 'Windows';
-        handles.hSystem.UserData = '\';
-    end
+if exist('localSettings.txt','file')==2
+    flist = importdata('localSettings.txt','\t');
+    flist = cellfun(@(x) strsplit(x,'\t'),{flist{:}},'UniformOutput',false);
+    allPath = cellfun(@(x) x{2},flist,'UniformOutput',false);
+    nanoLib = allPath{1};
+    dataPath = allPath{2};
 else
-    openError = true;
-    wdlg = warndlg({'1. Read readme.txt file';'2. Create file: viewerSettings.m';'3. Run SXM.m again'});
-    waitfor(wdlg);
+    [nanoLib,dataPath]=utility.setSettings();
+end
+
+addpath(nanoLib);
+handles.hFolderName.UserData = dataPath;
+
+handles.hSystem.UserData = '/';
+handles.hSystem.String = 'OS X';
+if ispc
+    handles.hSystem.String = 'Windows';
+    handles.hSystem.UserData = '\';
 end
 
 function SXM_CreateFcn(hObject,handles)

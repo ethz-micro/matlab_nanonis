@@ -10,14 +10,11 @@ DAT_CreateFcn(hDAT);
 
 set(hDAT,'DeleteFcn',@(hObject,eventdata)closeViewer(hObject,eventdata,guidata(hDAT)))
 
-openError = DAT_OpeningFcn(hDAT, guidata(hDAT), varargin);
+DAT_OpeningFcn(hDAT, guidata(hDAT), varargin);
 
-
-if ~openError
-    % set dialog to visible
-    set(hDAT, 'menubar', 'none');
-    hDAT.Visible = 'on';
-end
+% set dialog to visible
+set(hDAT, 'menubar', 'none');
+hDAT.Visible = 'on';
 
 % wait for closing of the main figure.
 % uiwait(hDAT);
@@ -26,17 +23,18 @@ function openError = DAT_OpeningFcn(~, handles, varargin)
 
 openError = false; 
 
-if exist('viewerSettings.m','file')==2
-    run('viewerSettings.m');
+if exist('localSettings.txt','file')==2
+    flist = importdata('localSettings.txt','\t');
+    flist = cellfun(@(x) strsplit(x,'\t'),{flist{:}},'UniformOutput',false);
+    allPath = cellfun(@(x) x{2},flist,'UniformOutput',false);
+    nanoLib = allPath{1};
+    dataPath = allPath{2};
 else
-    openError = true;
-    wdlg = warndlg({'1. Read readme.txt file';'2. Create file: settings.m';'3. Run SXM.m again'});
-    waitfor(wdlg);
-    return
+    [nanoLib,dataPath]=utility.setSettings();
 end
 
-addpath(nanoPath{:});
-handles.hFolderName.UserData = datPath;
+addpath(nanoLib);
+handles.hFolderName.UserData = dataPath;
 
 handles.hSystem.UserData = '/';
 handles.hSystem.String = 'OS X';
