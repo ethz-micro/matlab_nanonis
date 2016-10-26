@@ -1,11 +1,15 @@
 function [nanoLib,userNanoLib]=setSettings()
 
 % get path
+wdlg = warndlg({'set local path to NanoLib'});
+waitfor(wdlg);
 nanoLib = uigetdir(pwd,'Set NanoLib path');
 if ~ischar(nanoLib)
     error('Chose a directory for NanoLib');
 end
 
+wdlg = warndlg({'set local path to NanoLib USER library'});
+waitfor(wdlg);
 userNanoLib = uigetdir(pwd,'Set NanoLib USER library path');
 if ~ischar(userNanoLib)
     userNanoLib = 'none';
