@@ -20,46 +20,37 @@ function experimentList = getAllExperiments()
 %
 % See also loadProcessedDat
 
-% September 2016
+% October 2016
 
 %------------- BEGIN CODE --------------
 
-% semicolon
-sc = ':';
-if ispc
-    sc = ';';
+fn = '+dat/+load/datSettings.txt';
+if exist(fn,'file') == 2
+    flist = importdata(fn,'\t');
+    flist = cellfun(@(x) strsplit(x,'\t'),{flist{:}},'UniformOutput',false);
+    allPath = cellfun(@(x) x{2},flist,'UniformOutput',false);
+else
+    [nanoLib,userNanoLib]=dat.load.setSettings();
+    allPath = {nanoLib;userNanoLib};
 end
 
-% get path of the NanoLib directory
-mp = strsplit(path,sc);
-
-% get NanoLib Experiments
-iN = strfind(mp,'NanoLib');
-if cellfun('isempty', iN)
-    nanoList={[]};
+if strcmp(allPath{2},'none')
+    allPath = (allPath(1));
 else
-    baseNanoPath = mp{not(cellfun('isempty', iN))};
+    addpath(allPath{2});
+end
+
+i = 1;
+for j = 1:numel(allPath)
+    baseNanoPath = allPath{j};
     nanoPath = strsplit(findLoad(baseNanoPath,''),';');
-    for i = 1:numel(nanoPath)
-        nanoList{i} = getList(baseNanoPath,nanoPath{i});
+    for k = 1:numel(nanoPath)
+        nanoList{i} = getList(baseNanoPath,nanoPath{k});
+        i = i + 1;
     end
 end
 
-% get user defined experiments
-iN = strfind(mp,'NanoLib_userLibrary');
-if cellfun('isempty', iN)
-    userNanoList={[]};
-else
-    baseNanoUserPath = mp{not(cellfun('isempty', iN))};
-    nanoUserPath = strsplit(findLoad(baseNanoUserPath,''),';');
-    for i = 1:numel(nanoUserPath)
-        userNanoList{i} = getList(baseNanoUserPath,nanoUserPath{i});
-    end
-end
-
-% set all experiments together
-experimentList = cat(1,nanoList{:},userNanoList{:});
-
+experimentList = cat(1,nanoList{:});
 end
 
 function experiment_list = getList(basePath,path)

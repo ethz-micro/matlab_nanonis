@@ -191,16 +191,6 @@ This function is used to study the radial spectrum of an image computed from the
 \+{[xrange, yrange] = getRange(header)} extract the ranges \emph{xrange}, \emph{yrange} from \emph{header}.
 \edf
 % ------------------------------ %
-\subsubsection{nanHighStd}
-\bdf
-\+{data = nanHighStd(data)} is useful for STM measurements. Usually the lines with very high std don't carry informations, and thus if a line has $std > 3 median$, it is set to nan.
-\edf
-% ------------------------------ %
-\subsubsection{nanonisMap}
-\bdf
-\+{colorMap = nanonisMap(nPti)} is a color map function that generates a Nanonis color like mapping of \emph{nPti} number of colors. \emph{nPti} is an optional value. If not provided \emph{nPti} = 64 per default. 
-\edf
-% ------------------------------ %
 \subsubsection{interpHighStd}
 \bdf
 \+{data = interpHighStd(data)} Removes the lines with high STD values and interpolates the missing values.
@@ -209,6 +199,16 @@ This function is used to study the radial spectrum of an image computed from the
 \subsubsection{interpPeaks}
 \bdf
 \+{data = interpPeaks(data)} Removes the data witch are too far from the mean and interpolates the missing values.
+\edf
+% ------------------------------ %
+\subsubsection{nanHighStd}
+\bdf
+\+{data = nanHighStd(data)} is useful for STM measurements. Usually the lines with very high std don't carry informations, and thus if a line has $std > 3 median$, it is set to nan.
+\edf
+% ------------------------------ %
+\subsubsection{nanonisMap}
+\bdf
+\+{colorMap = nanonisMap(nPti)} is a color map function that generates a Nanonis color like mapping of \emph{nPti} number of colors. \emph{nPti} is an optional value. If not provided \emph{nPti} = 64 per default. 
 \edf
 
 %-------------------------------------------------------------------------------%

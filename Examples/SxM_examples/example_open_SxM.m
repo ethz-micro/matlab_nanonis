@@ -34,6 +34,11 @@ sxmFile = sxm.load.loadProcessedSxM(fileName,'Z');
 % plot data
 figure; sxm.plot.plotFile(sxmFile,1);
 
+%% load image channel 'Z' forward and backward with Processing Raw
+sxmFile = sxm.load.loadProcessedSxM(fileName,'Z','Raw');
+% plot data
+figure; sxm.plot.plotFile(sxmFile,1);
+
 %% load image channel 'Z' forward and backward with Processing MEDIAN
 sxmFile = sxm.load.loadProcessedSxM(fileName,'Z','Median');
 % plot data

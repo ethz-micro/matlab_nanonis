@@ -28,14 +28,14 @@ A simple example of how to load and to plot an image is given below:
 ```matlab
 % load file
 fileName = 'SXM_file.sxm';
-sxmFile = loadSxM.loadProcessedSxM(fileName);
+sxmFile = sxm.load.loadProcessedSxM(fileName);
 
 %% plot data
 iCh = 1; % Channel number
 
 %plot image
 figure('Name',sprintf('file: %s',fileName));
-plotSxM.plotFile(sxmFile,iCh);
+sxm.plot.plotFile(sxmFile,iCh);
 ```
 
 This and other examples can be found in the section *Example*.

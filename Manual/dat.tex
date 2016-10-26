@@ -54,19 +54,18 @@ This file is provided by \nanonis{} and loads a specified channel from a \emph{f
  This function is called by \emph{load.loadProcessedDat} and \textbf{should not be called directly}.
 \edf
 % ------------------------------ %
-\subsubsection{experiment\_$\ast$}
+\subsubsection{experiment\_XXX}
 \emph{files.dat} are all characterized by a unique \textbf{experiment\_name}, that is saved in the first line of every \emph{.dat} file.
 In the follow we refer to those \emph{files.dat} simply as \emph{experiments}.
 Different \emph{experiments} have different headers and data characteristics.
-Every \emph{experiment} have a specific function called \emph{experiment\_$\ast$}, \emph{$\ast$} being the name of the experiment.
-\emph{experiment\_$\ast$} are called automatically by the \emph{loadProcessedDat} function as listed below.
+Every \emph{experiment} have a specific function called \emph{experiment\_XXX}, \emph{XXX} being the name of the experiment.
+\emph{experiment\_XXX} are called automatically by the \emph{loadProcessedDat} function as listed below.
 
 \bdf
-\+ {experiment\_name = experiment\_$\ast$('get experiment')} returns the \textbf{experiment\_name}.
-\+ {header = experiment\_$\ast$('process header',header)} process the \emph{header} of the \emph{experiment}. 
-The \emph{header} variable is result of the function .
-
-\+ {[header,channels] = experiment\_$\ast$('process data',header,data)} stores data into the \emph{channels} structure described above. Where needed some additional processing are applied to the data. Header's information are adjusted accordingly.
+\+ {experiment\_name = experiment\_XXX('get experiment')} returns the \textbf{experiment\_name}.
+\+ {header = experiment\_XXX('process header',header)} process the \emph{header} of the \emph{experiment}. 
+The \emph{header} variable is result of the function.
+\+ {[header,channels] = experiment\_XXX('process data',header,data)} stores data into the \emph{channels} structure described above. Where needed some additional processing are applied to the data. Header's information are adjusted accordingly.
 \edf
 
 Further \emph{experiments} can be implemented by simply defining a function called \emph{experiment\_newExperiment}. New \emph{experiment} functions \textbf{must} have the same structure described above and should be saved in the \emph{+load} package folder.
@@ -74,16 +73,16 @@ Further \emph{experiments} can be implemented by simply defining a function call
 % ------------------------------ %
 \subsubsection{getAllExperiments}
 \bdf
-\+{experiment\_list = getAllExperiments()} returns a $2 \times n$ list, where $n$ is the number of the function \emph{experiment\_$\ast$}.
+\+{experiment\_list = getAllExperiments()} returns a $2 \times n$ list, where $n$ is the number of the function \emph{experiment\_XXX}.
 In the first column is listed the unique name of the experiment saved in the \emph{+load} package folder.
-In the second column compare the correspondent function, i.e., \emph{experiment\_$\ast$}.
+In the second column compare the correspondent function, i.e., \emph{experiment\_XXX}.
 \edf
 This function is used by the function \emph{loadProcessedDat} when loading different \emph{experiments}.
 
 % ------------------------------ %
 \subsubsection{loadProcessedDat}
 \emph{loadProcessedDat} loads a \emph{file.dat} calling the function \emph{loaddat}.
-And process the \emph{header} and the \emph{data} according to the type of experiment by calling -- automatically -- the corresponding \emph{experiment\_$\ast$}.
+And process the \emph{header} and the \emph{data} according to the type of experiment by calling -- automatically -- the corresponding \emph{experiment\_XXX}.
 \bdf
 \+{file=loadProcessedDat()} ask for a \emph{fileName.dat} and load it.
 \+{file=loadProcessedDat(fileName)} load the file named \emph{fileName.dat}.
