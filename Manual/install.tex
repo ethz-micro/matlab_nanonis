@@ -7,32 +7,74 @@ The preferred way to access the NanoLib is to make use of the free version contr
 
 \subsubsection{Git} \label{git-install}
 If you are familiar to git, you can directly clone the repository to your workstation. With the command: \\
-\texttt{git clone \url{https://github.com/ethz-micro/matlab_nanonis} ~/mynanolib} you will clone the repository to a subdirectory called \texttt{mynanonlib} in your actual working directory.
+\texttt{git clone \url{https://github.com/ethz-micro/matlab_nanonis} $\sim$/mynanolib} you will clone the repository to a subdirectory called \texttt{mynanonlib} in your actual working directory.
+
 \subsubsection{Manual Download} \label{man-install}
 If you do not know git probably the best is to simply download the ZIP file from the homepage. You will find the file here: \url{https://github.com/ethz-micro/matlab_nanonis} and click on the green field called ``Clone or download'', then ``Download ZIP''.
 
-You can clone the repository to your computer or download the ZIP file and unzip it to a directory of your choice, for example: ```~/myFunctions```.
+You can clone the repository to your computer or download the ZIP file and unzip it to a directory of your choice, for example: ``$\sim$/mynanolib''.
 
-%In order to use and access the library you need to add the path to the directory where you copied the library with the ```addpath``` standard function of MatLab. Before you begin with your project just type in the MatLab prompt:
-%```
-%>>> addpath ~/myFunctions
-%```
-%
-%You may use the functions of the library by calling first the ''class'' and then the specific function. For example, in order to load a SXM image, you can simply write ```load.loadSXM```.
-%
-%A simple example of how to load and to plot an image is given below:
-%
-%```matlab
-%% load file
-%fileName = 'SXM_file.sxm';
-%sxmFile = loadSxM.loadProcessedSxM(fileName);
-%
-%%% plot data
-%iCh = 1; % Channel number
-%
-%%plot image
-%figure('Name',sprintf('file: %s',fileName));
-%plotSxM.plotFile(sxmFile,iCh);
-%```
-%
-%This and other examples can be found in the section *Example*.
+
+\subsection{Use}
+
+The NanoLib library runs on \matlab{} 2015a or later. 
+In order to use and access the library you need to add the path to the directory where you copied the library (e.g., the same provided above, $\sim$/mynanolib).
+To this end open \matlab{} and set the folder called \texttt{NanoLib} (you should find it in the parent folder of this user guide, e.g., $\sim$/mynanolib/NanoLib) as the \matlab{} current folder.
+You may use also the button \emph{Browse for folder} beside the current folder path in the \matlab{} main window.\footnote{Alternatively, you may type in the \matlab{} terminal the following command: \mcode{addpath $\sim$/mynanolib/NanoLib}.
+An orange warning message appears in the \matlab{} terminal if the added path is not existing.}
+
+At this point you can use NanoLib functions by calling first the ``type'', second the ``operation'' and then the specific function. For example, in order to load a SXM image, you can simply write: \\
+\mcode{sxm.load.loadProcessedSXM(fileName)}.
+
+\newpage
+
+\subsubsection{Load a simple SXM file}
+
+The following instructions describe how to open and load a \emph{file.sxm}.
+
+\begin{enumerate}
+	\item Add the NanoLib path to the \matlab{} path (if not yet done):\\
+	\mcode{addpath $\sim$/mynanolib/NanoLib}
+
+	\item Define the file name and load it:\\
+	\mcode{fileName = 'SXM\_file.sxm';}\\
+	\mcode{sxmFile = sxm.load.loadProcessedSxM(fileName);
+	}
+	
+	\item Define the channel to plot:\\
+	\mcode{iCh = 1; \% Channel number}
+
+	\item Plot data:\\
+	\mcode{figure('Name',sprintf('file: \%s',fileName));}\\
+	\mcode{sxm.plot.plotFile(sxmFile,iCh);}
+	
+\end{enumerate}
+
+\noindent Other examples can be found in the section \ref{sec::examples}. A simple sxm viewer is additionally provided within this library.\\
+
+\subsubsection{Load a simple DAT file}
+
+The following instructions describe how to open and load a \emph{file.dat}. \\
+
+\noindent \textbf{NOTE: While using \nanonis{} it is sometimes useful to create user defined experiments (see sectin \ref{sec::examples}). The NanoLib library allows you to incorporate user defined functions (see section \ref{sec::dat}). The first time you load a \emph{file.dat} the NanoLib library will ask you to indicate the path to the NanoLib library and the path for the userNanoLib library (press cancel if you don't have any user defined functions). A file called \emph{datSettings.txt} will be created in the package folder \emph{+dat/+load/} with your local settings.
+}
+
+\begin{enumerate}
+	\item Add the NanoLib path to the \matlab{} path (if not yet done):\\
+	\mcode{addpath $\sim$/mynanolib/NanoLib}
+
+	\item Define the file name and load it:\\
+	\mcode{fileName = 'DAT\_file.dat';}\\
+	\mcode{sxmFile = dat.load.loadProcessedDat(fileName);
+	}
+	
+	\item Define the channel to plot:\\
+	\mcode{iCh = 1; \% Channel number}
+
+	\item Plot data:\\
+	\mcode{figure('Name',sprintf('file: \%s',fileName));}\\
+	\mcode{dat.plot.plotFile(sxmFile,iCh);}
+	
+\end{enumerate}
+
+\noindent Other examples can be found in the section \ref{sec::examples}. A simple dat viewer is additionally provided within this library.\\
