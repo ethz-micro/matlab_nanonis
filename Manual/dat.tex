@@ -47,6 +47,18 @@ The functions works with a structure that holds every relevant informations. To 
 %-------------------------------------------------------------------------------%
 \subsection{+load}
 This folder contains everything needed to load and process \emph{.dat} files.
+\textbf{NOTE: While using \nanonis{} it is sometimes useful to create user defined experiments (see section \ref{nanolib::user}). 
+The NanoLib library allows you to incorporate user defined functions.
+The first time you load a \emph{file.dat} the NanoLib library will ask you to indicate the path to the NanoLib library and the path for the userNanoLib library (press cancel if you don't have any user defined functions).
+A file called \emph{datSettings.txt} will be created in the package folder \emph{+dat/+load/} with the local settings.}
+% ------------------------------ %
+\subsubsection{setSettings}
+\bdf
+\+{[nanoLib,userNanoLib]=setSettings()} sets the local path for the nanoLib library.
+This function is automatically called the first time a \emph{file.dat} is loaded.
+It create a file called \emph{datSettings.txt} with the local settings.
+\edf
+
 % ------------------------------ %
 \subsubsection{loaddat}
 This file is provided by \nanonis{} and loads a specified channel from a \emph{file.dat}.
@@ -69,7 +81,7 @@ The \emph{header} variable is result of the function.
 \+ {[header,channels] = experiment\_XXX('process data',header,data)} stores data into the \emph{channels} structure described above. Where needed some additional processing are applied to the data. Header's information are adjusted accordingly.
 \edf
 
-Further \emph{experiments} can be implemented by simply defining a function called \emph{experiment\_newExperiment}. New \emph{experiment} functions \textbf{must} have the same structure described above and should be saved in the \emph{+load} package folder.
+Further \emph{experiments} can be implemented by simply defining a function called \emph{experiment\_newExperiment}. New \emph{experiment} functions \textbf{must} have the same structure described above and should be saved in a \emph{+load} package folder (see section \ref{nanolib::user}).
 
 % ------------------------------ %
 \subsubsection{getAllExperiments}
@@ -97,6 +109,7 @@ And process the \emph{header} and the \emph{data} according to the type of exper
 This package contains everything needed to plot the data.
 % ------------------------------ %
 \subsubsection{plotData}
+\label{dat::plotData}
 \bdf
 \+{hObject = plotData(data, name, unit, sweep\_channel,varargin)} plots the \emph{data} using according to the \emph{sweep\_channel}. The figure title is deduced from \emph{name} and \emph{unit}. It returns the plot handle \emph{hObject}. \emph{varargin} are the standard plot options. Additional options are provided.
 \bi
@@ -107,7 +120,7 @@ This package contains everything needed to plot the data.
 % ------------------------------ %
 \subsubsection{plotChannel}
 \bdf
-\+{hObject = plotChannel(channel,sweep\_channel,varargin)} plots the \emph{channel} using informations from the \emph{sweep\_channel}. It returns the plot handle  \emph{hObject}. It calls \emph{plot.plotData} on the channel data, \emph{varargin} are therefore the same as \emph{plot.plotData}.
+\+{hObject = plotChannel(channel,sweep\_channel,varargin)} plots the \emph{channel} using informations from the \emph{sweep\_channel}. It returns the plot handle  \emph{hObject}. It calls \emph{plot.plotData} on the channel data, \emph{varargin} are therefore the same as \emph{plot.plotData} \ref{dat::plotData}.
 \edf
 
 

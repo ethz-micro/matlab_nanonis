@@ -72,7 +72,7 @@ This file is provided by \nanonis{} and loads a specified channel from a \emph{.
 \bdf
 \+{channel = processChannel(channel, header)} Process the \emph{channel} as described below using the informations form \emph{header}. This function is called by \emph{load.loadProcessedXXX} and should not be called directly.
 
-\+{channel = processChannel(channel,header,corrType)} If \emph{corrType} is set to 'Median', the median is used instead of the mean for lines corrections. If it is set to 'PlaneLineCorrection' a linear fit is used.  
+\+{channel = processChannel(channel,header,corrType)} If \emph{corrType} is set to 'Raw', data are only oriented/rotated. If it is set to 'Median', the median is used instead of the mean for lines corrections. If it is set to 'PlaneLineCorrection' a linear fit is used. 
 \edf
 
 The processing orientate and rotate the data so that all the images are comparable.
@@ -81,12 +81,18 @@ Everything that is removed is saved in the output structure to avoid loosing inf
 The mean value of the measurement under the conditions of each pixel must be extracted from the data. As there is drift and other instabilities, the mean value of the data is generally not a good value. The mean of each line is used instead, as the measurement conditions doesn't change too much during one line. Others possibility include the median or the mean plane. The mean plane along the line is also removed.
 
 For STM, This offset is subtracted. For NFESEM and SEMPA, it is divided, as justified in the thesis.
+
 % ------------------------------ %
 \subsubsection{loadProcessedSxM}
+
+Data are processed as followw......... GABRIELE!
+
 \bdf
 \+{file=loadProcessedSxM(fn)} loads and process all the channels of \emph{.sxm} file named \emph{fn}. The structure \emph{file} contains all the informations and is used in a large number of other functions.
 
-\+{file=loadProcessedSxM(fn, chn)} only loads the channels whose numbers are in the array \emph{chn}
+\+{file=loadProcessedSxM(fn, chn)} only loads the channels whose numbers are in the array \emph{chn}.
+
+\+{file=loadProcessedSxM(fn, chnName)} searches for all channels (\emph{chn} above) that contains the chnName and loads channels whose numbers are in the array \emph{chn}
 
 \+{file=loadProcessedSxM(fn, corrType)} If \emph{corrType} is set to 'MedianCorrection', the median is used instead of the mean for lines corrections. If it set to 'PlaneLineCorrection' a linear fit is used. 
 
@@ -118,10 +124,17 @@ This package contains everything needed to plot the data.
 \edf
 % ------------------------------ %
 \subsubsection{plotData}
+\label{sxm:plotData}
 \bdf
 \+{[h, range] = plotData(data, name, unit, header)} plots the \emph{data} using informations from the \emph{header}. The figure title is deduced from \emph{name} and \emph{unit}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
- 
-\+{[h, range] = plotData(data, name, unit, header, xoffset, yoffset)} adds an offset to the plot.
+
+\+{[h, range] = plotData(data, name, unit, header, varargin)} allows to define following options:
+\bi
+\+ varargin = \{'Units', unit\} sets axis to 'm', 'nm', 'mum'. Defaults units are meter.
+\+ varargin = \{xoffset, yoffset\} adds an offset to the plot.\emph{xoffset} and \emph{yoffset} should be in the proper uints.
+\+ varargin = \{'HoldPosition'\} avoid command \texttt{'OuterPosition'}, \newline \texttt{[0,0,1,1]} that centers the axis of the image.
+\+ varargin = \{'NoTitle'\} hide the title of the image.
+\ei
 \edf
 
 The range is 2 STD. If the data is STM, only the lines with low std are considered for the range.
@@ -130,26 +143,35 @@ The range is 2 STD. If the data is STM, only the lines with low std are consider
 \bdf
 \+{[h, range] = plotChannel(channel, header)} plots the \emph{channel} using informations from the \emph{header}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
 
-\+{[h, range] = plotChannel(channel, header, xoffset, yoffset)} adds an offset to the plot.
+\+{[h, range] = plotChannel(channel, header, varargin)} allows to define some plot options (see section \ref{sxm:plotData}).
 \edf
 
 It calls \emph{plot.plotData} on the channel data.
+
 % ------------------------------ %
 \subsubsection{plotFile}
 
 \bdf
 \+{[h, range] = plotFile(file, n)} plots the $n^{th}$ channel of \emph{file}. It returns the plot handle \emph{h} and the chosen range \emph{range}.
 
-\+{[h, range] = plotFile(file, n, xoffset, yoffset)} adds an offset to the plot.
+\+{[h, range] = plotFile(file, n, varargin)} allows to define some plot options (see section \ref{sxm:plotData}).
 \edf
 
-It calls \emph{plot.plotChannel}. 
+It calls \emph{plot.plotChannel}.
+
 % ------------------------------ %
 \subsubsection{plotHistogram}
 \bdf
 \+{plotHistogram(data, range)} plots an histogram of \emph{data} and draw lines on the limit of \emph{range}. It removes the $.1\%$ most extreme values. 
 \edf
 
+% ------------------------------ %
+\subsubsection{scalebar}
+\bdf
+\+{hObj = scalebar(xStart,yStart,blength,bunits)} plots the scale bar on the current figure. \emph{xStart} is the x position of the scale bar, \emph{yStart} is the y position of the scale bar, \emph{blength} and \emph{bunits} are the length, and resp. the units, of the scale bar. 
+\edf
+Remark: \emph{xStart} and \emph{yStart} can be provided as ranges, e.g. \emph{xStart}=\texttt{[min(x),max(x)]} and \emph{yStart}=\texttt{[min(y),max(y)]}. 
+If this is the case the scale bar will be automatically placed within the $10\%$ of the \texttt{[min(x), min(y)]} point.
 %-------------------------------------------------------------------------------%
 %  +op                                                                          %
 %-------------------------------------------------------------------------------%

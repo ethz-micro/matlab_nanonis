@@ -2,11 +2,19 @@
 \section{+utility}
 
 The package folder \emph{+utility} contains generic functions, which can be used when analyzing both \emph{sxmFiles} and \emph{datFiles}
+
 % ------------------------------ %
 \subsubsection{combineChannel}
 \bdf
 \+{channel=combineChannel(file, name, chn, chw)} combined the channels \emph{chn} of the \emph{file} structure with weights \emph{chw} and return a new \emph{channel} with name \emph{name}.
 \edf
+
+% ------------------------------ %
+\subsubsection{divideByChannel}
+\bdf
+\+{channel=divideByChannel(file,name,chn\_N,chn\_D,chw)} divide the channel \emph{chn\_N} by the channel \emph{chn\_D} of the \emph{file} structure with weights \emph{chw} and return a new \emph{channel} with name \emph{name}.
+\edf
+
 % ------------------------------ %
 \subsubsection{getAlphaColor}
 \bdf
@@ -14,6 +22,7 @@ The package folder \emph{+utility} contains generic functions, which can be used
 
 \+{outputRGB = getAlphaColor(inputRGB,alpha,'dark')} returns \emph{alpha\%} darker \emph{inputRGB} color.
 \edf
+
 % ------------------------------ %
 \subsubsection{getChannel}
 \bdf
@@ -21,6 +30,7 @@ The package folder \emph{+utility} contains generic functions, which can be used
 
 \+{channelNumber = getChannel(channels,channelNames,direction)} returns only the channel number where \emph{channels.Direction} matches the \emph{direction}, too.
 \edf
+
 % ------------------------------ %
 \subsubsection{getColor}
 \bdf

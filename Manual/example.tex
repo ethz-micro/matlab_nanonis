@@ -6,14 +6,71 @@ NanoLib library comes with few example showing the basics usage of the library. 
 Below a list of all examples with a short explanation.
 % ------------------------------ %
 \subsection{SxM\_Example}
+\label{sxm::example}
+
+\subsubsection*{example\_open\_SxM} shows different ways to load a \emph{file.sxm}.
+\subsubsection*{example\_process\_option} shows different ways to process a file while loading a \emph{file.sxm}.
+\subsubsection*{example\_plot\_SxM} shows different ways to load a \emph{file.sxm}.
+\subsubsection*{example\_get\_drift} detect XY-offset between two different \emph{sxmFiles}.
+\subsubsection*{example\_mask} generates a mask of a \emph{sxmFile} and apply on the original image.
+\subsubsection*{example\_RadialFFT} applies \emph{op.getRadialFFT} and plots some interesting quantities.
+
+% ------------------------------ %
+\subsection{SxM\_viewer}
+\label{sxm::viewer}
+The SXM viewer allows to open sxm files and have a fast overview of all channels stored within a SXM image.
+
+\subsubsection*{Setup}
+In order to use the SXM viewer you need to set local paths for the NanoLib and the path to directory where images are saved.
+The first time you run the viewer you will be asked to find paths. 
+Information will be saved in a file \emph{localSettings.txt} in the same directory  where \emph{SXM.m} is with the following informations:\\
+\begin{minipage}{\textwidth}
+	\setlength{\parindent}{15pt}
+	\texttt{nanoLib	$\sim$/MATLAB/matlab\_nanonis/NanoLib}\\
+	\indent \texttt{dataPath	$\sim$/Nanonis/Data}
+\end{minipage}
+
+\subsubsection*{Usage}
+\begin{enumerate}
+	\item Run SXM viewer main file: \\ \mcode{SXM}
+	\item Select the process type in the popupmenu (default = Raw)
+	\item Press open button and search for the directory where measurements are;
+	\item Press items in the list box in order to let them appear in a new figure;
+	\item Press on plotted channels to export them on a new figure.
+\end{enumerate}
+
+% ------------------------------ %
+\subsection{Dat\_Example}
 \bdf
-\item[example\_open\_SxM] shows different ways to load a \emph{file.sxm}.
-\item[example\_process\_option] shows different ways to process a file while loading a \emph{file.sxm}.
-\item[example\_get\_drift] detect XY-offset between two different \emph{sxmFiles}.
-\item[example\_mask] generates a mask of a \emph{sxmFile} and apply on the original image.
-\item[example\_RadialFFT] applies \emph{op.getRadialFFT} and plots some interesting quantities.
+\item[example\_Dat] shows different ways to load some \emph{experiment.dat}.
 \edf
-\subsection{dat\_Example}
-\bdf
-\item[example\_open\_Dat] shows different ways to load some \emph{experiment.dat}.
-\edf
+
+% ------------------------------ %
+\subsection{Dat\_viewer}
+\label{dat::viewer}
+The DAT viewer allows to open dat files and have a fast overview of all channels stored within a dat file.
+
+\subsubsection*{Setup}
+In order to use the DAT viewer you need to set local paths for the NanoLib and the path to directory where images are saved.
+The first time you run the viewer you will be asked to find paths. 
+Information will be saved in a file \emph{localSettings.txt} in the same directory  where \emph{DAT.m} is with the following informations:\\
+\begin{minipage}{\textwidth}
+	\setlength{\parindent}{15pt}
+	\texttt{nanoLib	$\sim$/MATLAB/matlab\_nanonis/NanoLib}\\
+	\indent \texttt{dataPath	$\sim$/Nanonis/Data}
+\end{minipage}
+
+\subsubsection*{Usage}
+\begin{enumerate}
+	\item Run SXM viewer main file: \\ \mcode{DAT}
+	\item Press open button and search for the directory where measurements are;
+	\item Press items in the list box in order to let them appear in a new figure;
+	\item Press on plotted channels to export them on a new figure.
+	\item Whenever the button ‘hold exported’ is active (blue capital letters), all exported channels will be inserted in the same figure.
+\end{enumerate}
+
+% ------------------------------ %
+\subsection{NanoLib\_micro}
+\label{nanolib::user}
+
+Contains user defined examples in order to integrate user defined experiments which are defined as \emph{file.dat}.
