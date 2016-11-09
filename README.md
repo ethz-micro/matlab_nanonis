@@ -21,7 +21,7 @@ In order to use and access the library you need to add the path to the directory
 >>> addpath ~/myFunctions
 ```
 
-You may use the functions of the library by calling first the ''class'' and then the specific function. For example, in order to load a SXM image, you can simply write ```load.loadSXM```.
+You may use the functions of the library by calling first the ''class'' and then the specific function. For example, in order to load a SXM image, you can simply write ```sxm.load.loadProcessedSxM```.
 
 A simple example of how to load and to plot an image is given below:
 
