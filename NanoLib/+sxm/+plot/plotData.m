@@ -23,12 +23,12 @@ function [h, range] = plotData(data,name,unit,header,varargin)
             case 'NoTitle'
                 mkttl=false;
                 j(i) = i;
-            case {'units','Units'}
+            case {'Units','units'}
                 scale_legend={'m',1;'mum',1e6;'nm',1e9};
                 datasForKey= @(x) scale_legend(strcmp(x,scale_legend(:,1)),:);
                 scale = datasForKey(varargin{i+1});
                 j(i:i+1) = i:i+1;
-            case 'holdPosition'
+            case {'HoldPosition','holdPosition'}
                 setOuterPostion = false;
                 j(i) = i;
         end
@@ -42,7 +42,7 @@ function [h, range] = plotData(data,name,unit,header,varargin)
     l1=regexprep(l1,'_','\\_');
     l2=regexprep(name,'_','\\_');
     l3=['Delta= ',num2str(delta,3),' ',unit];
-    set(gca,'FontSize',20);
+    % set(gca,'FontSize',20);
     xlabel(sprintf('x [%s]',scale{1}));
     ylabel(sprintf('y [%s]',scale{1}));
     if mkttl    
@@ -61,10 +61,8 @@ function p=plotSxm(data,header,range,scale,varargin)
         xoffset=varargin{1};
         yoffset=varargin{2};
     end
-    XScale=[0 header.scan_range(1)]+xoffset;
-    YScale=[0 header.scan_range(2)]+yoffset;
-    XScale=XScale*scale;
-    YScale=YScale*scale;
+    XScale=[0 header.scan_range(1)]*scale+xoffset;
+    YScale=[0 header.scan_range(2)]*scale+yoffset;
     p = imagesc(XScale,YScale,data,range);
     axis image;
     %To export image correctly
