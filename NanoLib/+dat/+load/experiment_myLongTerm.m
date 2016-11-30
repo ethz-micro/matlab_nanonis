@@ -31,9 +31,6 @@ function header = processHeader(header)
 % parameters from header
 
 % user defined informations
-Date=strsplit(header.date,' ');
-header.rec_date=Date{1};
-header.rec_time=Date{2};
 
 end
 

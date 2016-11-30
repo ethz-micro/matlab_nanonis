@@ -34,9 +34,6 @@ header.grid_points = 1;
 header.sweep_signal = 'Bias (V)';
 
 % user defined informations specific for experiment
-Date=strsplit(header.date,' ');
-header.rec_date=Date{1};
-header.rec_time=Date{2};
 
 end
 

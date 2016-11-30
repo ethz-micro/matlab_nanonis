@@ -29,14 +29,7 @@ end
 function header = processHeader(header)
 
 % parameters from header
-try
-% user defined informations
-Date=strsplit(header.date,' ');
-header.rec_date=Date{1};
-header.rec_time=Date{2};
-catch
-    fprintf('date field does not exist.\n')
-end
+
 end
 
 % process data

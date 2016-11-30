@@ -32,9 +32,6 @@ function header = processHeader(header)
 header.sampling_time = str2double(header.sample_period__ms_);
 
 % user defined informations
-Date=strsplit(header.date,' ');
-header.rec_date=Date{1};
-header.rec_time=Date{2};
 
 end
 
