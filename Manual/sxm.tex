@@ -168,7 +168,15 @@ It calls \emph{plot.plotChannel}.
 % ------------------------------ %
 \subsubsection{scalebar}
 \bdf
-\+{hObj = scalebar(xStart,yStart,blength,bunits)} plots the scale bar on the current figure. \emph{xStart} is the x position of the scale bar, \emph{yStart} is the y position of the scale bar, \emph{blength} and \emph{bunits} are the length, and resp. the units, of the scale bar. 
+\+{hObj = scalebar(xStart,yStart,blength,bunits)} plots the scale bar on the current figure. \emph{xStart} is the x position of the scale bar, \emph{yStart} is the y position of the scale bar, \emph{blength} and \emph{bunits} are the length, and resp. the units, of the scale bar. \emph{hObj} is a graphical object of the line and the text of the scale bar. 
+
+\+{hObj = scalebar(xStart,yStart,blength,bunits,varargin)} allows following options:
+
+\bi
+\+ varargin = \{'Color', [r,g,b]\} sets the color of the bar (default = white).
+\+ varargin = \{'Location', location\} whenever ranges are used for \emph{xStart} and \emph{yStart} this sets the location of the bar. Possible locations: 'North', 'South', 'West', 'East' and the combination of two locations. default 'SouthWest'.
+\ei
+
 \edf
 Remark: \emph{xStart} and \emph{yStart} can be provided as ranges, e.g. \emph{xStart}=\texttt{[min(x),max(x)]} and \emph{yStart}=\texttt{[min(y),max(y)]}. 
 If this is the case the scale bar will be automatically placed within the $10\%$ of the \texttt{[min(x), min(y)]} point.

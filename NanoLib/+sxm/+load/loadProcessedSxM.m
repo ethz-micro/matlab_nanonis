@@ -143,6 +143,25 @@ function scan_type = scanType(data_info)
         scan_type='NFESEM';
         return
     end
+    cellIdx = strfind(channels,'Counter_');
+    idx = find(not(cellfun('isempty',cellIdx)));
+    if numel(idx)>=1
+        scan_type='NFESEM';
+        return
+    end
+    cellIdx = strfind(channels,'Channeltron');
+    idx = find(not(cellfun('isempty',cellIdx)));
+    if numel(idx)>=1
+        scan_type='NFESEM';
+        return
+    end
+    cellIdx = strfind(channels,'CLAM');
+    idx = find(not(cellfun('isempty',cellIdx)));
+    if numel(idx)>=1
+        scan_type='NFESEM';
+        return
+    end
+    
     
     % Video
     cellIdx = strfind(channels,'Video');

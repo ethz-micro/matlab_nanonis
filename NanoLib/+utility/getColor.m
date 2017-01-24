@@ -24,7 +24,7 @@ colorRange = [400,800];
 colorStep = 0.1;
 colorTicks = colorRange(1):colorStep:colorRange(2);
 
-if exist('mapping','var');
+if exist('mapping','var')
     colorScale = mapping(length(colorTicks));
 else
     colorScale = jet(length(colorTicks));

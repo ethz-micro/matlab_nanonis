@@ -194,6 +194,7 @@ end
 
 % save values to list
 handles.hFileList.UserData= userData;
+handles.hFileList.Value = 1;
 handles.hFileList.String = s;
 
 function sxmFile = loadSXM(fileName,handles)

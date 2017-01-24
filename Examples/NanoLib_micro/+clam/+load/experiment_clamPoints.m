@@ -51,7 +51,11 @@ end
 header.channeltron_front__v_ = str2double(header.channeltron_front__v_);
 header.channeltron_rear__v_ = str2double(header.channeltron_rear__v_);
 header.integration_time__ms_ = str2double(header.integration_time__ms_);
-header.loops = str2double(header.loops);
+try
+    header.loops = str2double(header.loops);
+catch
+    header.loops = -1;
+end
 end
 
 function [header,channels] = processData(header,data)
@@ -63,9 +67,29 @@ end
 
 function [header,channels] = split_loops(header,data)
 channels = struct;
+if header.loops < 0
+    %% try to get number of loops automatic
+    x = data(:,1);
+    nlps = 1;
+    if rem(length(x),length(unique(x)))==0
+        for lps = length(x)/length(unique(x)):-1:2
+            if rem(length(x),lps)==0
+                npti = length(x)/lps;
+                dx = x(1:npti)-x(npti+1:2*npti);
+                if dx==0
+                    nlps = lps;
+                    break
+                end
+            end
+        end
+    end
+    header.loops = nlps;
+end
+
+
 if header.loops > 1
     pti = size(data,1)/header.loops;
-    for i = 1:size(data,2);
+    for i = 1:size(data,2)
         chnName = regexp(header.channels{i}, '(?<name>.*?)+\((?<unit>.*?)\)','names');
         channels(i).Name = strtrim(chnName.name);
         channels(i).Unit = chnName.unit;
@@ -73,7 +97,7 @@ if header.loops > 1
         channels(i).data = reshape(data(:,i),pti,header.loops);
     end
 else
-    for i = 1:size(data,2);
+    for i = 1:size(data,2)
         chnName = regexp(header.channels{i}, '(?<name>.*?)+\((?<unit>.*?)\)','names');
         channels(i).Name = strtrim(chnName.name);
         channels(i).Unit = chnName.unit;
