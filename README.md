@@ -9,14 +9,14 @@ Some of this library's features are still oriented to solve problems related to 
 
 The repository is divided in three sections:
 * Manual: PDF of the user manual and source file,
-* NanoLib: the library with the different MatLab functions,
+* NanoLib: the library with the different MATLAB functions,
 * Examples: dummy files and code examples for using the library.
 
 ## Installation and Setup
 
 You can clone the repository to your computer or download the ZIP file and unzip it to a directory of your choice, for example: ```~/myFunctions```.
 
-In order to use and access the library you need to add the path to the directory where you copied the library with the ```addpath``` standard function of MatLab. Before you begin with your project just type in the MatLab prompt:
+In order to use and access the library you need to add the path to the directory where you copied the library with the ```addpath``` standard function of MATLAB. Before you begin with your project just type in the MATLAB prompt:
 ```
 >>> addpath ~/myFunctions
 ```
