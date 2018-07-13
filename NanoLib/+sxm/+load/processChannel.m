@@ -6,18 +6,8 @@ function channel = processChannel(channel,header,varargin)
     %Specific process
     switch header.scan_type
         case {'NFESEM','SEMPA'}
-            %The units become arbitrary
-            channel.Unit='';
-            
-            %If current & min<0 , take min as offset
-            if strcmp(channel.Name,'Current')
-                minI=min(channel.data(:));
-                if minI<0
-                    %Correct the offset
-                    channel.data=channel.data-minI;
-                end
-            end
-            
+            %The units become number of counts per second = [frequency]
+            channel.Unit='Hz';
         case 'SEMPA'
             %reset nans
             channel.data(abs(channel.data)>2^30)=nan;
