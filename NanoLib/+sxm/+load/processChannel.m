@@ -58,7 +58,9 @@ function channel = processChannel(channel,header,varargin)
     end
     
     %turn the datas - done after the rest because scan was line by line
-    channel.data = rotateData(channel.data,header.scan_angle);
+    %channel.data = rotateData(channel.data,header.scan_angle); %uncomment
+    %to correct the angle rotation if the scan was not horizontal 
+    
 end
 
 function lineFit = getLineFit(data,dim,varargin)
