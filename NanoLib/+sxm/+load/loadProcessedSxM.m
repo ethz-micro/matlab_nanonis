@@ -30,12 +30,49 @@ function file=loadProcessedSxM(fn, varargin)
         fprintf('File header malformed\n');
         return;
     end
+    %Get file name from the folder
+    if ispc % for windows users
+        ii = max(strfind(fn,'\'));
+        if isempty(ii)
+            ii=0;
+        end
+        filename= fn(ii+1:end);
+    else %for linux or unix users
+        ii = max(strfind(fn,'/'));
+        if isempty(ii)
+            ii=0;
+        end
+        filename= fn(ii+1:end);
+    end
     
     %Save data infos in a nice format
     data_info = readDataInfos(file.header);
     
+    %Guess scan Type from set of data
+    scan_type = scanType(data_info);
+
+    %comment the check for fast analysis(suggested with the SXM viewer)
+    %Check on scan type : ask user if it's correct the scantype found
+    nanolibguess = sprintf('Nanolib read the %s file %s .',scan_type,filename);
+    hint1 = nanolibguess;
+    hint2 =  'If you want to change the scan type for a different processing, please choose one of the following scan types: STM,NFESEM,SEMPA';
+    Hint = strcat(hint1,{' '},hint2);
+    prompt = Hint;
+    titl = sprintf('Processing: %s',filename);
+    num_line = 1;
+    definput = {scan_type};
+    options.Resize = 'on';
+    input = cell2mat(inputdlg(prompt,titl,num_line,definput,options));%get scan type from input
+    if isempty(input)% Check if user push cancel
+    elseif ~isempty(find(strcmp(input,{'STM','NFESEM','SEMPA'}),1))
+        scan_type = input;
+    else
+        msgbox('The input was not correct, please use one of those suggested.','error','error');
+        return
+    end
+
     %Save scan Type
-    file.header.scan_type = scanType(data_info);
+    file.header.scan_type = scan_type;
     
     %Channels numbers to save
     if ~isempty(channelNum)
@@ -49,7 +86,7 @@ function file=loadProcessedSxM(fn, varargin)
     %save channels
     for n=numel(nArray):-1:1
         idx=nArray(n);
-        file.channels(n)=loadChannel(fn,idx,data_info,corrStr);
+        file.channels(n)=loadChannel(fn,idx,data_info,scan_type,corrStr);
     end
     
     
@@ -74,7 +111,7 @@ function data_info = readDataInfos(header)
     
 end
 
-function channel = loadChannel(fn,n,data_info,varargin)
+function channel = loadChannel(fn,n,data_info,scan_type,varargin)
     
     idx=floor(n/2+1);%The index of data info is half the channel index (both direction saved)
     
@@ -113,12 +150,10 @@ function channel = loadChannel(fn,n,data_info,varargin)
         
         %load data in channel
         [header, data]=sxm.load.loadsxm(fn,n);
-        
-        header.scan_type = scanType(data_info);
+        header.scan_type = scan_type;
         
         %Save data
         channel.data=data;
-        
         channel=sxm.load.processChannel(channel,header,varargin{:});
         
         
