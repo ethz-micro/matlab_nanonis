@@ -8,7 +8,8 @@ if ~ischar(nanoLib)
     error('Chose a directory for NanoLib');
 end
 
-wdlg = warndlg({'set local path to Data'});
+%wdlg = warndlg({'set local path to Data'});
+wdlg = warndlg({'set local path to User library'});
 waitfor(wdlg);
 dataPath = uigetdir(pwd,'Set NanoLib USER library path');
 if ~ischar(dataPath)

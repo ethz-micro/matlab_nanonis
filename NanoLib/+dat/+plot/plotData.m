@@ -37,11 +37,12 @@ xOffset = 0;
 showLabels = true;
 var2remove = nan(size(varargin,2),1);
 loops = 1:size(data,2); % plot all loops as default
+show_loops=length(loops);
 for i = 1:size(varargin,2)
     if ischar(varargin{i})
         switch varargin{i}
             case 'loops'
-                loops = varargin{i+1};
+                show_loops = varargin{i+1};
                 var2remove(i) = i;
                 var2remove(i+1) = i+1;
             case 'xOffset'
@@ -57,29 +58,36 @@ end
 % remove used varargin
 varargin(var2remove(~isnan(var2remove))) = [];
 
-% plot
-hObject = gobjects(length(loops));
-ih = 1;
-for i = loops
-    hObject(ih) = plot(x_channel.data(:,i)+xOffset,data(:,i),...
+% plot 
+% if several loops: plot all+its mean,if one loop just plot
+if length(loops)>1
+    for i = 1:show_loops
+        plot(x_channel.data(:,i)+xOffset,data(:,i),':',...
+            'DisplayName',sprintf('%s %d',name,i),varargin{:});
+        hold on
+    end
+    hObject = plot(x_channel.data(:,1)+xOffset,mean(data,2),...
         'DisplayName',sprintf('%s %d',name,i),varargin{:});
-    
-    if ih==1; hold on; end
-    ih = ih+1;
+else
+    hObject = plot(x_channel.data+xOffset,data,...
+        'DisplayName',sprintf('%s %d',name,i),varargin{:});  
+    hold on
 end
-%hold off;
 
 if showLabels
-    title(name);
+    tt=title(name);
+    set(tt,'Interpreter','Latex');
     if isempty(strtrim(x_channel.Unit))
         xlabel(sprintf('%s',x_channel.Name));
     else
-        xlabel(sprintf('%s in %s',x_channel.Name,x_channel.Unit));
+        xx=xlabel(sprintf('%s in %s',x_channel.Name,x_channel.Unit));
+        set(xx,'Interpreter','Latex'); 
     end
     if isempty(strtrim(unit))
         ylabel(sprintf('%s',name));
     else
-        ylabel(sprintf('%s in %s',name,unit));
+        yy=ylabel(sprintf('%s in %s',name,unit));
+        set(yy,'Interpreter','Latex'); 
     end
 end
 
